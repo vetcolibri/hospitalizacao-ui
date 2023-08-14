@@ -17,7 +17,7 @@ const hour = makeHour()
 <template>
     <div>
         <Header title="Ronda diária">
-            <router-link to="/">
+            <router-link :to="{name: 'PatientList', params: {examFormat: 'daily-round'}}">
                 <arrow-left />
             </router-link>
         </Header>
@@ -27,7 +27,7 @@ const hour = makeHour()
                 <form action="." class="grid grid-row-1 space-y-4">
                     <ParameterInput title="Frequência Cardiaca" name="heartRate" helpText="(70 - 120) BPM"/>
                     <ParameterInput title="Frequência Respiratória" name="respiratoryRate" helpText="(10 - 30) RPM"/>
-                    <ParameterInput title="TRC" name="trc" helpText="(> 2)"/>
+                    <ParameterInput title="TRC" name="trc" helpText="(> 2')"/>
                     <ParameterSelect title="Mucosas" name="mucosas"/>
                     <ParameterSelect title="AVDN" name="avdn"/>
                     <ParameterInput title="Temperatura" name="temperature" helpText="(37.5 - 39) ºC"/>
@@ -42,8 +42,9 @@ const hour = makeHour()
             </section>
         </main>
         <Footer>
-            <SaveButton class="btn-success" title="Salvar" />
+            <router-link :to="{name: 'ScheduleAlert'}">
+                <SaveButton class="btn-success" title="Salvar" />
+            </router-link>
         </Footer>
     </div>
 </template>
-@/utils/tools

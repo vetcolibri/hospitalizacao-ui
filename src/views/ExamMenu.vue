@@ -1,6 +1,7 @@
 <script lang="ts" setup>
     import Header from '@/components/Header.vue';
     import Footer from '@/components/Footer.vue';
+    import Alert from '@/components/Alert.vue';
 </script>
 <template>
     <div>
@@ -14,6 +15,7 @@
                     <div class="border rounded shadow text-center bg-white p-4">Monitorização continuada</div>
                 </router-link>
             </div>
+            <Alert></Alert>
         </main>
         <Footer />
     </div>

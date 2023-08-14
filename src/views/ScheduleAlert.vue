@@ -2,7 +2,7 @@
     import { ref } from 'vue'
     import Header from '@/components/Header.vue';
     import Footer from '@/components/Footer.vue';
-    import SaveButton from '@/components/Button.vue';
+    import Button from '@/components/Button.vue';
     import ScheduleTime from '@/components/ScheduleTime.vue';
     import ParameterList from '@/components/ExamParameterList.vue';
     import RateFrequency from '@/components/RateFrequency.vue';
@@ -14,7 +14,7 @@
 </script>
 <template>
     <div>
-        <Header title="Alerta na monitorização"/>
+        <Header title="Alerta na monitorização" />
         <main class="main-content py-8">
             <section class="bg-white shadow px-8 py-6">
                 <form action="." class="space-y-3">
@@ -30,7 +30,12 @@
             </section>
         </main>
         <Footer>
-            <SaveButton class="btn-success" title="Salvar"/>
+            <div class="space-x-3">
+                <router-link :to="{name: 'ExamMenu'}">
+                    <Button class="btn-light" title="Cancelar" /> 
+                </router-link>
+                <Button class="btn-success" title="Salvar"/>
+            </div>
         </Footer>
     </div>
 </template>
