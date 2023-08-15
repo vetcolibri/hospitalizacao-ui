@@ -6,10 +6,11 @@
     import ScheduleTime from '@/components/ScheduleTime.vue';
     import ParameterList from '@/components/ExamParameterList.vue';
     import RateFrequency from '@/components/RateFrequency.vue';
+
+    import { makeHour } from '@/utils/tools';
     
     const time = ref()
-    const now = new Date()
-    time.value = `${now.toLocaleTimeString()}`
+    time.value = makeHour()
 
 </script>
 <template>
