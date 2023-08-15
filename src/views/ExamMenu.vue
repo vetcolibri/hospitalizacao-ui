@@ -1,6 +1,8 @@
 <script lang="ts" setup>
     import Header from '@/components/Header.vue';
     import Footer from '@/components/Footer.vue';
+    import Alert from '@/components/Alert.vue';
+    const parameters = ["Temperatura"]
 </script>
 <template>
     <div>
@@ -15,6 +17,7 @@
                 </router-link>
             </div>
         </main>
+        <Alert rate="10 minutos" :parameters=parameters comment="Atenção a temperatura do paciente"></Alert>
         <Footer />
     </div>
 </template>
