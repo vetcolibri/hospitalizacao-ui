@@ -32,7 +32,7 @@
         </main>
         <Footer>
             <div class="space-x-3">
-                <router-link :to="{name: 'ExamMenu'}">
+                <router-link :to="{name: 'ExamGeneralCondition'}">
                     <Button class="btn-light" title="Cancelar" /> 
                 </router-link>
                 <Button class="btn-success" title="Salvar"/>

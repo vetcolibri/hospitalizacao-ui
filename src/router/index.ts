@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ExamMenu from '@/views/ExamMenu.vue'
+import ExamGeneralCondition from '@/views/ExamGeneralCondition.vue'
 
 const routes = [
     {
         path: "/", 
-        name: "ExamMenu", 
-        component: ExamMenu
+        name: "ExamGeneralCondition", 
+        component: ExamGeneralCondition
     },
     {
-        path: "/patients/:examFormat", 
-        name: "PatientList", 
-        component: () => import("@/views/PatientList.vue")
+        path: "/choose-patient/:examFormat", 
+        name: "ChoosePatient", 
+        component: () => import("@/views/ChoosePatient.vue")
     },
     {
         path: "/daily-round", 
@@ -19,9 +19,9 @@ const routes = [
         component: () => import("@/views/DailyRound.vue")
     },
     {
-        path: "/parameters",
-        name: "Parameters",
-        component: () => import("@/views/Parameters.vue")
+        path: "/choose-parameters",
+        name: "ChooseParameters",
+        component: () => import("@/views/ChooseParameters.vue")
     },
     {
         path: "/schedule-alert", 
