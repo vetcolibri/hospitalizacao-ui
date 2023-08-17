@@ -21,5 +21,6 @@ export interface Parameter {
     type?: string,
     helpText?: string,
     isCombox?: boolean,
-    options?: string[] 
+    options?: string[],
+    value?: string 
 }

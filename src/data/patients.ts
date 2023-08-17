@@ -2,7 +2,7 @@ const iconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-product
 
 const PATIENTS = [
     {
-        id: "codigo:nome:tutor",
+        id: "001001:maximus:joao-santos",
         name: "Maximus",
         specie: "Bulldog",
         exams: [],
@@ -10,13 +10,21 @@ const PATIENTS = [
         iconUrl
     },
     {
-        id: "codigo:nome:tutor",
+        id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
         exams: [
-            {id: 1, parameter: "", value: 2},
-            {id: 1, parameter: "", value: 2},
-            {id: 1, parameter: "", value: 2}
+            {
+                heartRate: "4",
+                respiratoryRate: "2",
+                trc: "3",
+                mucosas: "4",
+                avdn: "3",
+                temperature: "3",
+                glicemia: "2",
+                bloodPressure: "2",
+                pam: "1"
+            }
         ],
         alerts: [
             {
@@ -30,7 +38,7 @@ const PATIENTS = [
         iconUrl
     },
     {
-        id: "codigo:nome:tutor",
+        id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
         exams: [],
@@ -38,7 +46,7 @@ const PATIENTS = [
         iconUrl,
     },
     {
-        id: "codigo:nome:tutor",
+        id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
         exams: [],

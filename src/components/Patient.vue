@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import AlertIcon from "vue-material-design-icons/Alert.vue"
+import AlertIcon from "vue-material-design-icons/AlertCircle.vue"
 
 import { Alert, Patient } from '@/lib/types';
+import { ref } from "vue";
 
-const props = defineProps<Patient>()
+const patientId = ref<string>()
 
 function hasAlert(alerts: Alert[] | undefined){
     return alerts?.find((alert) => alert.status === true)
 }
+
+const props = defineProps<Patient>()
 </script>
 <template>
     <section class="shadow-md rounded bg-white relative">
-        <router-link :to="`/${$route.params.examFormat}`">
+        <router-link :to="`/${$route.params.examFormat}`" v-model="patientId">
             <div class="flex p-8 gap-8 items-center mt-6">
                 <div class="w-[8rem]">
                     <img :src="props.iconUrl" alt="pet-foot-image">

@@ -79,7 +79,7 @@ function toogleParameterList(){
                 </div>
                 <div 
                     class="h-48 absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3" 
-                    :class="{hidden: !showParametersList}" id="parametersOptions">
+                    :class="{hidden: !showParametersList}">
                     <div class="flex items-center">
                         <input type="checkbox" class="rounded" @change="changeVisibiliy('1')">
                         <label class="ml-2 block text-gray-900">Frequência Cardiaca</label>

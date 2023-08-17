@@ -22,3 +22,8 @@ main {
 .btn-light {
     @apply h-10 px-9 rounded bg-gray-600 text-white hover:bg-gray-800
 }
+
+
+.form-invalid {
+   @apply w-full border-2 border-red-400 rounded shadow-sm focus:border-red-400 focus:ring-0
+}
