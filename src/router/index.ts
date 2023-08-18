@@ -14,12 +14,12 @@ const routes = [
         component: () => import("@/views/ChoosePatient.vue")
     },
     {
-        path: "/daily-round", 
+        path: "/daily-round/:patientId", 
         name: "DailyRound", 
         component: () => import("@/views/DailyRound.vue")
     },
     {
-        path: "/choose-parameters",
+        path: "/choose-parameters/:patientId",
         name: "ChooseParameters",
         component: () => import("@/views/ChooseParameters.vue")
     },

@@ -5,7 +5,7 @@ const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = (event: InputEvent) => {
-   emit("update:modelValue", (event.target as HTMLInputElement).value)
+    emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
 </script>
 
@@ -14,29 +14,39 @@ const updateValue = (event: InputEvent) => {
         <p>{{ props.title }}</p>
         <div class="flex gap-4">
             <div class="flex flex-col flex-1 gap-1">
-                <select 
-                    v-if="props.isCombox" 
-                    class="form-control text-gray-500" 
+                <select
+                    v-if="props.isCombox"
+                    class="form-control text-gray-500"
                     :name="props.name"
-                    @input="(e) => updateValue(e as InputEvent)" 
+                    @input="(e) => updateValue(e as InputEvent)"
                 >
-                    <option>Escolha um valor</option>
-                    <option v-for="opt in options" :value="opt">{{  opt }}</option>
+                    <option value="">Escolha um valor</option>
+                    <option v-for="opt in options" :value="opt">{{ opt }}</option>
                 </select>
-                <input v-else 
-                    class="form-control" 
-                    type="number" 
-                    step="1" 
-                    min="0" 
-                    max="500" 
+                <input
+                    v-else
+                    class="form-control"
+                    type="number"
                     :name="props.name"
-                    @input="(e) => updateValue(e as InputEvent)" 
+                    step="1"
+                    min="0"
+                    max="500"
+                    @input="(e) => updateValue(e as InputEvent)"
                     placeholder="Valor"
                 />
                 <span class="text-sm text-gray-600">{{ props.helpText }}</span>
             </div>
             <div class="flex flex-col flex-1 gap-1">
-                <input class="form-control bg-gray-200" disabled type="text" placeholder="N/D">
+                <input
+                    class="form-control bg-gray-200 text-gray-500"
+                    disabled
+                    type="text"
+                    placeholder="N/D"
+                    :value="lastMeasurement ? lastMeasurement.value : ''"
+                />
+                <span v-if="lastMeasurement?.value" class="text-sm text-gray-600"
+                    >Ultima medição as {{ lastMeasurement?.hour }}</span
+                >
             </div>
         </div>
     </div>

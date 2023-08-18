@@ -14,7 +14,7 @@ import PATIENTS from '@/data/patients'
             <GoBack />
         </Header>
         <main class="main-content py-8">
-            <div class="xl:grid xl:grid-cols-3 xl:justify-center xl:gap-3">
+            <section class="xl:grid xl:grid-cols-3 xl:justify-center xl:gap-3">
                 <Patient  
                     v-for="patient in PATIENTS" 
                     :id="patient.id" 
@@ -23,9 +23,8 @@ import PATIENTS from '@/data/patients'
                     :icon-url="patient.iconUrl"
                     :alerts="patient.alerts"
                     class="xl:w-[600px]"
-                >
-                </Patient>
-            </div>
+                />
+            </section>
         </main>
         <Footer />
     </div>
