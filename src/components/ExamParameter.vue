@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Parameter } from '@/lib/types'
+import { useRoute } from 'vue-router';
 
 const props = defineProps<Parameter>()
 const emit = defineEmits()
@@ -26,11 +27,8 @@ const updateValue = (event: InputEvent) => {
                 <input
                     v-else
                     class="form-control"
-                    type="number"
+                    type="text"
                     :name="props.name"
-                    step="1"
-                    min="0"
-                    max="500"
                     @input="(e) => updateValue(e as InputEvent)"
                     placeholder="Valor"
                 />
@@ -41,12 +39,11 @@ const updateValue = (event: InputEvent) => {
                     class="form-control bg-gray-200 text-gray-500"
                     disabled
                     type="text"
-                    placeholder="N/D"
-                    :value="lastMeasurement ? lastMeasurement.value : ''"
+                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
                 />
-                <span v-if="lastMeasurement?.value" class="text-sm text-gray-600"
-                    >Ultima medição as {{ lastMeasurement?.hour }}</span
-                >
+                <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
+                    Ultima medição as {{ lastMeasurement?.hour }}
+                </span>
             </div>
         </div>
     </div>

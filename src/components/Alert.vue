@@ -23,7 +23,7 @@ defineProps<Props>()
             <h1 class="font-medium text-center uppercase">Alerta</h1>
             <div class="space-y-3 mt-4">
                 <div class="flex justify-between items-center">
-                    <p>Parâmetros:</p>
+                    <p>Parâmetro:</p>
                     <span class="text-xs text-red-500">A cada {{ rate }}</span>
                 </div>
                 <ul class="mx-4">

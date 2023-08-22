@@ -5,7 +5,7 @@ const PATIENTS = [
         id: "001001:maximus:joao-santos",
         name: "Maximus",
         specie: "Bulldog",
-        exams: [],
+        measurements: [],
         alerts: [],
         iconUrl
     },
@@ -13,18 +13,19 @@ const PATIENTS = [
         id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
-        exams: [
+        measurements: [
             {
-                heartRate: "4",
-                respiratoryRate: "2",
-                trc: "3",
-                mucosas: "4",
-                avdn: "3",
-                temperature: "3",
-                glicemia: "2",
-                bloodPressure: "2",
-                pam: "1"
-            }
+                parameter: 'heartRate',
+                value: '100',
+                hour: '11:25',
+                date: '22 Ago. 2023'
+            },
+            {
+                parameter: 'respiratoryRate',
+                value: '30',
+                hour: '11:00',
+                date: '22 Ago. 2023'
+            },
         ],
         alerts: [
             {
@@ -41,7 +42,7 @@ const PATIENTS = [
         id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
-        exams: [],
+        measurements: [],
         alerts: [],
         iconUrl,
     },
@@ -49,7 +50,7 @@ const PATIENTS = [
         id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
-        exams: [],
+        measurements: [],
         alerts: [],
         iconUrl
     }

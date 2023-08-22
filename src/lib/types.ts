@@ -1,10 +1,3 @@
-export interface Measurement {
-    readonly patientId: string
-    readonly hour: string
-    readonly date: string
-    readonly value: string
-}
-
 export interface Patient {
     id: string,
     name: string,
@@ -20,6 +13,11 @@ export interface Alert {
     parameters: string[],
     comments: string,
     status: boolean
+}
+
+export interface Measurement {
+    readonly value: string
+    readonly hour: string
 }
 
 export interface Parameter {

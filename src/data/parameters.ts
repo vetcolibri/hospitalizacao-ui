@@ -1,6 +1,17 @@
-export const mucosasOptions = ["3", "5"]
+export const mucosasOptions = [
+    "Cianoticas", 
+    "Congestivas",
+    "Ictericas",
+    "Pálidas",
+    "Rosadas"
+]
 
-export const avdnOptions = ["3", "5"]
+export const avdnOptions = [
+    "Alerta", 
+    "Doloroso",
+    "Verbal",
+    "Não responsivo"
+]
 
 export const parameters = [
     {
@@ -59,20 +70,22 @@ export const parameters = [
         name: "glicemia",
         value: "", 
         isCombox: false,
-        required: true},
+        required: true
+    },
     {
-        title: "Pressão Arterial", 
-        helpText: "(11/70 - 12/80) mm/Hg", 
-        name: "bloodPressure",
-        value: "", 
-        isCombox: false,
-        required: true},
-    {
-        title: "PAM", 
-        helpText: "(60)" , 
-        name: "pam",
+        title: "HCT", 
+        helpText: "Canino (37 - 55)% e Felino (24 - 45)%" , 
+        name: "htc",
         value: "",
         isCombox: false,
         required: true
     },
+    {
+        title: "Pressão Arterial (Sis/Dis - PAM)", 
+        helpText: "(11/70 - 12/80) mm/Hg - (60)", 
+        name: "bloodPressure",
+        value: "", 
+        isCombox: false,
+        required: true
+    }
 ]
