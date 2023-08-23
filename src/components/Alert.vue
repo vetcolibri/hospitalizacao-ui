@@ -19,12 +19,12 @@ defineProps<Props>()
 </script>
 <template>
     <dialog v-if="isVisible" class="flex items-center absolute top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50">
-        <div class="w-1/2 mx-auto border rounded bg-white p-3">
+        <div class="lg:w-1/2 xl:w-1/4 mx-auto border rounded bg-white p-3">
             <h1 class="font-medium text-center uppercase">Alerta</h1>
             <div class="space-y-3 mt-4">
-                <div class="flex justify-between items-center">
+                <div class="flex gap-4 items-center">
                     <p>Parâmetro:</p>
-                    <span class="text-xs text-red-500">A cada {{ rate }}</span>
+                    <span class="text-sm text-red-500">A cada {{ rate }}</span>
                 </div>
                 <ul class="mx-4">
                     <li 

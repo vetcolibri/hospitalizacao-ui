@@ -15,6 +15,10 @@ main {
     @apply w-full border-gray-300 rounded shadow-sm focus:border-gray-500 focus:ring-gray-500
 }
 
+.form-invalid {
+   @apply w-full border-2 border-red-400 rounded shadow-sm focus:border-red-400 focus:ring-0
+}
+
 .btn-success {
     @apply h-10 px-9 rounded bg-green-600 text-white hover:bg-green-800
 }
@@ -23,7 +27,6 @@ main {
     @apply h-10 px-9 rounded bg-gray-600 text-white hover:bg-gray-800
 }
 
-
-.form-invalid {
-   @apply w-full border-2 border-red-400 rounded shadow-sm focus:border-red-400 focus:ring-0
+.disabled {
+    @apply bg-gray-200 text-gray-500
 }

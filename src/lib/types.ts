@@ -25,8 +25,7 @@ export interface Parameter {
     name: string,
     type?: string,
     helpText?: string,
-    isCombox?: boolean,
     options?: string[],
-    value?: string
-    lastMeasurement?: Measurement
+    value?: string,
+    lastMeasurement?: Measurement,
 }

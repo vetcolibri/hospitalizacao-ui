@@ -1,0 +1,56 @@
+<script setup lang="ts">
+import { Parameter } from '@/lib/types'
+import { ref } from 'vue';
+
+const inputElement = ref()
+const message = ref<string>('')
+const props = defineProps<Parameter>()
+const emit = defineEmits()
+
+const updateValue = () => {
+    emit('update:modelValue', inputElement.value)
+}
+
+function parameterValidation (){
+    const value = parseFloat(inputElement.value)
+    if (inputElement.value === '' || value <= 2) {
+        message.value = ''
+    } else if (value >= 0 && value <= 1){
+        message.value = ''
+    } else if (value > 2) {
+        message.value = "Vasoconstrição"
+    }
+}
+</script>
+
+<template>
+    <div class="flex flex-col gap-2">
+        <p>{{ props.title }}</p>
+        <div class="flex gap-4">
+            <div class="flex flex-col flex-1 gap-1">
+                <input
+                    class="form-control"
+                    placeholder="Valor"
+                    v-model="inputElement"
+                    step="0.1"
+                    min="0"
+                    :name="props.name"
+                    :type="props.type ? props.type : 'number'"
+                    :class="{'form-invalid': message.length > 0, 'form-control': message.length === 0}"
+                    @input="() => updateValue()"
+                    @keyup="() => parameterValidation()"
+                />
+                <span class="text-sm text-gray-600">
+                    {{ message.length > 0 ? message : props.helpText }}
+                </span>
+            </div>
+            <div class="flex flex-col flex-1 gap-1">
+                <input class="form-control disabled" disabled type="text"
+                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"/>
+                <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
+                    Ultima medição as {{ lastMeasurement?.hour }}
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
