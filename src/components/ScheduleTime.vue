@@ -1,9 +1,29 @@
 <script setup lang="ts">
-defineProps(['time'])
+import { onBeforeMount, ref } from 'vue';
+
+const date = new Date()
+const hour = ref(new Intl.DateTimeFormat("pt-PT", {timeStyle: "short"}).format(date))
+const emit = defineEmits()
+
+const updateValue = () => {
+    emit('update:modelValue', hour.value)
+}
+
+onBeforeMount(() => {
+    updateValue()
+})
 </script>
 <template>
-    <div class="w-32 space-y-1">
+    <div class="space-y-1">
         <label for="time" class="block">Hora do alerta</label>
-        <input class="form-control" type="time" name="hour" :value="time" required>
+        <div class="w-24">
+            <input 
+                class="form-control text-center w-24" 
+                type="time" 
+                name="hour" 
+                @input="() => updateValue()"
+                v-model="hour" 
+            >
+        </div>
     </div>
 </template>

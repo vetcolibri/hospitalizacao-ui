@@ -13,71 +13,78 @@ export const avdnOptions = [
     "Não responsivo"
 ]
 
-export const parameters = [
-    {
+export const parameters = {
+    heartRate: {
+        name: "heartRate",
         title: "Frequência Cardiaca", 
         helpText: "(70 - 120) BPM" , 
-        name: "heartRate",
-        type: "number",
         value: "",
         required: true,
+        chooseVisibility: false
     },
-    {
+    respiratoryRate: {
+        name: "respiratoryRate",
         title: "Frequencia Respiratoria", 
         helpText: "(10 - 30) RPM" , 
-        name: "respiratoryRate",
         value: "", 
-        required: true
+        required: true,
+        chooseVisibility: false
     },
-    {
+    trc: {
+        name: "trc",
         title: "TRC", 
         helpText: "(> 2')", 
-        name: "trc",
         value: "", 
-        required: true
+        required: true,
+        chooseVisibility: false
     },
-    {
-        title: "AVDN", 
-        helpText: "", 
+    avdn: {
         name: "avdn",
+        title: "AVDN", 
         value: "",
         required: true,
-        options: avdnOptions
+        options: avdnOptions,
+        chooseVisibility: false
     },
-    {
-        title: "Mucosas", 
-        helpText: "", 
+    mucosas: {
         name: "mucosas",
+        title: "Mucosas", 
         value: "", 
         required: true,
         options: mucosasOptions,
+        chooseVisibility: false
     },
-    {
+    temperature: {
         title: "Temperatura", 
-        helpText: "(37.5 - 39) ºC" , 
         name: "temperature",
+        helpText: "(37.5 - 39) ºC" , 
         value: "", 
-        required: true
+        required: true,
+        chooseVisibility: false
     },
-    {
+    glicemia: {
         title: "Glicemia", 
-        helpText: "(60 - 100) mg/dl" , 
         name: "glicemia",
+        helpText: "(60 - 100) mg/dl" , 
         value: "", 
-        required: true
+        required: true,
+        chooseVisibility: false
     },
-    {
+    hct: {
         title: "HCT", 
-        helpText: "Canino (37 - 55)% e Felino (24 - 45)%" , 
         name: "htc",
+        helpText: "Canino (37 - 55)% e Felino (24 - 45)%" , 
         value: "",
-        required: true
+        required: true,
+        chooseVisibility: false
     },
-    {
-        title: "Pressão Arterial - Sis/Dis (PAM)", 
-        helpText: "(11/70 - 12/80) mm/Hg - (60)", 
+    bloodPressure: {
         name: "bloodPressure",
+        title: "Pressão Arterial - Sis/Dis (PAM)", 
+        type: "text",
+        helpText: "(11/70 - 12/80) mm/Hg - (60)",
         value: "", 
-        required: true
+        required: true,
+        chooseVisibility: false
     }
-]
+}

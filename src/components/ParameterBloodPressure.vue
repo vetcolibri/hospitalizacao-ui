@@ -10,17 +10,6 @@ const emit = defineEmits()
 const updateValue = () => {
     emit('update:modelValue', inputElement.value)
 }
-
-function parameterValidation (){
-    const value = parseFloat(inputElement.value)
-    if (inputElement.value === '' || value <= 2) {
-        message.value = ''
-    } else if (value >= 0 && value <= 1){
-        message.value = ''
-    } else if (value > 2) {
-        message.value = "Vasoconstrição"
-    }
-}
 </script>
 
 <template>
@@ -32,13 +21,10 @@ function parameterValidation (){
                     class="form-control"
                     placeholder="Valor"
                     v-model="inputElement"
-                    step="0.1"
-                    min="0"
                     :name="props.name"
                     :type="props.type ? props.type : 'number'"
                     :class="{'form-invalid': message.length > 0, 'form-control': message.length === 0}"
                     @input="() => updateValue()"
-                    @keyup="() => parameterValidation()"
                 />
                 <span class="text-sm text-gray-600">
                     {{ message.length > 0 ? message : props.helpText }}

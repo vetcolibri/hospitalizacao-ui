@@ -1,17 +1,19 @@
 <script setup lang="ts">
-interface Props {
-    today: string
-    hour: string
-}
+import { ref } from 'vue';
 
-const props = defineProps<Props>()
+const date = new Date()
+const yearFormat = new Intl.DateTimeFormat("pt-PT", { year: "numeric"});
+const monthFormat = new Intl.DateTimeFormat("pt-PT", { month: "short"});
+const dayFormat = new Intl.DateTimeFormat("pt-PT", { day: "2-digit"});
+const hour = ref(new Intl.DateTimeFormat("pt-PT", {timeStyle: "short"}).format(date))
+const today = ref(`${dayFormat.format(date)} ${monthFormat.format(date)} ${yearFormat.format(date)}`)
 
 </script>
 <template>
-    <div>
+    <section>
         <div class="flex justify-end gap-3">
-            <div class="p-2 border rounded bg-gray-100">{{  props.today }}</div>
-            <div class="p-2 border rounded bg-gray-100">{{ props.hour }}</div>
+            <div class="p-2 border rounded bg-gray-100">{{ today }}</div>
+            <div class="p-2 border rounded bg-gray-100">{{ hour }}</div>
         </div>
-    </div>
+    </section>
 </template>

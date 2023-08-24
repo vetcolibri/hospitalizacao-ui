@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Parameter } from '@/lib/types'
-import { ref } from 'vue';
 
 const props = defineProps<Parameter>()
 const emit = defineEmits()

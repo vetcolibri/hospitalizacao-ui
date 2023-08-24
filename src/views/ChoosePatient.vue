@@ -6,7 +6,6 @@ import Patient from '@/components/Patient.vue'
 import GoBack from '@/components/GoBack.vue'
 
 import PATIENTS from '@/data/patients'
-
 </script>
 <template>
     <div>
@@ -16,7 +15,7 @@ import PATIENTS from '@/data/patients'
         <main class="main-content py-8">
             <section class="xl:grid xl:grid-cols-3 xl:justify-center xl:gap-3">
                 <Patient  
-                    v-for="patient in PATIENTS" 
+                    v-for="patient in PATIENTS"
                     :id="patient.id" 
                     :name="patient.name" 
                     :specie="patient.specie"

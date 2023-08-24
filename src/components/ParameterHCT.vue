@@ -12,13 +12,9 @@ const updateValue = () => {
 }
 
 function parameterValidation (){
-    const value = parseFloat(inputElement.value)
-    if (inputElement.value === '' || value <= 2) {
+    // const value = parseInt(inputElement.value)
+    if (inputElement.value === '') {
         message.value = ''
-    } else if (value >= 0 && value <= 1){
-        message.value = ''
-    } else if (value > 2) {
-        message.value = "Vasoconstrição"
     }
 }
 </script>

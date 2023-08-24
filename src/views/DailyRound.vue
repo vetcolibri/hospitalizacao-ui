@@ -17,14 +17,11 @@ import BloodPressure from '@/components/ParameterBloodPressure.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { makeToday, makeHour } from '@/utils/tools'
 import { parameters } from '@/data/parameters'
 import PATIENTS from '@/data/patients'
 
-const today = makeToday()
-const hour = makeHour()
 const dailyRound = ref(parameters)
-const createAlert = ref<boolean>(false)
+const scheduleAlert = ref<boolean>(false)
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
@@ -41,39 +38,38 @@ function addInvalidClass(parameter: string) {
 
 function validForm() {
     let count = 0
-    for (let parameter of dailyRound.value){
-        if ( parameter.value){
+    for (let parameter of Object.values(dailyRound.value)) {
+        if (parameter.value) {
             count++
             removeInvalidClass(parameter.name)
         } else {
             addInvalidClass(parameter.name)
         }
     }
-    return count === dailyRound.value.length
+    return count === Object.values(dailyRound.value).length
 }
 
 function cleanUpForm(){
-    for(let parameter of dailyRound.value){
+    for(let parameter of Object.values(dailyRound.value)){
         parameter.value = ''
     }
 }
 
 function sumbitData() {
-    const formData = dailyRound.value
+    const formData = Object.values(dailyRound.value)
     const patient = PATIENTS.find((patient) => patient.id === patientId)
-    for (let element of formData){
+    for (let parameter of formData){
         const data = {
-            parameter: element.name,
-            value: element.value,
-            hour: makeHour(),
-            date: makeToday()
+            parameter: parameter.name,
+            value: parameter.value,
+            hour: new Date().toLocaleTimeString(),
+            date: new Date().toLocaleDateString()
         }
         patient?.measurements.push(data)
     }
     cleanUpForm()
     alert("Medições da ronda diária salvas com sucesso.")
 }
-
 
 function lastMeasurement(parameter: string) {
     const patient = PATIENTS.find((patient) => patient.id === patientId)
@@ -84,13 +80,12 @@ function lastMeasurement(parameter: string) {
 }
 
 function save(){
-    console.log(dailyRound.value)
     const isValidForm = validForm()
-    if(isValidForm && createAlert.value === true){
+    if(isValidForm && scheduleAlert.value === true){
         sumbitData()
         router.push({name: 'ScheduleAlert'})
     }
-    if (isValidForm && createAlert.value === false){
+    if (isValidForm && scheduleAlert.value === false){
         sumbitData()
         router.push({name: 'ExamGeneralCondition'})
     }
@@ -103,76 +98,75 @@ function save(){
         </Header>
         <main class="main-content py-8">
             <section class="bg-white shadow px-8 py-6">
-                <ExamTime :today="today" :hour="hour" />
+                <ExamTime />
                 <form class="grid grid-row-1 space-y-4">
                     <HeartRate
-                        :name="parameters[0].name"
-                        :title="parameters[0].title"
-                        :helpText="parameters[0].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[0].name)"
-                        v-model="parameters[0].value"
+                        :name="parameters.heartRate.name"
+                        :title="parameters.heartRate.title"
+                        :helpText="parameters.heartRate.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.heartRate.name)"
+                        v-model="parameters.heartRate.value"
                     />
                     <RespiratoryRate
-                        :name="parameters[1].name"  
-                        :title="parameters[1].title"
-                        :helpText="parameters[1].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[1].name)"
-                        v-model="parameters[1].value"
+                        :name="parameters.respiratoryRate.name"  
+                        :title="parameters.respiratoryRate.title"
+                        :helpText="parameters.respiratoryRate.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.respiratoryRate.name)"
+                        v-model="parameters.respiratoryRate.value"
                     />
                     <TRC
-                        :name="parameters[2].name"  
-                        :title="parameters[2].title"
-                        :helpText="parameters[2].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[2].name)"
-                        v-model="parameters[2].value" 
+                        :name="parameters.trc.name"  
+                        :title="parameters.trc.title"
+                        :helpText="parameters.trc.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.trc.name)"
+                        v-model="parameters.trc.value" 
                     />
                     <AVDN
-                        :name="parameters[3].name" 
-                        :title="parameters[3].title"
-                        :helpText="parameters[3].helpText"
-                        :options="parameters[3].options"
-                        :lastMeasurement="lastMeasurement(parameters[3].name)"
-                        v-model="parameters[3].value"  
+                        :name="parameters.avdn.name" 
+                        :title="parameters.avdn.title"
+                        :options="parameters.avdn.options"
+                        :lastMeasurement="lastMeasurement(parameters.avdn.name)"
+                        v-model="parameters.avdn.value"  
                     />
                     <Mucosas
-                        :name="parameters[4].name" 
-                        :title="parameters[4].title"
-                        :helpText="parameters[4].helpText"
-                        :options="parameters[4].options"
-                        :lastMeasurement="lastMeasurement(parameters[4].name)"
-                        v-model="parameters[4].value"  
+                        :name="parameters.mucosas.name" 
+                        :title="parameters.mucosas.title"
+                        :options="parameters.mucosas.options"
+                        :lastMeasurement="lastMeasurement(parameters.mucosas.name)"
+                        v-model="parameters.mucosas.value"  
                     />
 
                     <Temperature 
-                        :name="parameters[5].name" 
-                        :title="parameters[5].title"
-                        :helpText="parameters[5].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[5].name)"
-                        v-model="parameters[5].value"  
+                        :name="parameters.temperature.name" 
+                        :title="parameters.temperature.title"
+                        :helpText="parameters.temperature.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.temperature.name)"
+                        v-model="parameters.temperature.value"  
                     />
                     <Glicemia 
-                        :name="parameters[6].name" 
-                        :title="parameters[6].title"
-                        :helpText="parameters[6].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[6].name)"
-                        v-model="parameters[6].value"  
+                        :name="parameters.glicemia.name" 
+                        :title="parameters.glicemia.title"
+                        :helpText="parameters.glicemia.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.glicemia.name)"
+                        v-model="parameters.glicemia.value"  
                     />
                     <HCT 
-                        :name="parameters[7].name" 
-                        :title="parameters[7].title"
-                        :helpText="parameters[7].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[7].name)"
-                        v-model="parameters[7].value" 
+                        :name="parameters.hct.name" 
+                        :title="parameters.hct.title"
+                        :helpText="parameters.hct.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.hct.name)"
+                        v-model="parameters.hct.value" 
                     />
                     <BloodPressure 
-                        :name="parameters[8].name" 
-                        :title="parameters[8].title"
-                        :helpText="parameters[8].helpText"
-                        :lastMeasurement="lastMeasurement(parameters[8].name)"
-                        v-model="parameters[8].value"  
+                        :name="parameters.bloodPressure.name" 
+                        :title="parameters.bloodPressure.title"
+                        :type="parameters.bloodPressure.type"
+                        :helpText="parameters.bloodPressure.helpText"
+                        :lastMeasurement="lastMeasurement(parameters.bloodPressure.name)"
+                        v-model="parameters.bloodPressure.value"  
                     />
                     <div class="flex items-center">
-                        <input type="checkbox" class="rounded" v-model="createAlert"/>
+                        <input type="checkbox" class="rounded" v-model="scheduleAlert"/>
                         <label for="create-alert" class="ml-2 block text-gray-900">
                             Criar alerta de monitorização
                         </label>
