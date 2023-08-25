@@ -17,6 +17,7 @@ const updateValue = (event: InputEvent) => {
                     class="form-control text-gray-500"
                     :name="props.name"
                     @input="(e) => updateValue(e as InputEvent)"
+                    required
                 >
                     <option value="">Escolha um valor</option>
                     <option v-for="opt in options" :value="opt">{{ opt }}</option>

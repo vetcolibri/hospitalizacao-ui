@@ -49,7 +49,7 @@ function save(){
                         <textarea
                             name="comments" 
                             rows="3"
-                            class="border-0 focus:ring-0"
+                            class="border-0 resize-none focus:ring-0 overflow-hidden"
                             v-model="comments"
                         >
                         </textarea>
@@ -62,7 +62,7 @@ function save(){
                 <router-link :to="{name: 'ExamGeneralCondition'}">
                     <Button class="btn-light" title="Cancelar" /> 
                 </router-link>
-                <Button class="btn-success" title="Salvar" @click="save"/>
+                <Button class="btn-success" title="Agendar" @click="save"/>
             </div>
         </Footer>
     </div>

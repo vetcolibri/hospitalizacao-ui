@@ -35,11 +35,11 @@ function parameterValidation (){
                     class="form-control"
                     placeholder="Valor"
                     v-model="inputElement"
-                    step="0.1"
                     min="0"
+                    max="300"
+                    required
                     :name="props.name"
                     :type="props.type ? props.type : 'number'"
-                    :class="{'form-invalid': message.length > 0, 'form-control': message.length === 0}"
                     @input="() => updateValue()"
                     @keyup="() => parameterValidation()"
                 />

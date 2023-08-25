@@ -16,7 +16,7 @@ onBeforeMount(() => {
     <div class="space-y-1">
         <label for="rate" class="block">Repetir a cada</label>
         <div class="flex items-center space-x-2">
-            <div class="w-12">
+            <div class="w-16">
                 <input 
                     class="form-control text-center" 
                     type="number" 

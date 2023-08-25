@@ -8,11 +8,11 @@ export interface Patient {
 }
 
 export interface Alert {
-    hour: string,
-    rate: number,
-    parameters: string[],
+    id: string,
+    patientId: string,
+    repeatEvery: string,
+    parameters: Partial<Parameter>[],
     comments: string,
-    status: boolean
 }
 
 export interface Measurement {

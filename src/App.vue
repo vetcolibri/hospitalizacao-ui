@@ -3,9 +3,12 @@ import Alert from './components/Alert.vue';
 </script>
 <template>
     <div class="bg-gray-300 relative">
-        <!-- <Alert 
-            comment="Atenção a temperatura do paciente" rate="30 minutos" 
-            :parameters="['Temperatura']" 
+        <!-- <Alert
+            id="alert-1"
+            patientId="some-patient-id"
+            repeatEvery="30 minutos" 
+            comments="Atenção a temperatura do paciente"
+            :parameters="['Temperatura']"
             class="z-50" 
         /> -->
         <router-view></router-view>

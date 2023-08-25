@@ -19,7 +19,7 @@ const routes = [
         component: () => import("@/views/DailyRound.vue")
     },
     {
-        path: "/choose-parameters/:patientId",
+        path: "/choose-parameters/:patientId/",
         name: "ChooseParameters",
         component: () => import("@/views/ChooseParameters.vue")
     },

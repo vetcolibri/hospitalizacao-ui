@@ -18,15 +18,11 @@ function parameterValidation (){
         message.value = "Bradicardia"
     } else if (value >= 70 && value <= 120) {
         message.value = ""
-    } else if (value > 120 && value <= 300) {
+    } else if (value > 120) {
         message.value = "Taquicardia"  
-    } else if (value > 300) {
-        inputElement.value = ""
-        message.value = ""
     }
 }
 </script>
-
 <template>
     <div class="flex flex-col gap-2">
         <p>{{ props.title }}</p>
@@ -37,9 +33,10 @@ function parameterValidation (){
                     placeholder="Valor"
                     v-model="inputElement"
                     min="0"
+                    max="300"
+                    required
                     :name="props.name"
                     :type="props.type ? props.type : 'number'"
-                    :class="{'form-invalid': message.length > 0, 'form-control': message.length === 0}"
                     @input="() => updateValue()"
                     @keyup="() => parameterValidation()"
                 />

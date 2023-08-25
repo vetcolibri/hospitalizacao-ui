@@ -25,31 +25,9 @@ const scheduleAlert = ref<boolean>(false)
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
+const form = ref<HTMLFormElement>()
 
-function removeInvalidClass(parameter: string) {
-    const element = document.getElementsByName(parameter)[0]
-    if (element.classList.contains('form-invalid')) element.className = 'form-control'
-}
-
-function addInvalidClass(parameter: string) {
-    const element = document.getElementsByName(parameter)[0]
-    element.className = 'form-invalid'
-}
-
-function validForm() {
-    let count = 0
-    for (let parameter of Object.values(dailyRound.value)) {
-        if (parameter.value) {
-            count++
-            removeInvalidClass(parameter.name)
-        } else {
-            addInvalidClass(parameter.name)
-        }
-    }
-    return count === Object.values(dailyRound.value).length
-}
-
-function cleanUpForm(){
+function clearForm(){
     for(let parameter of Object.values(dailyRound.value)){
         parameter.value = ''
     }
@@ -67,7 +45,7 @@ function sumbitData() {
         }
         patient?.measurements.push(data)
     }
-    cleanUpForm()
+    clearForm()
     alert("Medições da ronda diária salvas com sucesso.")
 }
 
@@ -80,12 +58,12 @@ function lastMeasurement(parameter: string) {
 }
 
 function save(){
-    const isValidForm = validForm()
-    if(isValidForm && scheduleAlert.value === true){
+    let isValid = form.value?.checkValidity()
+    if(isValid && scheduleAlert.value === true){
         sumbitData()
         router.push({name: 'ScheduleAlert'})
     }
-    if (isValidForm && scheduleAlert.value === false){
+    if (isValid && scheduleAlert.value === false){
         sumbitData()
         router.push({name: 'ExamGeneralCondition'})
     }
@@ -99,7 +77,7 @@ function save(){
         <main class="main-content py-8">
             <section class="bg-white shadow px-8 py-6">
                 <ExamTime />
-                <form class="grid grid-row-1 space-y-4">
+                <form ref="form" class="grid grid-row-1 space-y-4">
                     <HeartRate
                         :name="parameters.heartRate.name"
                         :title="parameters.heartRate.title"

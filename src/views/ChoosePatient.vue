@@ -20,7 +20,6 @@ import PATIENTS from '@/data/patients'
                     :name="patient.name" 
                     :specie="patient.specie"
                     :icon-url="patient.iconUrl"
-                    :alerts="patient.alerts"
                     class="xl:w-[600px]"
                 />
             </section>

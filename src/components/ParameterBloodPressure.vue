@@ -11,7 +11,6 @@ const updateValue = () => {
     emit('update:modelValue', inputElement.value)
 }
 </script>
-
 <template>
     <div class="flex flex-col gap-2">
         <p>{{ props.title }}</p>
@@ -21,9 +20,9 @@ const updateValue = () => {
                     class="form-control"
                     placeholder="Valor"
                     v-model="inputElement"
+                    required
                     :name="props.name"
                     :type="props.type ? props.type : 'number'"
-                    :class="{'form-invalid': message.length > 0, 'form-control': message.length === 0}"
                     @input="() => updateValue()"
                 />
                 <span class="text-sm text-gray-600">

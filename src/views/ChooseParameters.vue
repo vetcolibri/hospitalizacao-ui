@@ -21,14 +21,21 @@ import SearchIcon from 'vue-material-design-icons/Magnify.vue'
 import { parameters } from '@/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
 
+type Parameter = {
+    name: string,
+    title: string
+}
+
 const chooseParameters = ref(parameters)
 const parametersList = ref(false)
 const scheduleAlert = ref<boolean>(false)
-const dropdown = ref()
 const showScheduleAlert = ref(false)
-const router = useRouter()
+const dropdown = ref()
+
+// const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
+const selectedParameters: Parameter[] = JSON.parse(localStorage.getItem('parameters') as string)
 
 const clickOutsideHandler = (event: Event) => {
     if (dropdown.value && !dropdown.value.contains(event.target)) {
@@ -60,18 +67,27 @@ function toogleParameterList() {
     parametersList.value = !parametersList.value
 }
 
+function save(){
+    // const isValidForm = validateForm()
+    // console.log(isValidForm)
+}
+
 onBeforeMount(() => {
     showScheduleAlertCheckbox()
 })
 
 onMounted(() => {
     document.addEventListener("click", clickOutsideHandler);
+    if (selectedParameters) {
+        for (let parameter of selectedParameters){
+            changeParameterVisibility(parameter.name)
+        }
+    }
 })
 
 onBeforeUnmount(() => {
     document.removeEventListener("click", clickOutsideHandler);
 })
-
 </script>
 <template>
     <Header title="Escolha os parâmetros">
@@ -180,6 +196,7 @@ onBeforeUnmount(() => {
         </section>
     </main>
     <Footer>
-        <SaveButton class="btn-success" title="Salvar" />
+        <SaveButton class="btn-success" title="Salvar"
+        @click="save" />
     </Footer>
 </template>

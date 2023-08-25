@@ -16,7 +16,7 @@ onBeforeMount(() => {
 <template>
     <div class="space-y-1">
         <label for="time" class="block">Hora do alerta</label>
-        <div class="w-24">
+        <div class="w-32">
             <input 
                 class="form-control text-center w-24" 
                 type="time" 
