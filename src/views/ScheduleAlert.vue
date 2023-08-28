@@ -6,7 +6,7 @@ import Button from '@/components/Button.vue';
 import ScheduleTime from '@/components/ScheduleTime.vue';
 import RepeatEvery from '@/components/ScheduleRepeatEvery.vue';
 
-import { parameters } from '@/data/parameters';
+import { parameters } from '@/lib/data/parameters';
 
 let selectedParameters = ref<any[]>([])
 const scheduleTime = ref<Date>()

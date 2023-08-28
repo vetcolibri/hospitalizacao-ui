@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { units } from '@/data/alerts'
+import { units } from '@/lib/data/alerts'
 
 const repeatEveryValue = ref({rate: 30, unity: 'minutes'})
 const emit = defineEmits()

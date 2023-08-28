@@ -8,7 +8,8 @@ const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
-    emit('update:modelValue', inputElement.value)
+    const data = { value: inputElement.value, message}
+    emit('update:modelValue', data)
 }
 </script>
 <template>

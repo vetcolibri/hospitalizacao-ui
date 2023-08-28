@@ -13,39 +13,42 @@ import Temperature from '@/components/ParameterTemperature.vue'
 import Glicemia from '@/components/ParameterGlicemia.vue'
 import HCT from '@/components/ParameterHCT.vue'
 import BloodPressure from '@/components/ParameterBloodPressure.vue'
+import Dialog from '@/components/Dialog.vue'
 
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { parameters } from '@/data/parameters'
-import PATIENTS from '@/data/patients'
+import { parameters } from '@/lib/data/parameters'
+import PATIENTS from '@/lib/data/patients'
 
 const dailyRound = ref(parameters)
 const scheduleAlert = ref<boolean>(false)
+const dialogElement = ref<typeof Dialog>();
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
 const form = ref<HTMLFormElement>()
 
 function clearForm(){
-    for(let parameter of Object.values(dailyRound.value)){
-        parameter.value = ''
-    }
+    // for(let parameter of Object.values(dailyRound.value)){
+    //     parameter.measurement.value = ''
+    //     parameter.measurement.message = ''
+    // }
 }
 
 function sumbitData() {
-    const formData = Object.values(dailyRound.value)
-    const patient = PATIENTS.find((patient) => patient.id === patientId)
-    for (let parameter of formData){
-        const data = {
-            parameter: parameter.name,
-            value: parameter.value,
-            hour: new Date().toLocaleTimeString(),
-            date: new Date().toLocaleDateString()
-        }
-        patient?.measurements.push(data)
-    }
-    clearForm()
+    // const formData = Object.values(dailyRound.value)
+    // const patient = PATIENTS.find((patient) => patient.id === patientId)
+    // for (let parameter of formData){
+    //     const data = {
+    //         parameter: parameter.name,
+    //         value: parameter.measurement,
+    //         hour: new Date().toLocaleTimeString(),
+    //         date: new Date().toLocaleDateString()
+    //     }
+    //     patient?.measurements.push(data)
+    // }
+    // clearForm()
     alert("Medições da ronda diária salvas com sucesso.")
 }
 
@@ -57,15 +60,26 @@ function lastMeasurement(parameter: string) {
     return measurement
 }
 
-function save(){
-    let isValid = form.value?.checkValidity()
-    if(isValid && scheduleAlert.value === true){
-        sumbitData()
-        router.push({name: 'ScheduleAlert'})
+function openDialog(){
+    for(let parameter of Object.values(dailyRound.value)) {
+        dialogElement.value?.add(parameter)
     }
-    if (isValid && scheduleAlert.value === false){
-        sumbitData()
-        router.push({name: 'ExamGeneralCondition'})
+    dialogElement.value?.show()
+}
+
+function save(event: Event){
+    const isValid = form.value?.checkValidity()
+    if (!isValid) {
+        form.value?.reportValidity()
+    } else if(isValid && scheduleAlert.value === true){
+        openDialog()
+        // event.preventDefault()
+        // router.push({name: 'ScheduleAlert'})        
+        // sumbitData()
+    } else if (isValid && scheduleAlert.value === false){
+        openDialog()
+        // sumbitData()
+        // router.push({name: 'ExamGeneralCondition'})
     }
 }
 </script>
@@ -83,35 +97,35 @@ function save(){
                         :title="parameters.heartRate.title"
                         :helpText="parameters.heartRate.helpText"
                         :lastMeasurement="lastMeasurement(parameters.heartRate.name)"
-                        v-model="parameters.heartRate.value"
+                        v-model="parameters.heartRate.measurement"
                     />
                     <RespiratoryRate
                         :name="parameters.respiratoryRate.name"  
                         :title="parameters.respiratoryRate.title"
                         :helpText="parameters.respiratoryRate.helpText"
                         :lastMeasurement="lastMeasurement(parameters.respiratoryRate.name)"
-                        v-model="parameters.respiratoryRate.value"
+                        v-model="parameters.respiratoryRate.measurement"
                     />
                     <TRC
                         :name="parameters.trc.name"  
                         :title="parameters.trc.title"
                         :helpText="parameters.trc.helpText"
                         :lastMeasurement="lastMeasurement(parameters.trc.name)"
-                        v-model="parameters.trc.value" 
+                        v-model="parameters.trc.measurement" 
                     />
                     <AVDN
                         :name="parameters.avdn.name" 
                         :title="parameters.avdn.title"
                         :options="parameters.avdn.options"
                         :lastMeasurement="lastMeasurement(parameters.avdn.name)"
-                        v-model="parameters.avdn.value"  
+                        v-model="parameters.avdn.measurement"  
                     />
                     <Mucosas
                         :name="parameters.mucosas.name" 
                         :title="parameters.mucosas.title"
                         :options="parameters.mucosas.options"
                         :lastMeasurement="lastMeasurement(parameters.mucosas.name)"
-                        v-model="parameters.mucosas.value"  
+                        v-model="parameters.mucosas.measurement"  
                     />
 
                     <Temperature 
@@ -119,21 +133,21 @@ function save(){
                         :title="parameters.temperature.title"
                         :helpText="parameters.temperature.helpText"
                         :lastMeasurement="lastMeasurement(parameters.temperature.name)"
-                        v-model="parameters.temperature.value"  
+                        v-model="parameters.temperature.measurement"  
                     />
                     <Glicemia 
                         :name="parameters.glicemia.name" 
                         :title="parameters.glicemia.title"
                         :helpText="parameters.glicemia.helpText"
                         :lastMeasurement="lastMeasurement(parameters.glicemia.name)"
-                        v-model="parameters.glicemia.value"  
+                        v-model="parameters.glicemia.measurement"  
                     />
                     <HCT 
                         :name="parameters.hct.name" 
                         :title="parameters.hct.title"
                         :helpText="parameters.hct.helpText"
                         :lastMeasurement="lastMeasurement(parameters.hct.name)"
-                        v-model="parameters.hct.value" 
+                        v-model="parameters.hct.measurement" 
                     />
                     <BloodPressure 
                         :name="parameters.bloodPressure.name" 
@@ -141,7 +155,7 @@ function save(){
                         :type="parameters.bloodPressure.type"
                         :helpText="parameters.bloodPressure.helpText"
                         :lastMeasurement="lastMeasurement(parameters.bloodPressure.name)"
-                        v-model="parameters.bloodPressure.value"  
+                        v-model="parameters.bloodPressure.measurement"  
                     />
                     <div class="flex items-center">
                         <input type="checkbox" class="rounded" v-model="scheduleAlert"/>
@@ -153,7 +167,16 @@ function save(){
             </section>
         </main>
         <Footer>
-            <SaveButton class="btn-success" title="Salvar" @click="save"/>
+            <SaveButton class="btn-success" title="Salvar" @click="(evt) => save(evt)"/>
         </Footer>
+        <Dialog ref="dialogElement" title="Detalhes" />
     </div>
 </template>
+
+<!-- 
+    Componente slot, 
+    Dentro um botão, Cancelar e outro confirmar
+    Ao Clicar em confirmar, fecha o dialog e envia os dados no servidor.
+    Ao chegar em casa limpar o código.
+    e Fazer o mesmo para a escolha de parametros.
+ -->

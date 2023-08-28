@@ -18,7 +18,7 @@ import BloodPressure from '@/components/ParameterBloodPressure.vue'
 
 import SearchIcon from 'vue-material-design-icons/Magnify.vue'
 
-import { parameters } from '@/data/parameters'
+import { parameters } from '@/lib/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
 
 type Parameter = {

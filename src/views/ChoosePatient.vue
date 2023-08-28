@@ -5,7 +5,7 @@ import Patient from '@/components/Patient.vue'
 
 import GoBack from '@/components/GoBack.vue'
 
-import PATIENTS from '@/data/patients'
+import PATIENTS from '@/lib/data/patients'
 </script>
 <template>
     <div>

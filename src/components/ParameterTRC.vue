@@ -8,14 +8,16 @@ const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
-    emit('update:modelValue', inputElement.value)
+    const data = {value: inputElement.value, message}
+    emit('update:modelValue', data)
 }
 
 function parameterValidation (){
     const value = parseFloat(inputElement.value)
-    if (inputElement.value === '' || value <= 2) {
+    if (inputElement.value === '' || value > 10) {
         message.value = ''
-    } else if (value >= 0 && value <= 1){
+        inputElement.value = ''
+    } else if (value >= 0 && value <= 2){
         message.value = ''
     } else if (value > 2) {
         message.value = "Vasoconstrição"
@@ -34,7 +36,7 @@ function parameterValidation (){
                     v-model="inputElement"
                     step="0.1"
                     min="0"
-                    max="2"
+                    max="10"
                     required
                     :name="props.name"
                     :type="props.type ? props.type : 'number'"

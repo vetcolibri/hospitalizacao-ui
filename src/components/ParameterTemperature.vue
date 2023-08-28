@@ -8,11 +8,11 @@ const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
-    emit('update:modelValue', inputElement.value)
+    const data = { value: inputElement.value, message}
+    emit('update:modelValue', data)
 }
 
 function parameterValidation (){
-    console.log(1)
     const value = parseFloat(inputElement.value)
     if (inputElement.value === '' || value > 50) {
         inputElement.value = ''

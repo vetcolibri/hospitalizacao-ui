@@ -18,6 +18,7 @@ export interface Alert {
 export interface Measurement {
     readonly value: string
     readonly hour: string
+    readonly message?: string
 }
 
 export interface Parameter {
@@ -26,6 +27,6 @@ export interface Parameter {
     type?: string,
     helpText?: string,
     options?: string[],
-    value?: string,
+    measurement?: Measurement,
     lastMeasurement?: Measurement,
 }

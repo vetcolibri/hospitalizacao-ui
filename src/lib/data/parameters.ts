@@ -18,7 +18,7 @@ export const parameters = {
         name: "heartRate",
         title: "Frequência Cardiaca", 
         helpText: "(70 - 120) BPM" , 
-        value: "",
+        measurement: {value: '', message: ''},
         required: true,
         chooseVisibility: false
     },
@@ -26,7 +26,7 @@ export const parameters = {
         name: "respiratoryRate",
         title: "Frequencia Respiratoria", 
         helpText: "(10 - 30) RPM" , 
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         chooseVisibility: false
     },
@@ -34,14 +34,14 @@ export const parameters = {
         name: "trc",
         title: "TRC", 
         helpText: "(> 2')", 
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         chooseVisibility: false
     },
     avdn: {
         name: "avdn",
         title: "AVDN", 
-        value: "",
+        measurement: {value: '', message: ''},
         required: true,
         options: avdnOptions,
         chooseVisibility: false
@@ -49,7 +49,7 @@ export const parameters = {
     mucosas: {
         name: "mucosas",
         title: "Mucosas", 
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         options: mucosasOptions,
         chooseVisibility: false
@@ -58,7 +58,7 @@ export const parameters = {
         title: "Temperatura", 
         name: "temperature",
         helpText: "(37.5 - 39) ºC" , 
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         chooseVisibility: false
     },
@@ -66,7 +66,7 @@ export const parameters = {
         title: "Glicemia", 
         name: "glicemia",
         helpText: "(60 - 100) mg/dl" , 
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         chooseVisibility: false
     },
@@ -74,7 +74,7 @@ export const parameters = {
         title: "HCT", 
         name: "htc",
         helpText: "Canino (37 - 55)% e Felino (24 - 45)%" , 
-        value: "",
+        measurement: {value: '', message: ''},
         required: true,
         chooseVisibility: false
     },
@@ -83,7 +83,7 @@ export const parameters = {
         title: "Pressão Arterial - Sis/Dis (PAM)", 
         type: "text",
         helpText: "(11/70 - 12/80) mm/Hg - (60)",
-        value: "", 
+        measurement: {value: '', message: ''}, 
         required: true,
         chooseVisibility: false
     }
