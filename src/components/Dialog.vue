@@ -8,6 +8,10 @@ import { parameters } from "@/lib/data/parameters";
 const dialogElement = ref<HTMLDialogElement>();
 const dialogParameters = ref<Partial<Parameter>[]>([])
 
+function addParameters(parameters: Partial<Parameter>[]) {
+    parameters.forEach((parameter) => add(parameter))
+}
+
 function add (parameter: Partial<Parameter>){
     if (
         parameter.name != parameters.avdn.name 
@@ -27,7 +31,7 @@ function close(){
 }
 
 defineProps(['title'])
-defineExpose({add, show})
+defineExpose({addParameters, add, show, close})
 </script>
 <template>
     <dialog ref="dialogElement">
@@ -62,10 +66,11 @@ defineExpose({add, show})
                     </li>
                 </ul>
             </div>
-            <div class="mt-4 space-y-2">
-                <button class="btn-alert" @click="close()">
+            <div class="text-right mt-8 space-y-2 space-x-2">
+                <button class="btn-light" @click="close()">
                     Fechar
                 </button>
+                <slot></slot>
             </div>
         </div>
     </dialog>

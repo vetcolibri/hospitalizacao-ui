@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Parameter } from '@/lib/types'
 
-const props = defineProps<Parameter>()
+defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = (event: InputEvent) => {
@@ -10,12 +10,12 @@ const updateValue = (event: InputEvent) => {
 </script>
 <template>
     <div class="flex flex-col gap-2">
-        <p>{{ props.title }}</p>
+        <p>{{ title }}</p>
         <div class="flex gap-4">
             <div class="flex flex-col flex-1 gap-1">
                 <select
                     class="form-control text-gray-500"
-                    :name="props.name"
+                    :name="name"
                     @input="(e) => updateValue(e as InputEvent)"
                     required
                 >

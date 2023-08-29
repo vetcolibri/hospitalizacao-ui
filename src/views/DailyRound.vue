@@ -2,7 +2,7 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
-import SaveButton from '@/components/Button.vue'
+import Button from '@/components/Button.vue'
 import ExamTime from '@/components/ExamTime.vue'
 import HeartRate from '@/components/ParameterHeartRate.vue'
 import RespiratoryRate from '@/components/ParameterRespiratoryRate.vue'
@@ -19,38 +19,16 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
+import { sendData } from '@/lib/shared/utils'
 import PATIENTS from '@/lib/data/patients'
 
 const dailyRound = ref(parameters)
 const scheduleAlert = ref<boolean>(false)
-const dialogElement = ref<typeof Dialog>();
+const dialogElement = ref<typeof Dialog>()
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
 const form = ref<HTMLFormElement>()
-
-function clearForm(){
-    // for(let parameter of Object.values(dailyRound.value)){
-    //     parameter.measurement.value = ''
-    //     parameter.measurement.message = ''
-    // }
-}
-
-function sumbitData() {
-    // const formData = Object.values(dailyRound.value)
-    // const patient = PATIENTS.find((patient) => patient.id === patientId)
-    // for (let parameter of formData){
-    //     const data = {
-    //         parameter: parameter.name,
-    //         value: parameter.measurement,
-    //         hour: new Date().toLocaleTimeString(),
-    //         date: new Date().toLocaleDateString()
-    //     }
-    //     patient?.measurements.push(data)
-    // }
-    // clearForm()
-    alert("Medições da ronda diária salvas com sucesso.")
-}
 
 function lastMeasurement(parameter: string) {
     const patient = PATIENTS.find((patient) => patient.id === patientId)
@@ -60,27 +38,22 @@ function lastMeasurement(parameter: string) {
     return measurement
 }
 
-function openDialog(){
-    for(let parameter of Object.values(dailyRound.value)) {
-        dialogElement.value?.add(parameter)
+function openResume() {
+    if (!form.value?.checkValidity()) {
+        return form.value?.reportValidity()
     }
+    const parameters = Object.values(dailyRound.value)
+    dialogElement.value?.addParameters(parameters)
     dialogElement.value?.show()
 }
 
-function save(event: Event){
-    const isValid = form.value?.checkValidity()
-    if (!isValid) {
-        form.value?.reportValidity()
-    } else if(isValid && scheduleAlert.value === true){
-        openDialog()
-        // event.preventDefault()
-        // router.push({name: 'ScheduleAlert'})        
-        // sumbitData()
-    } else if (isValid && scheduleAlert.value === false){
-        openDialog()
-        // sumbitData()
-        // router.push({name: 'ExamGeneralCondition'})
+function confirm() {
+    sendData()
+    dialogElement.value?.close()
+    if (scheduleAlert.value) {
+        return router.push({ name: 'ScheduleAlert' })
     }
+    return router.push({ name: 'ExamGeneralCondition' })
 }
 </script>
 <template>
@@ -100,66 +73,73 @@ function save(event: Event){
                         v-model="parameters.heartRate.measurement"
                     />
                     <RespiratoryRate
-                        :name="parameters.respiratoryRate.name"  
+                        :name="parameters.respiratoryRate.name"
                         :title="parameters.respiratoryRate.title"
                         :helpText="parameters.respiratoryRate.helpText"
                         :lastMeasurement="lastMeasurement(parameters.respiratoryRate.name)"
                         v-model="parameters.respiratoryRate.measurement"
                     />
                     <TRC
-                        :name="parameters.trc.name"  
+                        :name="parameters.trc.name"
                         :title="parameters.trc.title"
                         :helpText="parameters.trc.helpText"
                         :lastMeasurement="lastMeasurement(parameters.trc.name)"
-                        v-model="parameters.trc.measurement" 
+                        v-model="parameters.trc.measurement"
                     />
                     <AVDN
-                        :name="parameters.avdn.name" 
+                        :name="parameters.avdn.name"
                         :title="parameters.avdn.title"
                         :options="parameters.avdn.options"
                         :lastMeasurement="lastMeasurement(parameters.avdn.name)"
-                        v-model="parameters.avdn.measurement"  
+                        v-model="parameters.avdn.measurement"
                     />
                     <Mucosas
-                        :name="parameters.mucosas.name" 
+                        :name="parameters.mucosas.name"
                         :title="parameters.mucosas.title"
                         :options="parameters.mucosas.options"
                         :lastMeasurement="lastMeasurement(parameters.mucosas.name)"
-                        v-model="parameters.mucosas.measurement"  
+                        v-model="parameters.mucosas.measurement"
                     />
 
-                    <Temperature 
-                        :name="parameters.temperature.name" 
+                    <Temperature
+                        :name="parameters.temperature.name"
                         :title="parameters.temperature.title"
                         :helpText="parameters.temperature.helpText"
                         :lastMeasurement="lastMeasurement(parameters.temperature.name)"
-                        v-model="parameters.temperature.measurement"  
+                        v-model="parameters.temperature.measurement"
                     />
-                    <Glicemia 
-                        :name="parameters.glicemia.name" 
+                    <Glicemia
+                        :name="parameters.glicemia.name"
                         :title="parameters.glicemia.title"
                         :helpText="parameters.glicemia.helpText"
                         :lastMeasurement="lastMeasurement(parameters.glicemia.name)"
-                        v-model="parameters.glicemia.measurement"  
+                        v-model="parameters.glicemia.measurement"
                     />
-                    <HCT 
-                        :name="parameters.hct.name" 
+                    <HCT
+                        :name="parameters.hct.name"
                         :title="parameters.hct.title"
                         :helpText="parameters.hct.helpText"
                         :lastMeasurement="lastMeasurement(parameters.hct.name)"
-                        v-model="parameters.hct.measurement" 
+                        v-model="parameters.hct.measurement"
                     />
-                    <BloodPressure 
-                        :name="parameters.bloodPressure.name" 
+                    <BloodPressure
+                        :name="parameters.bloodPressure.name"
                         :title="parameters.bloodPressure.title"
                         :type="parameters.bloodPressure.type"
                         :helpText="parameters.bloodPressure.helpText"
                         :lastMeasurement="lastMeasurement(parameters.bloodPressure.name)"
-                        v-model="parameters.bloodPressure.measurement"  
+                        v-model="parameters.bloodPressure.measurement"
                     />
                     <div class="flex items-center">
-                        <input type="checkbox" class="rounded" v-model="scheduleAlert"/>
-                        <label for="create-alert" class="ml-2 block text-gray-900">
+                        <input
+                            type="checkbox"
+                            class="focus:ring-0 rounded"
+                            v-model="scheduleAlert"
+                        />
+                        <label
+                            class="ml-2 block text-gray-900"
+                            @click="() => (scheduleAlert = !scheduleAlert)"
+                        >
                             Criar alerta de monitorização
                         </label>
                     </div>
@@ -167,16 +147,10 @@ function save(event: Event){
             </section>
         </main>
         <Footer>
-            <SaveButton class="btn-success" title="Salvar" @click="(evt) => save(evt)"/>
+            <Button class="btn-success" title="Salvar" @click="openResume()" />
         </Footer>
-        <Dialog ref="dialogElement" title="Detalhes" />
+        <Dialog ref="dialogElement" title="Detalhes">
+            <Button class="btn-secondary" title="Confirmar" @click="confirm()" />
+        </Dialog>
     </div>
 </template>
-
-<!-- 
-    Componente slot, 
-    Dentro um botão, Cancelar e outro confirmar
-    Ao Clicar em confirmar, fecha o dialog e envia os dados no servidor.
-    Ao chegar em casa limpar o código.
-    e Fazer o mesmo para a escolha de parametros.
- -->

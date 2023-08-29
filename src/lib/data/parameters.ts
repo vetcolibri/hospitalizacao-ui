@@ -24,7 +24,7 @@ export const parameters = {
     },
     respiratoryRate: {
         name: "respiratoryRate",
-        title: "Frequencia Respiratoria", 
+        title: "Frequência Respiratória", 
         helpText: "(10 - 30) RPM" , 
         measurement: {value: '', message: ''}, 
         required: true,

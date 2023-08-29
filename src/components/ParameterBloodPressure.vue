@@ -4,17 +4,17 @@ import { ref } from 'vue';
 
 const inputElement = ref()
 const message = ref<string>('')
-const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
     const data = { value: inputElement.value, message}
     emit('update:modelValue', data)
 }
+defineProps<Parameter>()
 </script>
 <template>
     <div class="flex flex-col gap-2">
-        <p>{{ props.title }}</p>
+        <p>{{ title }}</p>
         <div class="flex gap-4">
             <div class="flex flex-col flex-1 gap-1">
                 <input
@@ -22,13 +22,11 @@ const updateValue = () => {
                     placeholder="Valor"
                     v-model="inputElement"
                     required
-                    :name="props.name"
-                    :type="props.type ? props.type : 'number'"
+                    :name="name"
+                    :type="type ? type : 'number'"
                     @input="() => updateValue()"
                 />
-                <span class="text-sm text-gray-600">
-                    {{ message.length > 0 ? message : props.helpText }}
-                </span>
+                <span class="text-sm text-gray-600">{{ helpText }}</span>
             </div>
             <div class="flex flex-col flex-1 gap-1">
                 <input class="form-control disabled" disabled type="text"

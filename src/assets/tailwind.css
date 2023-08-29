@@ -30,8 +30,12 @@ form:invalid select:required {
    @apply w-full rounded text-white bg-gray-600 hover:bg-gray-800 p-3
 }
 
-.btn-light {
+.btn-secondary {
     @apply h-10 px-9 rounded bg-gray-600 text-white hover:bg-gray-800
+}
+
+.btn-light {
+    @apply h-10 px-9 rounded bg-red-500 text-white hover:bg-red-800
 }
 
 .disabled {

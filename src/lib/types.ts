@@ -3,7 +3,7 @@ export interface Patient {
     name: string,
     specie: string,
     exams?: string[],
-    alerts?: Alert[],
+    hasAlert?: boolean,
     iconUrl: string
 }
 

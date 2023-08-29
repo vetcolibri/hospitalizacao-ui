@@ -4,7 +4,6 @@ import { ref } from 'vue';
 
 const inputElement = ref()
 const message = ref<string>('')
-const props = defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
@@ -14,38 +13,35 @@ const updateValue = () => {
 
 function parameterValidation (){
     const value = parseFloat(inputElement.value)
-    if (inputElement.value === '' || value > 10) {
+    if (inputElement.value === '') {
         message.value = ''
-        inputElement.value = ''
     } else if (value >= 0 && value <= 2){
         message.value = ''
     } else if (value > 2) {
         message.value = "Vasoconstrição"
     }
 }
+defineProps<Parameter>()
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
-        <p>{{ props.title }}</p>
+        <p>{{ title }}</p>
         <div class="flex gap-4">
             <div class="flex flex-col flex-1 gap-1">
                 <input
                     class="form-control"
                     placeholder="Valor"
                     v-model="inputElement"
-                    step="0.1"
                     min="0"
                     max="10"
                     required
-                    :name="props.name"
-                    :type="props.type ? props.type : 'number'"
+                    :name="name"
+                    :type="type ? type : 'number'"
                     @input="() => updateValue()"
                     @keyup="() => parameterValidation()"
                 />
-                <span class="text-sm text-gray-600">
-                    {{ message.length > 0 ? message : props.helpText }}
-                </span>
+                <span class="text-sm text-gray-600">{{ helpText }}</span>
             </div>
             <div class="flex flex-col flex-1 gap-1">
                 <input class="form-control disabled" disabled type="text"
