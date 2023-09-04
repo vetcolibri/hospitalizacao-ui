@@ -2,9 +2,7 @@ export interface Patient {
     id: string,
     name: string,
     specie: string,
-    exams?: string[],
     hasAlert?: boolean,
-    iconUrl: string
 }
 
 export interface Alert {

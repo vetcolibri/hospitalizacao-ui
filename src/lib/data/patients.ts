@@ -1,13 +1,11 @@
-const iconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-productivity-black-4/1/101_13-512.png"
+export const iconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-productivity-black-4/1/101_13-512.png"
 
 const PATIENTS = [
     {
         id: "001001:maximus:joao-santos",
         name: "Maximus",
         specie: "Bulldog",
-        measurements: [],
-        alerts: [],
-        iconUrl
+        hasAlert: true
     },
     {
         id: "codigo:nome-do-animal:nome-do-tutor",
@@ -27,32 +25,17 @@ const PATIENTS = [
                 date: '22 Ago. 2023'
             },
         ],
-        alerts: [
-            {
-                hour: "10h00", 
-                rate: 1800, 
-                parameters: ["Temperatura"],
-                comments: "Atenção a temperatura do paciente.",
-                status: true
-            }
-        ],
-        iconUrl
     },
     {
         id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
-        measurements: [],
-        alerts: [],
-        iconUrl,
+        hasAlert: true
     },
     {
         id: "codigo:nome-do-animal:nome-do-tutor",
         name: "Rex",
         specie: "Bulldog",
-        measurements: [],
-        alerts: [],
-        iconUrl
     }
 ]
 

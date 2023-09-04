@@ -16,7 +16,7 @@ import Glicemia from '@/components/ParameterGlicemia.vue'
 import HCT from '@/components/ParameterHCT.vue'
 import BloodPressure from '@/components/ParameterBloodPressure.vue'
 
-import SearchIcon from 'vue-material-design-icons/Magnify.vue'
+import HandIndex from '@/components/icons/HandIndex.vue'
 
 import { parameters } from '@/lib/data/parameters'
 import { sendData } from '@/lib/shared/utils'
@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
                     @click="toogleParameterList"
                     class="flex items-center gap-2 border rounded ps-2 text-gray-500"
                 >
-                    <search-icon></search-icon>
+                    <hand-index></hand-index>
                     <div class="form-contral flex-1 border-0 py-2 focus:ring-0">
                         Escolher parâmentros
                     </div>

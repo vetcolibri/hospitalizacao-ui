@@ -4,7 +4,6 @@ import Footer from '@/components/Footer.vue'
 import Patient from '@/components/Patient.vue'
 
 import GoBack from '@/components/GoBack.vue'
-
 import PATIENTS from '@/lib/data/patients'
 </script>
 <template>
@@ -13,13 +12,13 @@ import PATIENTS from '@/lib/data/patients'
             <GoBack />
         </Header>
         <main class="main-content py-8">
-            <section class="xl:grid xl:grid-cols-3 xl:justify-center xl:gap-3">
-                <Patient  
+            <section>
+                <Patient
                     v-for="patient in PATIENTS"
-                    :id="patient.id" 
-                    :name="patient.name" 
+                    :id="patient.id"
+                    :name="patient.name"
                     :specie="patient.specie"
-                    :icon-url="patient.iconUrl"
+                    :hasAlert="patient.hasAlert"
                     class="xl:w-[600px]"
                 />
             </section>

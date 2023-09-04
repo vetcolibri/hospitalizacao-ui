@@ -16,7 +16,6 @@ const comments = ref<string>()
 const router = useRouter()
 
 function isSeleted(name: string) {
-    console.log('cliqued...', selectedParameters.value)
     return selectedParameters.value.find((element) => element === name)
 }
 

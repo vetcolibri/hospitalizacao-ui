@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import AlertIcon from 'vue-material-design-icons/AlertCircle.vue'
-
-import { Patient } from '@/lib/types'
+import AlertIcon from '@/components/icons/AlertIcon.vue'
+import { iconUrl } from '@/lib/data/patients'
+import { type Patient } from '@/lib/types'
 
 defineProps<Patient>()
-
 </script>
 <template>
     <section class="shadow-md rounded bg-white relative">
@@ -25,7 +24,7 @@ defineProps<Patient>()
                     </div>
                 </div>
             </div>
-            <div v-if="hasAlert" class="absolute left-3 bottom-1 text-end text-yellow-600">
+            <div v-if="hasAlert" class="absolute left-3 bottom-3 text-end text-yellow-600">
                 <alert-icon class="inline-block" />
             </div>
         </router-link>
