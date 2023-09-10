@@ -20,7 +20,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import { sendData } from '@/lib/shared/utils'
-import PATIENTS from '@/lib/data/patients'
 
 const dailyRound = ref(parameters)
 const scheduleAlert = ref<boolean>(false)
@@ -29,14 +28,6 @@ const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
 const form = ref<HTMLFormElement>()
-
-function lastMeasurement(parameter: string) {
-    const patient = PATIENTS.find((patient) => patient.id === patientId)
-    if (!patient) return
-    const measurements = patient.measurements.filter((item) => item.parameter === parameter)
-    const measurement = measurements[measurements.length - 1]
-    return measurement
-}
 
 function openResume() {
     if (!form.value?.checkValidity()) {
@@ -69,35 +60,30 @@ function confirm() {
                         :name="parameters.heartRate.name"
                         :title="parameters.heartRate.title"
                         :helpText="parameters.heartRate.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.heartRate.name)"
                         v-model="parameters.heartRate.measurement"
                     />
                     <RespiratoryRate
                         :name="parameters.respiratoryRate.name"
                         :title="parameters.respiratoryRate.title"
                         :helpText="parameters.respiratoryRate.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.respiratoryRate.name)"
                         v-model="parameters.respiratoryRate.measurement"
                     />
                     <TRC
                         :name="parameters.trc.name"
                         :title="parameters.trc.title"
                         :helpText="parameters.trc.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.trc.name)"
                         v-model="parameters.trc.measurement"
                     />
                     <AVDN
                         :name="parameters.avdn.name"
                         :title="parameters.avdn.title"
                         :options="parameters.avdn.options"
-                        :lastMeasurement="lastMeasurement(parameters.avdn.name)"
                         v-model="parameters.avdn.measurement"
                     />
                     <Mucosas
                         :name="parameters.mucosas.name"
                         :title="parameters.mucosas.title"
                         :options="parameters.mucosas.options"
-                        :lastMeasurement="lastMeasurement(parameters.mucosas.name)"
                         v-model="parameters.mucosas.measurement"
                     />
 
@@ -105,21 +91,18 @@ function confirm() {
                         :name="parameters.temperature.name"
                         :title="parameters.temperature.title"
                         :helpText="parameters.temperature.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.temperature.name)"
                         v-model="parameters.temperature.measurement"
                     />
                     <Glicemia
                         :name="parameters.glicemia.name"
                         :title="parameters.glicemia.title"
                         :helpText="parameters.glicemia.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.glicemia.name)"
                         v-model="parameters.glicemia.measurement"
                     />
                     <HCT
                         :name="parameters.hct.name"
                         :title="parameters.hct.title"
                         :helpText="parameters.hct.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.hct.name)"
                         v-model="parameters.hct.measurement"
                     />
                     <BloodPressure
@@ -127,7 +110,6 @@ function confirm() {
                         :title="parameters.bloodPressure.title"
                         :type="parameters.bloodPressure.type"
                         :helpText="parameters.bloodPressure.helpText"
-                        :lastMeasurement="lastMeasurement(parameters.bloodPressure.name)"
                         v-model="parameters.bloodPressure.measurement"
                     />
                     <div class="flex items-center">

@@ -61,10 +61,10 @@ function changeParameterVisibility(name: string) {
 }
 
 function showScheduleAlertCheckbox() {
-    const isVisibleSomeParameter = Object.values(chooseParameters.value).find(
+    const isVisible = Object.values(chooseParameters.value).find(
         (parameter) => parameter.chooseVisibility === true
     )
-    if (isVisibleSomeParameter) {
+    if (isVisible) {
         showScheduleAlert.value = true
     } else {
         showScheduleAlert.value = false
@@ -134,112 +134,58 @@ onBeforeUnmount(() => {
         <section class="bg-white shadow px-8 py-6 space-y-3">
             <ExamTime />
             <div class="relative space-y-2">
-                <div
-                    ref="dropdown"
-                    @click="toogleParameterList"
-                    class="flex items-center gap-2 border rounded ps-2 text-gray-500"
-                >
+                <div ref="dropdown" @click="toogleParameterList"
+                    class="flex items-center gap-2 border rounded ps-2 text-gray-500">
                     <hand-index></hand-index>
                     <div class="form-contral flex-1 border-0 py-2 focus:ring-0">
                         Escolher parâmentros
                     </div>
                 </div>
-                <div
-                    v-if="parametersList"
-                    @click.stop
-                    class="h-48 absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3"
-                >
+                <div v-if="parametersList" @click.stop
+                    class="h-48 absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3">
                     <div v-for="parameter in parameters" class="flex items-center">
-                        <input
-                            type="checkbox"
-                            class="rounded focus:ring-0"
+                        <input type="checkbox" class="rounded focus:ring-0"
                             @change="changeParameterVisibility(parameter.name)"
-                            :checked="parameter.chooseVisibility ? true : false"
-                        />
-                        <label
-                            @click="changeParameterVisibility(parameter.name)"
-                            class="ml-2 block text-gray-900"
-                            >{{ parameter.title }}</label
-                        >
+                            :checked="parameter.chooseVisibility ? true : false" />
+                        <label @click="changeParameterVisibility(parameter.name)" class="ml-2 block text-gray-900">{{
+                            parameter.title }}</label>
                     </div>
                 </div>
                 <hr />
                 <form ref="form" method="POST">
                     <div class="space-y-4">
-                        <HeartRate
-                            v-if="chooseParameters.heartRate.chooseVisibility"
-                            :name="parameters.heartRate.name"
-                            :title="parameters.heartRate.title"
-                            :helpText="parameters.heartRate.helpText"
-                            v-model="parameters.heartRate.measurement"
-                        />
-                        <RespiratoryRate
-                            v-if="chooseParameters.respiratoryRate.chooseVisibility"
-                            :name="chooseParameters.respiratoryRate.name"
-                            :title="chooseParameters.respiratoryRate.title"
+                        <HeartRate v-if="chooseParameters.heartRate.chooseVisibility" :name="parameters.heartRate.name"
+                            :title="parameters.heartRate.title" :helpText="parameters.heartRate.helpText"
+                            v-model="parameters.heartRate.measurement" />
+                        <RespiratoryRate v-if="chooseParameters.respiratoryRate.chooseVisibility"
+                            :name="chooseParameters.respiratoryRate.name" :title="chooseParameters.respiratoryRate.title"
                             :helpText="chooseParameters.respiratoryRate.helpText"
-                            v-model="chooseParameters.respiratoryRate.measurement"
-                        />
-                        <TRC
-                            v-if="chooseParameters.trc.chooseVisibility"
-                            :name="parameters.trc.name"
-                            :title="parameters.trc.title"
-                            :helpText="parameters.trc.helpText"
-                            v-model="parameters.trc.measurement"
-                        />
-                        <AVDN
-                            v-if="chooseParameters.avdn.chooseVisibility"
-                            :name="parameters.avdn.name"
-                            :title="parameters.avdn.title"
-                            :options="parameters.avdn.options"
-                            v-model="parameters.avdn.measurement"
-                        />
-                        <Mucosas
-                            v-if="chooseParameters.mucosas.chooseVisibility"
-                            :name="parameters.mucosas.name"
-                            :title="parameters.mucosas.title"
-                            :options="parameters.mucosas.options"
-                            v-model="parameters.mucosas.measurement"
-                        />
-                        <Temperature
-                            v-if="chooseParameters.temperature.chooseVisibility"
-                            :name="parameters.temperature.name"
-                            :title="parameters.temperature.title"
-                            :helpText="parameters.temperature.helpText"
-                            v-model="parameters.temperature.measurement"
-                        />
-                        <Glicemia
-                            v-if="chooseParameters.glicemia.chooseVisibility"
-                            :name="parameters.glicemia.name"
-                            :title="parameters.glicemia.title"
-                            :helpText="parameters.glicemia.helpText"
-                            v-model="parameters.glicemia.measurement"
-                        />
-                        <HCT
-                            v-if="chooseParameters.hct.chooseVisibility"
-                            :name="parameters.hct.name"
-                            :title="parameters.hct.title"
-                            :helpText="parameters.hct.helpText"
-                            v-model="parameters.hct.measurement"
-                        />
-                        <BloodPressure
-                            v-if="chooseParameters.bloodPressure.chooseVisibility"
-                            :name="parameters.bloodPressure.name"
-                            :title="parameters.bloodPressure.title"
-                            :type="parameters.bloodPressure.type"
-                            :helpText="parameters.bloodPressure.helpText"
-                            v-model="parameters.bloodPressure.measurement"
-                        />
+                            v-model="chooseParameters.respiratoryRate.measurement" />
+                        <TRC v-if="chooseParameters.trc.chooseVisibility" :name="parameters.trc.name"
+                            :title="parameters.trc.title" :helpText="parameters.trc.helpText"
+                            v-model="parameters.trc.measurement" />
+                        <AVDN v-if="chooseParameters.avdn.chooseVisibility" :name="parameters.avdn.name"
+                            :title="parameters.avdn.title" :options="parameters.avdn.options"
+                            v-model="parameters.avdn.measurement" />
+                        <Mucosas v-if="chooseParameters.mucosas.chooseVisibility" :name="parameters.mucosas.name"
+                            :title="parameters.mucosas.title" :options="parameters.mucosas.options"
+                            v-model="parameters.mucosas.measurement" />
+                        <Temperature v-if="chooseParameters.temperature.chooseVisibility"
+                            :name="parameters.temperature.name" :title="parameters.temperature.title"
+                            :helpText="parameters.temperature.helpText" v-model="parameters.temperature.measurement" />
+                        <Glicemia v-if="chooseParameters.glicemia.chooseVisibility" :name="parameters.glicemia.name"
+                            :title="parameters.glicemia.title" :helpText="parameters.glicemia.helpText"
+                            v-model="parameters.glicemia.measurement" />
+                        <HCT v-if="chooseParameters.hct.chooseVisibility" :name="parameters.hct.name"
+                            :title="parameters.hct.title" :helpText="parameters.hct.helpText"
+                            v-model="parameters.hct.measurement" />
+                        <BloodPressure v-if="chooseParameters.bloodPressure.chooseVisibility"
+                            :name="parameters.bloodPressure.name" :title="parameters.bloodPressure.title"
+                            :type="parameters.bloodPressure.type" :helpText="parameters.bloodPressure.helpText"
+                            v-model="parameters.bloodPressure.measurement" />
                         <div v-if="showScheduleAlert" class="flex items-center">
-                            <input
-                                type="checkbox"
-                                class="focus:ring-0 rounded"
-                                v-model="scheduleAlert"
-                            />
-                            <label
-                                class="ml-2 block text-gray-900"
-                                @click="() => (scheduleAlert = !scheduleAlert)"
-                            >
+                            <input type="checkbox" class="focus:ring-0 rounded" v-model="scheduleAlert" />
+                            <label class="ml-2 block text-gray-900" @click="() => (scheduleAlert = !scheduleAlert)">
                                 Criar alerta de monitorização
                             </label>
                         </div>

@@ -6,10 +6,10 @@ export interface Patient {
 }
 
 export interface Alert {
-    id: string,
+    alertId: string,
     patientId: string,
-    repeatEvery: string,
-    parameters: Partial<Parameter>[],
+    repeatEvery: number,
+    parameters: string[],
     comments: string,
 }
 
