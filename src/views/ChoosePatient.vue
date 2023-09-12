@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import Patient from '@/components/Patient.vue'
-
 import GoBack from '@/components/GoBack.vue'
-import PATIENTS from '@/lib/data/patients'
+import PatientHospitalized from '@/components/Patient.vue'
+import type { Patient } from '@/lib/types'
+import { ref } from 'vue'
+
+const patients = ref<Patient[]>([])
 </script>
 <template>
     <div>
@@ -13,9 +15,9 @@ import PATIENTS from '@/lib/data/patients'
         </Header>
         <main class="main-content py-8">
             <section>
-                <Patient
-                    v-for="patient in PATIENTS"
-                    :id="patient.id"
+                <PatientHospitalized
+                    v-for="patient in patients"
+                    :patientId="patient.patientId"
                     :name="patient.name"
                     :specie="patient.specie"
                     :hasAlert="patient.hasAlert"

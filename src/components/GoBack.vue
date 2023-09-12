@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import ArrowLeft from '@/components/icons/ArrowLeft.vue'
 </script>
 <template>
     <arrow-left @click="$router.back()" class="cursor-pointer" />
