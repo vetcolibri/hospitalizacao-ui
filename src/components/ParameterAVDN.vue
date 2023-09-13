@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Parameter } from '@/lib/types'
+import { ref } from 'vue'
 
 defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = (event: InputEvent) => {
-    emit('update:modelValue', (event.target as HTMLSelectElement).value)
+    const data = { value: (event.target as HTMLSelectElement).value, message: '' }
+    emit('update:modelValue', data)
 }
 </script>
 <template>
@@ -24,8 +26,12 @@ const updateValue = (event: InputEvent) => {
                 </select>
             </div>
             <div class="flex flex-col flex-1 gap-1">
-                <input class="form-control disabled" disabled type="text"
-                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"/>
+                <input
+                    class="form-control disabled"
+                    disabled
+                    type="text"
+                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
+                />
                 <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
                     Ultima medição as {{ lastMeasurement?.hour }}
                 </span>

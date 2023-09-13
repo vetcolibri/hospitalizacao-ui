@@ -6,13 +6,16 @@ import router from './router'
 
 import { AxiosAdapter } from './lib/apiClient/adapters'
 import { PatientAPI } from './lib/apiClient/patients'
+import { MeasurementAPI } from './lib/apiClient/measurements'
 
 const app = createApp(App)
 
-const baseUrl = "http://localhost:8000"
+const baseUrl = 'http://localhost:8000'
 const axiosAdapter = new AxiosAdapter()
 const patientClient = new PatientAPI(axiosAdapter, baseUrl)
-app.provide("patientClient", patientClient)
+const measurementClient = new MeasurementAPI(axiosAdapter, baseUrl)
+app.provide('patientClient', patientClient)
+app.provide('measurementClient', measurementClient)
 
 app.use(router)
 

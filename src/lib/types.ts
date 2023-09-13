@@ -14,8 +14,9 @@ export interface Alert {
 }
 
 export interface Measurement {
+    readonly parameter: string
     readonly value: string
-    readonly hour: string
+    readonly date?: string
     readonly message?: string
 }
 
@@ -27,4 +28,5 @@ export interface Parameter {
     options?: string[]
     measurement?: Measurement
     lastMeasurement?: Measurement
+    chooseVisibility?: boolean
 }

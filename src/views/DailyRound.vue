@@ -19,7 +19,6 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
-import { sendData } from '@/lib/shared/utils'
 
 const dailyRound = ref(parameters)
 const scheduleAlert = ref<boolean>(false)
@@ -39,7 +38,6 @@ function openResume() {
 }
 
 function confirm() {
-    sendData()
     dialogElement.value?.close()
     if (scheduleAlert.value) {
         return router.push({ name: 'ScheduleAlert' })

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const date = new Date()
-const yearFormat = new Intl.DateTimeFormat("pt-PT", { year: "numeric"});
-const monthFormat = new Intl.DateTimeFormat("pt-PT", { month: "short"});
-const dayFormat = new Intl.DateTimeFormat("pt-PT", { day: "2-digit"});
-const hour = ref(new Intl.DateTimeFormat("pt-PT", {timeStyle: "short"}).format(date))
-const today = ref(`${dayFormat.format(date)} ${monthFormat.format(date)} ${yearFormat.format(date)}`)
-
+const yearFormat = new Intl.DateTimeFormat('pt-PT', { year: 'numeric' })
+const monthFormat = new Intl.DateTimeFormat('pt-PT', { month: 'short' })
+const dayFormat = new Intl.DateTimeFormat('pt-PT', { day: '2-digit' })
+const hour = ref(new Intl.DateTimeFormat('pt-PT', { timeStyle: 'short' }).format(date))
+const today = ref(
+    `${dayFormat.format(date)} ${monthFormat.format(date)} ${yearFormat.format(date)}`
+)
 </script>
 <template>
     <section>

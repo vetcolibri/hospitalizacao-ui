@@ -3,8 +3,9 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import PatientHospitalized from '@/components/Patient.vue'
-import type { Patient } from '@/lib/types'
+
 import { inject, onMounted, ref } from 'vue'
+import type { Patient } from '@/lib/types'
 import type { PatientAPI } from '@/lib/apiClient/patients'
 
 const patients = ref<Patient[]>([])
