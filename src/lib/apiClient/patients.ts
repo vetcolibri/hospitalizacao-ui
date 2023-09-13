@@ -1,4 +1,4 @@
-import { HttpClient } from './http_client'
+import type { HttpClient } from './http_client'
 
 export class PatientAPI {
     readonly HttpClient: HttpClient

@@ -4,9 +4,16 @@ import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import PatientHospitalized from '@/components/Patient.vue'
 import type { Patient } from '@/lib/types'
-import { ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
+import type { PatientAPI } from '@/lib/apiClient/patients'
 
 const patients = ref<Patient[]>([])
+
+onMounted(async () => {
+    const patientClient = inject('patientClient') as PatientAPI
+    const data = await patientClient.getAllHospitalized()
+    patients.value = data
+})
 </script>
 <template>
     <div>
