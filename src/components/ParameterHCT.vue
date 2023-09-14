@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { Parameter } from '@/lib/types'
-import { ref } from 'vue';
+import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
+import type { Parameter } from '@/lib/types'
+import { ref } from 'vue'
 
-const inputElement = ref()
-const message = ref<string>('')
+const hct = ref()
+const props = defineProps<Parameter>()
 const emit = defineEmits()
 
-const updateValue = () => {
-    emit('update:modelValue', inputElement.value)
-}
+const date = props.lastMeasurement?.date ? new Date(props.lastMeasurement?.date!) : new Date()
+const hour = makeHourFormat(date)
+const today = makeTodayFormat(date)
 
-defineProps<Parameter>()
+const updateValue = () => {
+    const data = { value: hct.value, message: '' }
+    emit('update:modelValue', data)
+}
 </script>
 <template>
     <div class="flex flex-col gap-2">
@@ -20,7 +24,7 @@ defineProps<Parameter>()
                 <input
                     class="form-control"
                     placeholder="Valor"
-                    v-model="inputElement"
+                    v-model="hct"
                     step="1"
                     min="0"
                     max="100"
@@ -32,10 +36,14 @@ defineProps<Parameter>()
                 <span class="text-sm text-gray-600">{{ helpText }}</span>
             </div>
             <div class="flex flex-col flex-1 gap-1">
-                <input class="form-control disabled" disabled type="text"
-                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"/>
+                <input
+                    class="form-control disabled"
+                    disabled
+                    type="text"
+                    :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
+                />
                 <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
-                    Ultima medição as {{ lastMeasurement?.hour }}
+                    Ultima medição: {{ today }}, {{ hour }}.
                 </span>
             </div>
         </div>

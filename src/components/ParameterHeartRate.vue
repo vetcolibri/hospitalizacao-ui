@@ -1,19 +1,25 @@
 <script setup lang="ts">
+import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
 import { Parameter } from '@/lib/types'
 import { ref } from 'vue'
 
-const inputElement = ref()
+const heartRate = ref()
 const message = ref<string>('')
+const props = defineProps<Parameter>()
 const emit = defineEmits()
 
+const date = props.lastMeasurement?.value ? new Date(props.lastMeasurement?.date!) : new Date()
+const hour = makeHourFormat(date)
+const today = makeTodayFormat(date)
+
 const updateValue = () => {
-    const data = { value: inputElement.value, message }
+    const data = { value: heartRate.value, message }
     emit('update:modelValue', data)
 }
 
 function parameterValidation() {
-    const value = parseInt(inputElement.value)
-    if (inputElement.value === '') {
+    const value = parseInt(heartRate.value)
+    if (heartRate.value === '') {
         message.value = ''
     } else if (value >= 0 && value <= 69) {
         message.value = 'Bradicardia'
@@ -23,8 +29,6 @@ function parameterValidation() {
         message.value = 'Taquicardia'
     }
 }
-
-defineProps<Parameter>()
 </script>
 <template>
     <div class="flex flex-col gap-2">
@@ -34,7 +38,7 @@ defineProps<Parameter>()
                 <input
                     class="form-control"
                     placeholder="Valor"
-                    v-model="inputElement"
+                    v-model="heartRate"
                     min="0"
                     max="300"
                     required
@@ -53,7 +57,7 @@ defineProps<Parameter>()
                     :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
                 />
                 <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
-                    Ultima medição as {{ lastMeasurement?.date }}
+                    Ultima medição: {{ today }}, {{ hour }}.
                 </span>
             </div>
         </div>

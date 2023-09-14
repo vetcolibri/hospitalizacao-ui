@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
 
 const date = new Date()
-const yearFormat = new Intl.DateTimeFormat('pt-PT', { year: 'numeric' })
-const monthFormat = new Intl.DateTimeFormat('pt-PT', { month: 'short' })
-const dayFormat = new Intl.DateTimeFormat('pt-PT', { day: '2-digit' })
-const hour = ref(new Intl.DateTimeFormat('pt-PT', { timeStyle: 'short' }).format(date))
-const today = ref(
-    `${dayFormat.format(date)} ${monthFormat.format(date)} ${yearFormat.format(date)}`
-)
+const today = makeTodayFormat(date)
+const hour = makeHourFormat(date)
 </script>
 <template>
     <section>

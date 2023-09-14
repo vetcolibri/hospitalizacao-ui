@@ -61,7 +61,7 @@ export const parameters = {
     },
     hct: {
         title: 'HCT',
-        name: 'htc',
+        name: 'hct',
         helpText: 'Canino (37 - 55)% e Felino (24 - 45)%',
         measurement: { value: '', message: '' },
         required: true,

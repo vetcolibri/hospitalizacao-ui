@@ -17,7 +17,7 @@ export class MeasurementAPI {
         const requestBody = {
             patientId,
             userId: 'some-user-id',
-            data: date,
+            date: date.toISOString(),
             measurements
         }
         this.httpClient.post(`${this.baseUrl}/${this.resource}`, requestBody)

@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
 import { Parameter } from '@/lib/types'
-import { ref } from 'vue'
 
-defineProps<Parameter>()
+const props = defineProps<Parameter>()
 const emit = defineEmits()
+
+const date = props.lastMeasurement?.date ? new Date(props.lastMeasurement?.date!) : new Date()
+const hour = makeHourFormat(date)
+const today = makeTodayFormat(date)
 
 const updateValue = (event: InputEvent) => {
     const data = { value: (event.target as HTMLSelectElement).value, message: '' }
@@ -33,7 +37,7 @@ const updateValue = (event: InputEvent) => {
                     :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
                 />
                 <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
-                    Ultima medição as {{ lastMeasurement?.hour }}
+                    Ultima medição: {{ today }}, {{ hour }}.
                 </span>
             </div>
         </div>

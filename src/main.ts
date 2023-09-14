@@ -10,7 +10,7 @@ import { MeasurementAPI } from './lib/apiClient/measurements'
 
 const app = createApp(App)
 
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'http://192.168.10.69:8000'
 const axiosAdapter = new AxiosAdapter()
 const patientClient = new PatientAPI(axiosAdapter, baseUrl)
 const measurementClient = new MeasurementAPI(axiosAdapter, baseUrl)

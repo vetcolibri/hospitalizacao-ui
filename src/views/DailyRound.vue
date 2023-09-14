@@ -13,37 +13,41 @@ import Temperature from '@/components/ParameterTemperature.vue'
 import Glicemia from '@/components/ParameterGlicemia.vue'
 import HCT from '@/components/ParameterHCT.vue'
 import BloodPressure from '@/components/ParameterBloodPressure.vue'
-import Dialog from '@/components/Dialog.vue'
+import Summary from '@/components/ParametersSummary.vue'
 
-import { ref } from 'vue'
+import { inject, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
+import type { Measurement } from '@/lib/types'
+import { getAllMeasurements, openSummary, lastMeasurement } from '@/lib/shared/utils'
+import { MeasurementAPI } from '@/lib/apiClient/measurements'
 
 const dailyRound = ref(parameters)
-const scheduleAlert = ref<boolean>(false)
-const dialogElement = ref<typeof Dialog>()
-const router = useRouter()
-const route = useRoute()
-const patientId = `${route.params.patientId}`
+const alertCheckbox = ref<boolean>(false)
+const summaryOfMeasurements = ref<typeof Summary>()
 const form = ref<HTMLFormElement>()
+const latestMeasurements = ref<Measurement[]>([])
 
-function openResume() {
-    if (!form.value?.checkValidity()) {
-        return form.value?.reportValidity()
-    }
-    const parameters = Object.values(dailyRound.value)
-    dialogElement.value?.addParameters(parameters)
-    dialogElement.value?.show()
-}
+const route = useRoute()
+const router = useRouter()
+const patientId = `${route.params.patientId}`
+const measurmentClient = inject('measurementClient') as MeasurementAPI
 
 function confirm() {
-    dialogElement.value?.close()
-    if (scheduleAlert.value) {
+    const parameters = dailyRound.value
+    const measurements = getAllMeasurements(parameters)
+    measurmentClient.newMeasurements(patientId, measurements)
+    summaryOfMeasurements.value?.close()
+    if (alertCheckbox.value) {
         return router.push({ name: 'ScheduleAlert' })
     }
     return router.push({ name: 'ExamGeneralCondition' })
 }
+
+onBeforeMount(async () => {
+    latestMeasurements.value = await measurmentClient.latestMeasurements(patientId)
+})
 </script>
 <template>
     <div>
@@ -59,30 +63,43 @@ function confirm() {
                         :title="parameters.heartRate.title"
                         :helpText="parameters.heartRate.helpText"
                         v-model="parameters.heartRate.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.heartRate.name, latestMeasurements)
+                        "
                     />
                     <RespiratoryRate
                         :name="parameters.respiratoryRate.name"
                         :title="parameters.respiratoryRate.title"
                         :helpText="parameters.respiratoryRate.helpText"
                         v-model="parameters.respiratoryRate.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.respiratoryRate.name, latestMeasurements)
+                        "
                     />
                     <TRC
                         :name="parameters.trc.name"
                         :title="parameters.trc.title"
                         :helpText="parameters.trc.helpText"
                         v-model="parameters.trc.measurement"
+                        :last-measurement="lastMeasurement(parameters.trc.name, latestMeasurements)"
                     />
                     <AVDN
                         :name="parameters.avdn.name"
                         :title="parameters.avdn.title"
                         :options="parameters.avdn.options"
                         v-model="parameters.avdn.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.avdn.name, latestMeasurements)
+                        "
                     />
                     <Mucosas
                         :name="parameters.mucosas.name"
                         :title="parameters.mucosas.title"
                         :options="parameters.mucosas.options"
                         v-model="parameters.mucosas.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.mucosas.name, latestMeasurements)
+                        "
                     />
 
                     <Temperature
@@ -90,18 +107,25 @@ function confirm() {
                         :title="parameters.temperature.title"
                         :helpText="parameters.temperature.helpText"
                         v-model="parameters.temperature.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.temperature.name, latestMeasurements)
+                        "
                     />
                     <Glicemia
                         :name="parameters.glicemia.name"
                         :title="parameters.glicemia.title"
                         :helpText="parameters.glicemia.helpText"
                         v-model="parameters.glicemia.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.glicemia.name, latestMeasurements)
+                        "
                     />
                     <HCT
                         :name="parameters.hct.name"
                         :title="parameters.hct.title"
                         :helpText="parameters.hct.helpText"
                         v-model="parameters.hct.measurement"
+                        :last-measurement="lastMeasurement(parameters.hct.name, latestMeasurements)"
                     />
                     <BloodPressure
                         :name="parameters.bloodPressure.name"
@@ -109,16 +133,19 @@ function confirm() {
                         :type="parameters.bloodPressure.type"
                         :helpText="parameters.bloodPressure.helpText"
                         v-model="parameters.bloodPressure.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.bloodPressure.name, latestMeasurements)
+                        "
                     />
                     <div class="flex items-center">
                         <input
                             type="checkbox"
                             class="focus:ring-0 rounded"
-                            v-model="scheduleAlert"
+                            v-model="alertCheckbox"
                         />
                         <label
                             class="ml-2 block text-gray-900"
-                            @click="() => (scheduleAlert = !scheduleAlert)"
+                            @click="() => (alertCheckbox = !alertCheckbox)"
                         >
                             Criar alerta de monitorização
                         </label>
@@ -127,10 +154,14 @@ function confirm() {
             </section>
         </main>
         <Footer>
-            <Button class="btn-success" title="Salvar" @click="openResume()" />
+            <Button
+                class="btn-success"
+                title="Salvar"
+                @click="openSummary(form!, summaryOfMeasurements, Object.values(dailyRound))"
+            />
         </Footer>
-        <Dialog ref="dialogElement" title="Detalhes">
+        <Summary ref="summaryOfMeasurements" title="Detalhes">
             <Button class="btn-secondary" title="Confirmar" @click="confirm()" />
-        </Dialog>
+        </Summary>
     </div>
 </template>

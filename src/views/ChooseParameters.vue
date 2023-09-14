@@ -16,12 +16,13 @@ import Glicemia from '@/components/ParameterGlicemia.vue'
 import HCT from '@/components/ParameterHCT.vue'
 import BloodPressure from '@/components/ParameterBloodPressure.vue'
 
-import Summary from '@/components/Dialog.vue'
+import Summary from '@/components/ParametersSummary.vue'
 import HandIndex from '@/components/icons/HandIndex.vue'
 
 import { parameters } from '@/lib/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
-import { openSummary, lastMeasurement } from '@/lib/shared/utils'
+import type { Measurement } from '@/lib/types'
+import { openSummary, lastMeasurement, getAllMeasurements } from '@/lib/shared/utils'
 import { MeasurementAPI } from '@/lib/apiClient/measurements'
 
 const choiceOfParameters = ref(parameters)
@@ -32,7 +33,7 @@ const alertCheckbox = ref<boolean>(false)
 const alertCheckboxVisibility = ref<boolean>(false)
 const selectedParameters = ref()
 const parameterListElement = ref()
-const latestMeasurements = ref()
+const latestMeasurements = ref<Measurement[]>([])
 
 const router = useRouter()
 const route = useRoute()
@@ -91,18 +92,9 @@ const clickOutsideHandler = (event: Event) => {
     }
 }
 
-function findAllMeasurements() {
-    const measurements: any = []
-    const parameters = visibleParameters()
-    for (let parameter of Object.values(parameters)) {
-        const { value } = parameter.measurement
-        measurements.push({ parameter: parameter.name, value })
-    }
-    return measurements
-}
-
 function confirm() {
-    const measurements = findAllMeasurements()
+    const parameters = visibleParameters()
+    const measurements = getAllMeasurements(parameters)
     measurmentClient.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
     alert('Medições salvas com sucesso!')
@@ -185,6 +177,9 @@ onBeforeUnmount(() => {
                             :title="choiceOfParameters.respiratoryRate.title"
                             :helpText="choiceOfParameters.respiratoryRate.helpText"
                             v-model="choiceOfParameters.respiratoryRate.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.respiratoryRate.name, latestMeasurements)
+                            "
                         />
                         <TRC
                             v-if="choiceOfParameters.trc.chooseVisibility"
@@ -192,6 +187,9 @@ onBeforeUnmount(() => {
                             :title="parameters.trc.title"
                             :helpText="parameters.trc.helpText"
                             v-model="parameters.trc.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.trc.name, latestMeasurements)
+                            "
                         />
                         <AVDN
                             v-if="choiceOfParameters.avdn.chooseVisibility"
@@ -199,6 +197,9 @@ onBeforeUnmount(() => {
                             :title="parameters.avdn.title"
                             :options="parameters.avdn.options"
                             v-model="parameters.avdn.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.avdn.name, latestMeasurements)
+                            "
                         />
                         <Mucosas
                             v-if="choiceOfParameters.mucosas.chooseVisibility"
@@ -206,6 +207,9 @@ onBeforeUnmount(() => {
                             :title="parameters.mucosas.title"
                             :options="parameters.mucosas.options"
                             v-model="parameters.mucosas.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.mucosas.name, latestMeasurements)
+                            "
                         />
                         <Temperature
                             v-if="choiceOfParameters.temperature.chooseVisibility"
@@ -213,6 +217,9 @@ onBeforeUnmount(() => {
                             :title="parameters.temperature.title"
                             :helpText="parameters.temperature.helpText"
                             v-model="parameters.temperature.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.temperature.name, latestMeasurements)
+                            "
                         />
                         <Glicemia
                             v-if="choiceOfParameters.glicemia.chooseVisibility"
@@ -220,6 +227,9 @@ onBeforeUnmount(() => {
                             :title="parameters.glicemia.title"
                             :helpText="parameters.glicemia.helpText"
                             v-model="parameters.glicemia.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.glicemia.name, latestMeasurements)
+                            "
                         />
                         <HCT
                             v-if="choiceOfParameters.hct.chooseVisibility"
@@ -227,6 +237,9 @@ onBeforeUnmount(() => {
                             :title="parameters.hct.title"
                             :helpText="parameters.hct.helpText"
                             v-model="parameters.hct.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.hct.name, latestMeasurements)
+                            "
                         />
                         <BloodPressure
                             v-if="choiceOfParameters.bloodPressure.chooseVisibility"
@@ -235,6 +248,9 @@ onBeforeUnmount(() => {
                             :type="parameters.bloodPressure.type"
                             :helpText="parameters.bloodPressure.helpText"
                             v-model="parameters.bloodPressure.measurement"
+                            :last-measurement="
+                                lastMeasurement(parameters.bloodPressure.name, latestMeasurements)
+                            "
                         />
                         <div v-if="alertCheckboxVisibility" class="flex items-center">
                             <input
