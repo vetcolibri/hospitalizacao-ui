@@ -30,3 +30,8 @@ export interface Parameter {
     lastMeasurement?: Measurement
     chooseVisibility?: boolean
 }
+
+export interface RepeatEvery {
+    rate: number
+    unity: string
+}

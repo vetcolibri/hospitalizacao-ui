@@ -278,6 +278,6 @@ onBeforeUnmount(() => {
         />
     </Footer>
     <Summary ref="summaryOfMeasurements" title="Detalhes">
-        <button class="btn-secondary" @click="confirm()">Confirmar</button>
+        <button class="btn-success" @click="confirm()">Confirmar</button>
     </Summary>
 </template>

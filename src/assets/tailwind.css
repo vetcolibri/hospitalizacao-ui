@@ -35,9 +35,9 @@ form:invalid select:required {
 }
 
 .btn-light {
-    @apply h-10 px-9 rounded bg-red-500 text-white hover:bg-red-800
+    @apply h-10 px-9 rounded bg-gray-200 text-white
 }
 
 .disabled {
-    @apply bg-gray-200 text-gray-500
+    @apply bg-gray-300 text-gray-500 cursor-default
 }

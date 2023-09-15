@@ -48,7 +48,7 @@ defineExpose({ addParameters, add, show, close })
             </ul>
         </div>
         <div class="text-right space-x-3">
-            <button class="btn-light" @click="close()">Fechar</button>
+            <button class="btn-secondary" @click="close()">Fechar</button>
             <slot></slot>
         </div>
     </dialog>
