@@ -6,7 +6,7 @@ import ScheduleTime from '@/components/ScheduleTime.vue'
 import ScheduleRate from '@/components/ScheduleRepeatEvery.vue'
 
 import { inject, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
@@ -20,6 +20,8 @@ const comments = ref<string>()
 const textareaElement = ref<HTMLTextAreaElement>()
 const scheduleButton = ref<boolean>(false)
 const router = useRouter()
+const route = useRoute()
+const patientId = `${route.params.patientId}`
 const alertClient = inject('alertClient') as AlertAPI
 
 function wasSelected(name: string) {
@@ -46,7 +48,7 @@ function schedule() {
     console.log(date, rate)
 
     const alertData = {
-        patientId: 'some-id',
+        patientId: patientId,
         parameters: selectedParameters.value,
         repeatEvery: rate,
         comments: comments.value

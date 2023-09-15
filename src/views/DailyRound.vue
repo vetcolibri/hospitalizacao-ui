@@ -40,7 +40,7 @@ function confirm() {
     measurmentClient.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
     if (alertCheckbox.value) {
-        return router.push({ name: 'ScheduleAlert' })
+        return router.push({ name: 'ScheduleAlert', params: { patientId } })
     }
     return router.push({ name: 'ExamGeneralCondition' })
 }

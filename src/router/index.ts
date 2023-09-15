@@ -4,30 +4,30 @@ import ExamGeneralCondition from '@/views/ExamGeneralCondition.vue'
 
 const routes = [
     {
-        path: "/", 
-        name: "ExamGeneralCondition", 
+        path: '/',
+        name: 'ExamGeneralCondition',
         component: ExamGeneralCondition
     },
     {
-        path: "/choose-patient/:examFormat", 
-        name: "ChoosePatient", 
-        component: () => import("@/views/ChoosePatient.vue")
+        path: '/choose-patient/:examFormat',
+        name: 'ChoosePatient',
+        component: () => import('@/views/ChoosePatient.vue')
     },
     {
-        path: "/daily-round/:patientId", 
-        name: "DailyRound", 
-        component: () => import("@/views/DailyRound.vue")
+        path: '/daily-round/:patientId',
+        name: 'DailyRound',
+        component: () => import('@/views/DailyRound.vue')
     },
     {
-        path: "/choose-parameters/:patientId/",
-        name: "ChooseParameters",
-        component: () => import("@/views/ChooseParameters.vue")
+        path: '/choose-parameters/:patientId/',
+        name: 'ChooseParameters',
+        component: () => import('@/views/ChooseParameters.vue')
     },
     {
-        path: "/schedule-alert", 
-        name: "ScheduleAlert", 
-        component: () => import("@/views/ScheduleAlert.vue")
-    },
+        path: '/schedule-alert/:patientId/',
+        name: 'ScheduleAlert',
+        component: () => import('@/views/ScheduleAlert.vue')
+    }
 ]
 
 const router = createRouter({

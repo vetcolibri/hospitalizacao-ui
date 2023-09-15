@@ -99,7 +99,7 @@ function confirm() {
     summaryOfMeasurements.value?.close()
     alert('Medições salvas com sucesso!')
     if (alertCheckbox.value) {
-        return router.push({ name: 'ScheduleAlert' })
+        return router.push({ name: 'ScheduleAlert', params: { patientId } })
     }
     return router.push({ name: 'ExamGeneralCondition' })
 }
