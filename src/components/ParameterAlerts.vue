@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AlertIcon from '@/components/icons/AlertIcon.vue'
 
-import { inject, onBeforeMount, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Alert } from '@/lib/types'
 import { AlertAPI } from '@/lib/apiClient/alerts'
@@ -12,6 +12,15 @@ const router = useRouter()
 const props = defineProps<Alert>()
 const emit = defineEmits(['close'])
 const alertClient = inject('alertClient') as AlertAPI
+
+function convert(seconds: number) {
+    let unity = 'minuto'
+    const minutes = seconds / 60
+    if (minutes > 1) {
+        unity = 'minutos'
+    }
+    return `${minutes} ${unity}`
+}
 
 function redirectToChooseParameters() {
     router.push({
@@ -36,7 +45,7 @@ function findParameterName(name: string) {
     <div class="my-4 space-y-4">
         <div class="flex gap-4 items-center">
             <p>Parâmetro:</p>
-            <span class="text-sm text-red-500">A cada {{ repeatEvery }}</span>
+            <span class="text-sm text-red-500">A cada {{ convert(repeatEvery) }}</span>
         </div>
         <ul class="space-y-4">
             <li v-for="parameter in props.parameters" class="flex items-center w-full gap-2">

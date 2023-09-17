@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
-import { Parameter } from '@/lib/types'
+import type { Parameter } from '@/lib/types'
 import { ref } from 'vue'
 
 const temperature = ref()

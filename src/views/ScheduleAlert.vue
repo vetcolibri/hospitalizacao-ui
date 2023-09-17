@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import Button from '@/components/Button.vue'
 import ScheduleTime from '@/components/ScheduleTime.vue'
 import ScheduleRate from '@/components/ScheduleRepeatEvery.vue'
 
@@ -45,11 +44,10 @@ function repeatEveryToSeconds() {
 function schedule() {
     const date = timeFromString(scheduleTime.value)
     const rate = repeatEveryToSeconds()
-    console.log(date, rate)
-
     const alertData = {
         patientId: patientId,
         parameters: selectedParameters.value,
+        date: date.toISOString(),
         repeatEvery: rate,
         comments: comments.value
     }
@@ -73,7 +71,7 @@ onMounted(() => {
     <div>
         <Header title="Alerta na monitorização" />
         <main class="main-content py-8">
-            <section class="bg-white shadow px-8 py-6">
+            <section class="parameters-container">
                 <form class="space-y-3">
                     <ScheduleTime v-model="scheduleTime" />
                     <ScheduleRate v-model="repeatEvery" />
@@ -109,15 +107,12 @@ onMounted(() => {
         <Footer>
             <div class="space-x-3">
                 <router-link :to="{ name: 'ExamGeneralCondition' }">
-                    <Button class="btn-secondary" title="Cancelar" />
+                    <button class="btn-secondary">Cancelar</button>
                 </router-link>
-                <Button v-if="!scheduleButton" class="btn-light disabled" title="Agendar" />
-                <Button
-                    v-if="scheduleButton"
-                    class="btn-success"
-                    title="Agendar"
-                    @click="schedule()"
-                />
+                <button v-if="!scheduleButton" class="btn-light disabled">Agendar</button>
+                <button v-if="scheduleButton" type="button" class="btn-success" @click="schedule()">
+                    Agendar
+                </button>
             </div>
         </Footer>
     </div>

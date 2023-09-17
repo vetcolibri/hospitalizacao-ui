@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
         <GoBack />
     </Header>
     <main class="main-content py-8">
-        <section class="bg-white shadow px-8 py-6 space-y-3">
+        <section class="parameters-container">
             <ExamTime />
             <div class="relative space-y-2">
                 <div
@@ -271,11 +271,13 @@ onBeforeUnmount(() => {
         </section>
     </main>
     <Footer>
-        <Button
+        <button
+            type="button"
             class="btn-success"
-            title="Salvar"
             @click="openSummary(form!, summaryOfMeasurements, visibleParameters())"
-        />
+        >
+            Salvar
+        </button>
     </Footer>
     <Summary ref="summaryOfMeasurements" title="Detalhes">
         <button class="btn-success" @click="confirm()">Confirmar</button>
