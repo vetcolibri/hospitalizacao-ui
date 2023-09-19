@@ -22,14 +22,13 @@ onMounted(async () => {
             <GoBack />
         </Header>
         <main class="main-content py-8">
-            <section>
+            <section class="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:mx-auto xl:max-w-7xl">
                 <PatientHospitalized
                     v-for="patient in patients"
                     :patientId="patient.patientId"
                     :name="patient.name"
                     :specie="patient.specie"
                     :hasAlert="patient.hasAlert"
-                    class="xl:w-[600px]"
                 />
             </section>
         </main>
