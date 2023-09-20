@@ -23,6 +23,7 @@ function convert(seconds: number) {
 }
 
 function redirectToChooseParameters() {
+    localStorage.setItem('selectedParameters', JSON.stringify(props.parameters))
     router.push({
         name: 'ChooseParameters',
         params: { patientId: props.patientId }

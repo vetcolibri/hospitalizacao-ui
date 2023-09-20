@@ -1,6 +1,11 @@
-import type { HttpClient } from "../http_client";
+import type { HttpClient } from "@/lib/http_client";
+import type { Patient } from "@/models/patient";
 
-export class PatientAPI {
+export interface PatientService {
+  getAllHospitalized(): Promise<Patient[]>;
+}
+
+export class HttpPatientService implements PatientService {
   readonly HttpClient: HttpClient;
   readonly baseUrl: string;
   readonly resource: string;
@@ -11,7 +16,7 @@ export class PatientAPI {
     this.resource = "patients";
   }
 
-  async getAllHospitalized(): Promise<any> {
+  async getAllHospitalized(): Promise<Patient[]> {
     const patients = await this.HttpClient.get(
       `${this.baseUrl}/${this.resource}/hospitalized`,
     );

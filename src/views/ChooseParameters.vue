@@ -30,7 +30,6 @@ const summaryOfMeasurements = ref<typeof Summary>()
 const form = ref<HTMLFormElement>()
 const alertCheckbox = ref<boolean>(false)
 const alertCheckboxVisibility = ref<boolean>(false)
-const selectedParameters = ref()
 const parameterListElement = ref()
 const latestMeasurements = ref<Measurement[]>([])
 
@@ -67,9 +66,10 @@ function clearVisibility() {
 }
 
 function showSelectedParameters() {
-    if (selectedParameters) {
-        for (let parameter of selectedParameters.value) {
-            changeParameterVisibility(parameter.name)
+    const parameters = localStorage.getItem('selectedParameters')
+    if (parameters) {
+        for (let name of JSON.parse(parameters)) {
+            changeParameterVisibility(name)
         }
     }
 }
@@ -108,11 +108,10 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-    document.addEventListener('click', clickOutsideHandler)
-    if (selectedParameters.value) {
-        showSelectedParameters()
-    }
     latestMeasurements.value = await measurmentClient.latestMeasurements(patientId)
+    showSelectedParameters()
+    localStorage.clear()
+    document.addEventListener('click', clickOutsideHandler)
 })
 
 onBeforeUnmount(() => {

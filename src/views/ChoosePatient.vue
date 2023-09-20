@@ -6,12 +6,13 @@ import PatientHospitalized from '@/components/Patient.vue'
 
 import { inject, onMounted, ref } from 'vue'
 import type { Patient } from '@/lib/types'
-import type { PatientAPI } from '@/lib/apiClient/patients'
+import { PatientService } from '@/services/patient_service'
+import { Provided } from '@/lib/provided'
 
 const patients = ref<Patient[]>([])
 
 onMounted(async () => {
-    const patientClient = inject('patientClient') as PatientAPI
+    const patientClient = inject<PatientService>(Provided.PatientService)!
     const data = await patientClient.getAllHospitalized()
     patients.value = data
 })
