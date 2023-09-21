@@ -1,30 +1,29 @@
-import "@/assets/tailwind.css";
+import '@/assets/tailwind.css'
 
-import { createApp } from "vue";
-import App from "./App.vue";
-import router from "./router";
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
 
-import { AxiosAdapter } from "./lib/apiClient/adapters";
-import { PatientAPI } from "./lib/apiClient/patients";
-import { MeasurementAPI } from "./lib/apiClient/measurements";
-import { AlertAPI } from "./lib/apiClient/alerts";
-import { Provided } from "./lib/provided";
-import { HttpPatientService } from "./services/patient_service";
+import { AxiosAdapter } from './lib/adapters/axios_adapter'
+import { HttpMeasurementService } from './lib/services/measurement_service'
+import { HttpAlertService } from './lib/services/alert_service'
+import { Provided } from './lib/provided'
+import { HttpPatientService } from './lib/services/patient_service'
 
-const app = createApp(App);
+const app = createApp(App)
 
-const baseUrl = "http://192.168.10.69:8000";
-const axiosAdapter = new AxiosAdapter();
-const patientService = new HttpPatientService(axiosAdapter, baseUrl);
-const measurementClient = new MeasurementAPI(axiosAdapter, baseUrl);
-const alertClient = new AlertAPI(axiosAdapter, baseUrl);
-const webSocket = new WebSocket("ws://192.168.10.69:8000/alerts/notifications");
+const baseUrl = 'http://localhost:8000'
+const axiosAdapter = new AxiosAdapter()
+const patientService = new HttpPatientService(axiosAdapter, baseUrl)
+const measurementService = new HttpMeasurementService(axiosAdapter, baseUrl)
+const alertService = new HttpAlertService(axiosAdapter, baseUrl)
+const webSocket = new WebSocket('ws://localhost:8000/alerts/notifications')
 
-app.provide(Provided.PatientService, patientService);
-app.provide("measurementClient", measurementClient);
-app.provide("alertClient", alertClient);
-app.provide("webSocket", webSocket);
+app.provide(Provided.PATIENT_SERVICE, patientService)
+app.provide(Provided.MEASUREMENT_SERVICE, measurementService)
+app.provide(Provided.ALERT_SERVICE, alertService)
+app.provide(Provided.WEBSOCKET, webSocket)
 
-app.use(router);
+app.use(router)
 
-app.mount("#app");
+app.mount('#app')

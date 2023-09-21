@@ -18,9 +18,10 @@ import { inject, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
-import type { Measurement } from '@/lib/types'
+import type { Measurement } from '@/models/measurement'
 import { getAllMeasurements, openSummary, lastMeasurement } from '@/lib/shared/utils'
-import { MeasurementAPI } from '@/lib/apiClient/measurements'
+import { HttpMeasurementService } from '@/services/measurement_service'
+import { Provided } from '@/lib/provided'
 
 const dailyRound = ref(parameters)
 const alertCheckbox = ref<boolean>(false)
@@ -31,7 +32,7 @@ const latestMeasurements = ref<Measurement[]>([])
 const route = useRoute()
 const router = useRouter()
 const patientId = `${route.params.patientId}`
-const measurmentClient = inject('measurementClient') as MeasurementAPI
+const measurmentClient = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 function confirm() {
     const parameters = dailyRound.value
@@ -156,3 +157,4 @@ onBeforeMount(async () => {
         <button type="button" class="btn-secondary" @click="confirm()">Confirmar</button>
     </Summary>
 </template>
+@/lib/models/measurement

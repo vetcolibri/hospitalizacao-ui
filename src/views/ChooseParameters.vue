@@ -20,9 +20,10 @@ import HandIndex from '@/components/icons/HandIndex.vue'
 
 import { parameters } from '@/lib/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
-import type { Measurement } from '@/lib/types'
+import type { Measurement } from '@/models/measurement'
 import { openSummary, lastMeasurement, getAllMeasurements } from '@/lib/shared/utils'
-import { MeasurementAPI } from '@/lib/apiClient/measurements'
+import { HttpMeasurementService } from '@/services/measurement_service'
+import { Provided } from '@/lib/provided'
 
 const choiceOfParameters = ref(parameters)
 const parameterListVisibility = ref(false)
@@ -37,7 +38,7 @@ const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
 
-const measurmentClient = inject('measurementClient') as MeasurementAPI
+const measurmentClient = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 function toogleParameterList() {
     parameterListVisibility.value = !parameterListVisibility.value
@@ -281,3 +282,4 @@ onBeforeUnmount(() => {
         <button class="btn-success" @click="confirm()">Confirmar</button>
     </Summary>
 </template>
+@/lib/models/measurement

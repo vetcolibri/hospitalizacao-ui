@@ -7,9 +7,9 @@ const hour = makeHourFormat(date)
 </script>
 <template>
     <section>
-        <div class="flex justify-end gap-3">
-            <div class="p-2 border rounded bg-gray-100">{{ today }}</div>
-            <div class="p-2 border rounded bg-gray-100">{{ hour }}</div>
-        </div>
+        <ul class="flex justify-end gap-3">
+            <li class="p-2 border rounded bg-gray-100">{{ today }}</li>
+            <li class="p-2 border rounded bg-gray-100">{{ hour }}</li>
+        </ul>
     </section>
 </template>

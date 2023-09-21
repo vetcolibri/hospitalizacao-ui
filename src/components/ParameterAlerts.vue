@@ -3,15 +3,16 @@ import AlertIcon from '@/components/icons/AlertIcon.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Alert } from '@/lib/types'
-import { AlertAPI } from '@/lib/apiClient/alerts'
+import { HttpAlertService } from '@/services/alert_service'
 import { parameters } from '@/lib/data/parameters'
+import { Provided } from '@/lib/provided'
+import type { Alert } from '@/lib/models/alert'
 
-const notShowAgain = ref<boolean>(false)
 const router = useRouter()
 const props = defineProps<Alert>()
 const emit = defineEmits(['close'])
-const alertClient = inject('alertClient') as AlertAPI
+const notShowAgain = ref<boolean>(false)
+const alertClient = inject<HttpAlertService>(Provided.ALERT_SERVICE)!
 
 function convert(seconds: number) {
     let unity = 'minuto'
@@ -33,7 +34,7 @@ function redirectToChooseParameters() {
 function confirm() {
     emit('close')
     if (notShowAgain.value === true) {
-        alertClient.disable(props.alertId)
+        alertClient.disableAlert(props.alertId!)
     }
     return redirectToChooseParameters()
 }
@@ -74,3 +75,4 @@ function findParameterName(name: string) {
         </div>
     </div>
 </template>
+@/lib/models/alert

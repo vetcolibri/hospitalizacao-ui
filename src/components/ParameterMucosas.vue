@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
-import type { Parameter } from '@/lib/types'
+import type { Parameter } from '@/lib/models/parameter'
 
 const props = defineProps<Parameter>()
 const emit = defineEmits()
@@ -44,3 +44,4 @@ const updateValue = (event: InputEvent) => {
         </div>
     </div>
 </template>
+@/lib/models/parameter

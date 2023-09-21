@@ -5,14 +5,14 @@ import GoBack from '@/components/GoBack.vue'
 import PatientHospitalized from '@/components/Patient.vue'
 
 import { inject, onMounted, ref } from 'vue'
-import type { Patient } from '@/lib/types'
-import { PatientService } from '@/services/patient_service'
 import { Provided } from '@/lib/provided'
+import type { Patient } from '@/models/patient'
+import type { PatientService } from '@/services/patient_service'
 
 const patients = ref<Patient[]>([])
 
 onMounted(async () => {
-    const patientClient = inject<PatientService>(Provided.PatientService)!
+    const patientClient = inject<PatientService>(Provided.PATIENT_SERVICE)!
     const data = await patientClient.getAllHospitalized()
     patients.value = data
 })
@@ -36,3 +36,4 @@ onMounted(async () => {
         <Footer />
     </div>
 </template>
+@/lib/models/patient

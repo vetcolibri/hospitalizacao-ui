@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AlertIcon from '@/components/icons/AlertIcon.vue'
 import { iconUrl } from '@/lib/data/patients'
-import { type Patient } from '@/lib/types'
+import type { Patient } from '@/lib/models/patient'
 
 defineProps<Patient>()
 </script>
@@ -30,3 +30,4 @@ defineProps<Patient>()
         </router-link>
     </section>
 </template>
+@/lib/models/patient

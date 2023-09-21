@@ -9,22 +9,25 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
-import { AlertAPI } from '@/lib/apiClient/alerts'
-import type { RepeatEvery } from '@/lib/types'
+import { HttpAlertService } from '@/services/alert_service'
+import type { RepeatEvery } from '@/models/repeat_every'
+import { Provided } from '@/lib/provided'
 
-let selectedParameters = ref<any[]>([])
+let selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
 const repeatEvery = ref<RepeatEvery>({ rate: 0, unity: '' })
-const comments = ref<string>()
+const comments = ref<string>('')
 const textareaElement = ref<HTMLTextAreaElement>()
 const scheduleButton = ref<boolean>(false)
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
-const alertClient = inject('alertClient') as AlertAPI
+const alertClient = inject<HttpAlertService>(Provided.ALERT_SERVICE)!
 
 function wasSelected(name: string) {
-    return selectedParameters.value.find((element) => element === name)
+    const selected = selectedParameters.value.find((element) => element === name)
+    if (selected) return true
+    return false
 }
 
 function selectParameter(name: string) {
@@ -52,7 +55,7 @@ function schedule() {
         comments: comments.value
     }
 
-    alertClient.schedule(alertData)
+    alertClient.scheduleAlert(alertData)
     alert('Alerta agendado com sucesso')
     return router.push({ name: 'ExamGeneralCondition' })
 }
@@ -81,8 +84,8 @@ onMounted(() => {
                                 type="checkbox"
                                 class="rounded focus:ring-0"
                                 :name="parameter.name"
-                                @click="selectParameter(parameter.name)"
                                 :checked="wasSelected(parameter.name)"
+                                @click="selectParameter(parameter.name)"
                             />
                             <label
                                 class="ml-2 block text-gray-900"
@@ -117,3 +120,4 @@ onMounted(() => {
         </Footer>
     </div>
 </template>
+@/lib/models/repeat_every
