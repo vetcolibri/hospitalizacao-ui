@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { HttpAlertService } from '@/services/alert_service'
 import { parameters } from '@/lib/data/parameters'
 import { Provided } from '@/lib/provided'
-import type { Alert } from '@/lib/models/alert'
+import type { Alert } from '@/models/alert'
 
 const router = useRouter()
 const props = defineProps<Alert>()
@@ -75,4 +75,4 @@ function findParameterName(name: string) {
         </div>
     </div>
 </template>
-@/lib/models/alert
+@/models/alert @/models/alert

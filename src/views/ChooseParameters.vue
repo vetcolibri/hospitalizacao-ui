@@ -282,4 +282,4 @@ onBeforeUnmount(() => {
         <button class="btn-success" @click="confirm()">Confirmar</button>
     </Summary>
 </template>
-@/lib/models/measurement
+@/models/measurement

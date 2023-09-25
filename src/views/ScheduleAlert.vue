@@ -120,4 +120,4 @@ onMounted(() => {
         </Footer>
     </div>
 </template>
-@/lib/models/repeat_every
+@/models/repeat_every

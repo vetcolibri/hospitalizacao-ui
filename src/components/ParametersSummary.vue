@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AlertIcon from '@/components/icons/AlertIcon.vue'
 import CheckCircle from '@/components/icons/CheckCircle.vue'
-import type { Parameter } from '@/lib/models/parameter'
+import type { Parameter } from '@/models/parameter'
 
 import { ref } from 'vue'
 
@@ -53,4 +53,4 @@ defineExpose({ addParameters, add, show, close })
         </div>
     </dialog>
 </template>
-@/lib/models/parameter
+@/models/parameter @/models/parameter

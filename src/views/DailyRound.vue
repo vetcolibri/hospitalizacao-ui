@@ -157,4 +157,4 @@ onBeforeMount(async () => {
         <button type="button" class="btn-secondary" @click="confirm()">Confirmar</button>
     </Summary>
 </template>
-@/lib/models/measurement
+@/models/measurement

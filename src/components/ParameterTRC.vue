@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
-import type { Parameter } from '@/lib/models/parameter'
+import type { Parameter } from '@/models/parameter'
 import { ref } from 'vue'
 
 const trc = ref()
@@ -62,4 +62,4 @@ function parameterValidation() {
         </div>
     </div>
 </template>
-@/lib/models/parameter
+@/models/parameter @/models/parameter
