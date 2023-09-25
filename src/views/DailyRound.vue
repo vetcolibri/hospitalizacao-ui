@@ -54,7 +54,7 @@ onBeforeMount(async () => {
         <GoBack />
     </Header>
     <main class="main-content py-8">
-        <section class="parameters-container">
+        <section class="container">
             <ExamTime />
             <form ref="form" class="grid grid-row-1 space-y-4">
                 <HeartRate

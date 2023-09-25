@@ -74,7 +74,7 @@ onMounted(() => {
     <div>
         <Header title="Alerta na monitorização" />
         <main class="main-content py-8">
-            <section class="parameters-container">
+            <section class="container">
                 <form class="space-y-3">
                     <ScheduleTime v-model="scheduleTime" />
                     <ScheduleRate v-model="repeatEvery" />

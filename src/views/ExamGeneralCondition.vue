@@ -7,15 +7,16 @@ import Footer from '@/components/Footer.vue'
     <main class="main-content">
         <nav class="flex items-center justify-center h-full">
             <ul class="flex flex-col gap-4 w-full lg:max-w-lg xl:max-w-xl">
-                <router-link :to="{ name: 'ChoosePatient', params: { examFormat: 'daily-round' } }">
+                <router-link :to="{ name: 'ChoosePatient', params: { page: 'daily-round' } }">
                     <li class="border rounded shadow text-center bg-white p-4">Ronda diária</li>
                 </router-link>
-                <router-link
-                    :to="{ name: 'ChoosePatient', params: { examFormat: 'choose-parameters' } }"
-                >
+                <router-link :to="{ name: 'ChoosePatient', params: { page: 'choose-parameters' } }">
                     <li class="border rounded shadow text-center bg-white p-4">
                         Monitorização continuada
                     </li>
+                </router-link>
+                <router-link :to="{ name: 'ChoosePatient', params: { page: 'measurements' } }">
+                    <li class="border rounded shadow text-center bg-white p-4">Internamentos</li>
                 </router-link>
             </ul>
         </nav>

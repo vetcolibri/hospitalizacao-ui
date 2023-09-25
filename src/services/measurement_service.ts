@@ -7,6 +7,7 @@ export interface MeasurementService {
     measurements: Measurement[],
   ): Promise<void>;
   latestMeasurements(patientId: string): Promise<Measurement[]>;
+  getAllMeasurements(patientId: string): Promise<Measurement[]>;
 }
 
 export class HttpMeasurementService implements MeasurementService {
@@ -33,12 +34,19 @@ export class HttpMeasurementService implements MeasurementService {
   }
 
   async latestMeasurements(patientId: string) {
-    const { data } = await this.httpClient.post(
+    const response = await this.httpClient.post(
       `${this.baseUrl}/${this.resource}/latest`,
       {
         patientId,
       },
     );
-    return data;
+    return response.data;
+  }
+
+  async getAllMeasurements(patientId: string): Promise<Measurement[]> {
+    const response = await this.httpClient.get(
+      `${this.baseUrl}/${this.resource}/`,
+    );
+    return response.data;
   }
 }

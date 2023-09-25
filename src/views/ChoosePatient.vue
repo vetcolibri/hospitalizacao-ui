@@ -36,4 +36,3 @@ onMounted(async () => {
         <Footer />
     </div>
 </template>
-@/models/patient

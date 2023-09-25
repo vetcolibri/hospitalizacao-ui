@@ -9,7 +9,7 @@ const routes = [
         component: ExamGeneralCondition
     },
     {
-        path: '/choose-patient/:examFormat',
+        path: '/choose-patient/:page',
         name: 'ChoosePatient',
         component: () => import('@/views/ChoosePatient.vue')
     },
@@ -27,6 +27,11 @@ const routes = [
         path: '/schedule-alert/:patientId/',
         name: 'ScheduleAlert',
         component: () => import('@/views/ScheduleAlert.vue')
+    },
+    {
+        path: '/measurements/:patientId/',
+        name: 'Measurements',
+        component: () => import('@/views/Measurements.vue')
     }
 ]
 

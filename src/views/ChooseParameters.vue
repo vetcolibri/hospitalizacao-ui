@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
         <GoBack />
     </Header>
     <main class="main-content py-8">
-        <section class="parameters-container">
+        <section class="container">
             <ExamTime />
             <div class="relative space-y-2">
                 <div

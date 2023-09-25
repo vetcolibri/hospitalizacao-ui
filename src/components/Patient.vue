@@ -7,7 +7,7 @@ defineProps<Patient>()
 </script>
 <template>
     <section class="shadow-md rounded bg-white relative">
-        <router-link :to="`/${$route.params.examFormat}/${patientId}`">
+        <router-link :to="`/${$route.params.page}/${patientId}`">
             <div class="flex p-8 gap-8 items-center">
                 <div class="w-[8rem]">
                     <img :src="iconUrl" alt="pet-foot-image" />
@@ -30,4 +30,3 @@ defineProps<Patient>()
         </router-link>
     </section>
 </template>
-@/models/patient @/models/patient
