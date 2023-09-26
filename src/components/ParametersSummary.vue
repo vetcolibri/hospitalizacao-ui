@@ -53,4 +53,3 @@ defineExpose({ addParameters, add, show, close })
         </div>
     </dialog>
 </template>
-@/models/parameter @/models/parameter

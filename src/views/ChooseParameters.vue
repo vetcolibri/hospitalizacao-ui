@@ -21,7 +21,7 @@ import HandIndex from '@/components/icons/HandIndex.vue'
 import { parameters } from '@/lib/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
 import type { Measurement } from '@/models/measurement'
-import { openSummary, lastMeasurement, getAllMeasurements } from '@/lib/shared/utils'
+import { openSummary, lastMeasurement, makeParameters } from '@/lib/shared/utils'
 import { HttpMeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 
@@ -94,7 +94,7 @@ const clickOutsideHandler = (event: Event) => {
 
 function confirm() {
     const parameters = visibleParameters()
-    const measurements = getAllMeasurements(parameters)
+    const measurements = makeParameters(parameters)
     measurmentClient.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
     alert('Medições salvas com sucesso!')

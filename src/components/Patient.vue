@@ -22,6 +22,9 @@ defineProps<Patient>()
                     <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
                         {{ specie }}
                     </li>
+                    <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
+                        18 Set. 2023
+                    </li>
                 </ul>
             </div>
             <div v-if="hasAlert" class="absolute left-3 bottom-3 text-end text-yellow-600">

@@ -19,7 +19,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import type { Measurement } from '@/models/measurement'
-import { getAllMeasurements, openSummary, lastMeasurement } from '@/lib/shared/utils'
+import { makeParameters, openSummary, lastMeasurement } from '@/lib/shared/utils'
 import { HttpMeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 
@@ -36,7 +36,7 @@ const measurmentClient = inject<HttpMeasurementService>(Provided.MEASUREMENT_SER
 
 function confirm() {
     const parameters = dailyRound.value
-    const measurements = getAllMeasurements(parameters)
+    const measurements = makeParameters(parameters)
     measurmentClient.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
     if (alertCheckbox.value) {

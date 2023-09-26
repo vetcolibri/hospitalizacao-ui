@@ -1,5 +1,5 @@
 export interface Measurement {
-    readonly parameter: string
+    readonly name: string
     readonly value: string
     readonly date?: string
     readonly message?: string

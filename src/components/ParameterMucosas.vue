@@ -1,13 +1,9 @@
 <script setup lang="ts">
-import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
+import { vLastMeasurement } from '@/lib/shared/utils'
 import type { Parameter } from '@/models/parameter'
 
-const props = defineProps<Parameter>()
+defineProps<Parameter>()
 const emit = defineEmits()
-
-const date = props.lastMeasurement?.date ? new Date(props.lastMeasurement?.date!) : new Date()
-const hour = makeHourFormat(date)
-const today = makeTodayFormat(date)
 
 const updateValue = (event: InputEvent) => {
     const data = { value: (event.target as HTMLSelectElement).value, message: '' }
@@ -37,11 +33,13 @@ const updateValue = (event: InputEvent) => {
                     type="text"
                     :placeholder="lastMeasurement ? lastMeasurement.value : 'N/D'"
                 />
-                <span v-if="lastMeasurement?.value" class="text-sm text-gray-600">
-                    Ultima medição: {{ today }}, {{ hour }}.
+                <span
+                    v-if="lastMeasurement?.value"
+                    v-last-measurement="lastMeasurement?.date!"
+                    class="text-sm text-gray-600"
+                >
                 </span>
             </div>
         </div>
     </div>
 </template>
-@/models/parameter @/models/parameter
