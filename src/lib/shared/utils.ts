@@ -30,7 +30,7 @@ export function lastMeasurement(
   measurements: Measurement[],
 ) {
   const measurement = measurements.find((measurement: any) =>
-    measurement.parameter === parameter
+    measurement.name === parameter
   );
   if (measurement) return measurement;
 }

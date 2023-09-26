@@ -47,4 +47,3 @@ const updateValue = () => {
         </div>
     </div>
 </template>
-@/models/parameter @/models/parameter

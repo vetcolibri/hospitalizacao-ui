@@ -43,4 +43,3 @@ const updateValue = (event: InputEvent) => {
         </div>
     </div>
 </template>
-@/models/parameter @/models/parameter

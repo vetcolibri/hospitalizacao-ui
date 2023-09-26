@@ -63,4 +63,3 @@ function parameterValidation() {
         </div>
     </div>
 </template>
-@/models/parameter @/models/parameter
