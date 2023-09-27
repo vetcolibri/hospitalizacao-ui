@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AlertIcon from '@/components/icons/AlertIcon.vue'
 import { iconUrl } from '@/lib/data/patients'
+import { makeDateFormat } from '@/lib/shared/utils'
 import type { Patient } from '@/models/patient'
 
 defineProps<Patient>()
@@ -23,7 +24,7 @@ defineProps<Patient>()
                         {{ specie }}
                     </li>
                     <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        18 Set. 2023
+                        {{ makeDateFormat(new Date(dateOfAdmission)) }}
                     </li>
                 </ul>
             </div>

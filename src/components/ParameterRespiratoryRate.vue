@@ -3,19 +3,19 @@ import { vLastMeasurement } from '@/lib/shared/utils'
 import type { Parameter } from '@/models/parameter'
 import { ref } from 'vue'
 
-const inputElement = ref()
+const respiratoryRate = ref()
 const message = ref<string>('')
 defineProps<Parameter>()
 const emit = defineEmits()
 
 const updateValue = () => {
-    const data = { value: inputElement.value, message }
+    const data = { value: respiratoryRate.value, message }
     emit('update:modelValue', data)
 }
 
 function parameterValidation() {
-    const value = parseInt(inputElement.value)
-    if (inputElement.value === '') {
+    const value = parseInt(respiratoryRate.value)
+    if (respiratoryRate.value === '') {
         message.value = ''
     } else if (value >= 0 && value <= 9) {
         message.value = 'Bradipnéia'
@@ -35,7 +35,7 @@ function parameterValidation() {
                 <input
                     class="form-control"
                     placeholder="Valor"
-                    v-model="inputElement"
+                    v-model="respiratoryRate"
                     min="0"
                     max="100"
                     required

@@ -21,7 +21,7 @@ const routes = [
     {
         path: '/choose-parameters/:patientId/',
         name: 'ChooseParameters',
-        component: () => import('@/views/ChooseParameters.vue')
+        component: () => import('@/views/ContinuousMonitoring.vue')
     },
     {
         path: '/schedule-alert/:patientId/',
@@ -31,7 +31,7 @@ const routes = [
     {
         path: '/measurements/:patientId/',
         name: 'Measurements',
-        component: () => import('@/views/Measurements.vue')
+        component: () => import('@/views/PatientMeasurements.vue')
     }
 ]
 

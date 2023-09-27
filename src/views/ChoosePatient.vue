@@ -12,8 +12,8 @@ import type { PatientService } from '@/services/patient_service'
 const patients = ref<Patient[]>([])
 
 onMounted(async () => {
-    const patientClient = inject<PatientService>(Provided.PATIENT_SERVICE)!
-    const data = await patientClient.getAllHospitalized()
+    const patientService = inject<PatientService>(Provided.PATIENT_SERVICE)!
+    const data = await patientService.getAllHospitalized()
     patients.value = data
 })
 </script>
@@ -29,6 +29,7 @@ onMounted(async () => {
                     :patientId="patient.patientId"
                     :name="patient.name"
                     :specie="patient.specie"
+                    :dateOfAdmission="patient.dateOfAdmission"
                     :hasAlert="patient.hasAlert"
                 />
             </section>

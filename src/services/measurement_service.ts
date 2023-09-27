@@ -41,6 +41,6 @@ export class HttpMeasurementService implements MeasurementService {
         const data = await this.httpClient.get(
             `${this.baseUrl}/${this.resource}/?patientId=${patientId}`
         )
-        return data
+        return data.reverse()
     }
 }

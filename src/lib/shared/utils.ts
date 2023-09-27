@@ -1,4 +1,5 @@
 import type { Measurement } from '@/models/measurement'
+import { PARAMETERS_NAME, PARAMETERS_UNITY } from '../data/parameters'
 
 export function openSummary(form: HTMLFormElement, summary: any, parameters: any) {
     if (!form.checkValidity()) {
@@ -26,7 +27,7 @@ export function lastMeasurement(parameter: string, measurements: Measurement[]) 
     if (measurement) return measurement
 }
 
-export function makeTodayFormat(date: Date) {
+export function makeDateFormat(date: Date) {
     let month = makeMonthFormat(date)
     const firstCharacter = month.charAt(0).toUpperCase()
     month = firstCharacter + month.slice(1)
@@ -71,7 +72,19 @@ export const vLastMeasurement = {
 
 function lastMeasurementFormat(el: HTMLSpanElement, binding: { value: string }) {
     const date = new Date(binding.value)
-    const day = makeTodayFormat(date)
+    const day = makeDateFormat(date)
     const hour = makeHourFormat(date)
     el.innerHTML = `Ultimas medições: ${day}, ${hour}`
+}
+
+export function findParameterName(name: string) {
+    const result = Object.entries(PARAMETERS_NAME).find((item) => item[0] === name)
+    if (!result) return
+    return result[1]
+}
+
+export function findParameterUnity(name: string) {
+    const result = Object.entries(PARAMETERS_UNITY).find((item) => item[0] === name)
+    if (!result) return
+    return result[1]
 }

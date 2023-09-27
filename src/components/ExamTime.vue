@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
+import { makeHourFormat, makeDateFormat } from '@/lib/shared/utils'
 
 const date = new Date()
-const today = makeTodayFormat(date)
+const today = makeDateFormat(date)
 const hour = makeHourFormat(date)
 </script>
 <template>

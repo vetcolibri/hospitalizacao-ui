@@ -22,7 +22,7 @@ const scheduleButton = ref<boolean>(false)
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
-const alertClient = inject<HttpAlertService>(Provided.ALERT_SERVICE)!
+const alertService = inject<HttpAlertService>(Provided.ALERT_SERVICE)!
 
 function wasSelected(name: string) {
     const selected = selectedParameters.value.find((element) => element === name)
@@ -55,7 +55,7 @@ function schedule() {
         comments: comments.value
     }
 
-    alertClient.scheduleAlert(alertData)
+    alertService.scheduleAlert(alertData)
     alert('Alerta agendado com sucesso')
     return router.push({ name: 'ExamGeneralCondition' })
 }

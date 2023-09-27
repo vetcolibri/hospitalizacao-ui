@@ -6,7 +6,12 @@ import { RouterLink } from 'vue-router'
 import { inject, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { makeHourFormat, makeTodayFormat } from '@/lib/shared/utils'
+import {
+    makeHourFormat,
+    makeDateFormat,
+    findParameterName,
+    findParameterUnity
+} from '@/lib/shared/utils'
 import { Measurement } from '@/models/measurement'
 import { MeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
@@ -14,28 +19,11 @@ import { Provided } from '@/lib/provided'
 const parameters = ref<Measurement[]>([])
 const route = useRoute()
 const patientId = `${route.params.patientId}`
-const measurmentClient = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
-
-const PARAMETERS = {
-    heartRate: 'Frequência Cardiaca',
-    respiratoryRate: 'Frequência Respiratória',
-    trc: 'TRC',
-    avdn: 'AVDN',
-    mucosas: 'Mucosas',
-    temperature: 'Temperature',
-    glicemia: 'Glicemia',
-    hct: 'HCT',
-    bloodPressure: 'Pressão Arteiral'
-}
-function findParameterName(name: string) {
-    const result = Object.entries(PARAMETERS).find((item) => item[0] === name)
-    if (!result) return
-    return result[1]
-}
+const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 onMounted(async () => {
-    const data = await await measurmentClient.getAllMeasurements(patientId)
-    parameters.value = data.reverse()
+    const data = await await measurmentService.getAllMeasurements(patientId)
+    parameters.value = data
 })
 </script>
 <template>
@@ -84,9 +72,11 @@ onMounted(async () => {
                                 <th scope="row" class="px-6 py-4 font-medium text-gray-90">
                                     {{ findParameterName(parameter.name) }}
                                 </th>
-                                <td class="px-6 py-4">{{ parameter.value }}</td>
                                 <td class="px-6 py-4">
-                                    {{ makeTodayFormat(new Date(parameter.date!)) }}
+                                    {{ parameter.value }} {{ findParameterUnity(parameter.name) }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ makeDateFormat(new Date(parameter.date!)) }}
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ makeHourFormat(new Date(parameter.date!)) }}

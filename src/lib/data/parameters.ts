@@ -77,3 +77,25 @@ export const parameters = {
         chooseVisibility: false
     }
 }
+
+export const PARAMETERS_NAME = {
+    heartRate: 'Frequência Cardiaca',
+    respiratoryRate: 'Frequência Respiratória',
+    trc: 'TRC',
+    avdn: 'AVDN',
+    mucosas: 'Mucosas',
+    temperature: 'Temperature',
+    glicemia: 'Glicemia',
+    hct: 'HCT',
+    bloodPressure: 'Pressão Arteiral'
+}
+
+export const PARAMETERS_UNITY = {
+    heartRate: 'BPM',
+    respiratoryRate: 'RPM',
+    trc: "'",
+    temperature: 'ºC',
+    glicemia: 'mg/dl',
+    hct: '%',
+    bloodPressure: 'mm/Hg'
+}

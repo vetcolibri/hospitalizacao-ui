@@ -37,8 +37,7 @@ const latestMeasurements = ref<Measurement[]>([])
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
-
-const measurmentClient = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
+const measurmentService = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 function toogleParameterList() {
     parameterListVisibility.value = !parameterListVisibility.value
@@ -95,7 +94,7 @@ const clickOutsideHandler = (event: Event) => {
 function confirm() {
     const parameters = visibleParameters()
     const measurements = makeParameters(parameters)
-    measurmentClient.newMeasurements(patientId, measurements)
+    measurmentService.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
     alert('Medições salvas com sucesso!')
     if (alertCheckbox.value) {
@@ -109,7 +108,7 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-    latestMeasurements.value = await measurmentClient.latestMeasurements(patientId)
+    latestMeasurements.value = await measurmentService.latestMeasurements(patientId)
     showSelectedParameters()
     localStorage.clear()
     document.addEventListener('click', clickOutsideHandler)

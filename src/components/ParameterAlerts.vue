@@ -3,10 +3,11 @@ import AlertIcon from '@/components/icons/AlertIcon.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 import { HttpAlertService } from '@/services/alert_service'
-import { parameters } from '@/lib/data/parameters'
-import { Provided } from '@/lib/provided'
+import { findParameterName } from '@/lib/shared/utils'
 import type { Alert } from '@/models/alert'
+import { Provided } from '@/lib/provided'
 
 const router = useRouter()
 const props = defineProps<Alert>()
@@ -38,10 +39,6 @@ function confirm() {
     }
     return redirectToChooseParameters()
 }
-
-function findParameterName(name: string) {
-    return Object.values(parameters).find((parameter) => parameter.name === name)
-}
 </script>
 <template>
     <div class="my-4 space-y-4">
@@ -50,9 +47,9 @@ function findParameterName(name: string) {
             <span class="text-sm text-red-500">A cada {{ convert(repeatEvery) }}</span>
         </div>
         <ul class="space-y-4">
-            <li v-for="parameter in props.parameters" class="flex items-center w-full gap-2">
+            <li v-for="name in parameters" class="flex items-center w-full gap-2">
                 <alert-icon class="text-yellow-600" />
-                {{ findParameterName(parameter)?.title }}
+                {{ findParameterName(name) }}
             </li>
         </ul>
         <p class="text-sm text-justify my-4">{{ comments }}</p>
@@ -75,4 +72,3 @@ function findParameterName(name: string) {
         </div>
     </div>
 </template>
-@/models/alert @/models/alert
