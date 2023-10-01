@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
                 >
                     <hand-index></hand-index>
                     <div class="form-contral flex-1 border-0 py-2 focus:ring-0">
-                        Escolher parâmentros
+                        Escolher parâmetros
                     </div>
                 </div>
                 <div

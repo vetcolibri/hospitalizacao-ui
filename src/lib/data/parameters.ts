@@ -84,7 +84,7 @@ export const PARAMETERS_NAME = {
     trc: 'TRC',
     avdn: 'AVDN',
     mucosas: 'Mucosas',
-    temperature: 'Temperature',
+    temperature: 'Temperatura',
     glicemia: 'Glicemia',
     hct: 'HCT',
     bloodPressure: 'Pressão Arteiral'
