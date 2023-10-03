@@ -2,9 +2,7 @@ import type { Measurement } from '@/models/measurement'
 import { PARAMETERS_NAME, PARAMETERS_UNITY } from '../data/parameters'
 
 export function openSummary(form: HTMLFormElement, summary: any, parameters: any) {
-    if (!form.checkValidity()) {
-        return form.reportValidity()
-    }
+    if (!form.checkValidity()) return form.reportValidity()
     if (parameters.length > 0) {
         summary.addParameters(parameters)
         summary.show()

@@ -39,6 +39,7 @@ function confirm() {
     const measurements = makeParameters(parameters)
     measurmentClient.newMeasurements(patientId, measurements)
     summaryOfMeasurements.value?.close()
+    alert('Medições salvas com sucesso!')
     if (alertCheckbox.value) {
         return router.push({ name: 'ScheduleAlert', params: { patientId } })
     }
@@ -154,6 +155,6 @@ onBeforeMount(async () => {
         </button>
     </Footer>
     <Summary ref="summaryOfMeasurements" title="Detalhes">
-        <button type="button" class="btn-secondary" @click="confirm()">Confirmar</button>
+        <button type="button" class="btn-success" @click="confirm()">Confirmar</button>
     </Summary>
 </template>
