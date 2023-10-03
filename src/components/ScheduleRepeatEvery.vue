@@ -4,7 +4,7 @@ import { units } from '@/lib/data/alerts'
 
 const repeatEvery = ref({ rate: 30, unity: 'minutes' })
 const emit = defineEmits()
-const updateValue = (event?: InputEvent) => {
+const updateValue = () => {
     emit('update:modelValue', repeatEvery.value)
 }
 

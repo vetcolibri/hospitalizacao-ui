@@ -3,8 +3,11 @@ import AlertIcon from '@/components/icons/AlertIcon.vue'
 import { iconUrl } from '@/lib/data/patients'
 import { makeDateFormat } from '@/lib/shared/utils'
 import type { Patient } from '@/models/patient'
+import { ref } from 'vue'
 
-defineProps<Patient>()
+const date = ref()
+const props = defineProps<Patient>()
+date.value = new Date(props.dateOfAdmission)
 </script>
 <template>
     <section class="shadow-md rounded bg-white relative">
@@ -24,7 +27,7 @@ defineProps<Patient>()
                         {{ specie }}
                     </li>
                     <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        {{ makeDateFormat(new Date(dateOfAdmission)) }}
+                        {{ makeDateFormat(date) }}
                     </li>
                 </ul>
             </div>

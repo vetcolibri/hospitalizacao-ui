@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue';
+import { makeHourFormat } from '@/lib/shared/utils'
+import { onBeforeMount, ref } from 'vue'
 
-const date = new Date()
-const hour = ref(new Intl.DateTimeFormat("pt-PT", {timeStyle: "short"}).format(date))
 const emit = defineEmits()
+const date = new Date()
+const hour = ref()
+hour.value = makeHourFormat(date)
 
 const updateValue = () => {
     emit('update:modelValue', hour.value)
@@ -17,13 +19,13 @@ onBeforeMount(() => {
     <div class="space-y-1">
         <label for="time" class="block">Hora do alerta</label>
         <div class="w-32">
-            <input 
-                class="form-control text-center w-24" 
-                type="time" 
-                name="hour" 
+            <input
+                class="form-control text-center w-24"
+                type="time"
+                name="hour"
                 @input="() => updateValue()"
-                v-model="hour" 
-            >
+                v-model="hour"
+            />
         </div>
     </div>
 </template>

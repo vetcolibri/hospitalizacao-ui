@@ -3,6 +3,7 @@ import Alert from './components/Alert.vue'
 import ParameterAlerts from './components/ParameterAlerts.vue'
 
 import { inject, ref } from 'vue'
+import { Provided } from './lib/provided'
 
 const alertElement = ref<typeof Alert>()
 const alertId = ref<string>('')
@@ -10,7 +11,7 @@ const patientId = ref<string>('')
 const parameters = ref<string[]>([])
 const repeatEvery = ref<number>(0)
 const comments = ref<string>('')
-const webSocket = inject('webSocket') as WebSocket
+const webSocket = inject<WebSocket>(Provided.WEBSOCKET)!
 
 webSocket.onopen = () => {
     console.log('Websocket Connected.')

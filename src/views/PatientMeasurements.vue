@@ -22,7 +22,7 @@ const patientId = `${route.params.patientId}`
 const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 onMounted(async () => {
-    const data = await await measurmentService.getAllMeasurements(patientId)
+    const data = await measurmentService.getAllMeasurements(patientId)
     parameters.value = data
 })
 </script>

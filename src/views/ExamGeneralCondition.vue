@@ -16,7 +16,7 @@ import Footer from '@/components/Footer.vue'
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'ChoosePatient', params: { page: 'measurements' } }">
-                    <li class="border rounded shadow text-center bg-white p-4">Internamentos</li>
+                    <li class="border rounded shadow text-center bg-white p-4">Hospitalização</li>
                 </router-link>
             </ul>
         </nav>
