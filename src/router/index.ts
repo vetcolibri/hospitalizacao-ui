@@ -32,6 +32,11 @@ const routes = [
         path: '/measurements/:patientId/',
         name: 'Measurements',
         component: () => import('@/views/PatientMeasurements.vue')
+    },
+    {
+        path: '/new-hospitalization/',
+        name: 'NewHospitalization',
+        component: () => import('@/views/NewHospitalization.vue')
     }
 ]
 

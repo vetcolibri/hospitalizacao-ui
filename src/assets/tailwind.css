@@ -23,7 +23,7 @@ form:invalid select:required {
 }
 
 .form-control {
-    @apply w-full border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-0;
+    @apply w-full p-2.5 block text-sm border border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-0;
 }
 
 .btn-success {
@@ -43,5 +43,5 @@ form:invalid select:required {
 }
 
 .disabled {
-    @apply bg-gray-100 text-gray-500 cursor-default;
+    @apply bg-gray-100 text-gray-500 cursor-not-allowed;
 }
