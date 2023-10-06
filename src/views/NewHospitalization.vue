@@ -7,8 +7,10 @@ import { QUEIXAS, DIAGNOSTICOS } from '@/lib/data/hospitalization'
 import { ref } from 'vue'
 
 const form = ref<HTMLFormElement>()
+const patientID = ref<string>('')
 
 function hospitalize() {
+    console.log(patientID.value)
     const isValid = form.value?.checkValidity()
     if (!isValid) return form.value?.reportValidity()
 }
@@ -55,7 +57,7 @@ function hospitalize() {
                     />
                     <InputField
                         title="ID Proprietário"
-                        value="1ahjYAAx91"
+                        value="PR - 2921/KJ23"
                         :disabled="true"
                         :readonly="true"
                         class="flex-1"

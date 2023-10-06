@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 interface Props {
     title: string
     value?: string
@@ -8,7 +10,14 @@ interface Props {
     isSelect?: boolean
     isRequired?: boolean
 }
-defineProps<Props>()
+const props = defineProps<Props>()
+const emit = defineEmits(['update:modelValue'])
+const value = ref()
+
+function emitValue() {
+    if (props.disabled && props.readonly) return
+    emit('update:modelValue', value)
+}
 </script>
 
 <template>
@@ -33,6 +42,8 @@ defineProps<Props>()
             :disabled="disabled ? true : false"
             :readonly="readonly ? true : false"
             :required="isRequired"
+            :v-model="value"
+            @input="emitValue"
         />
     </div>
 </template>
