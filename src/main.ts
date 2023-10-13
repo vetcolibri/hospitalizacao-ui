@@ -8,13 +8,13 @@ import { AxiosAdapter } from './lib/adapters/axios_adapter'
 import { HttpMeasurementService } from './services/measurement_service'
 import { HttpAlertService } from './services/alert_service'
 import { Provided } from './lib/provided'
-import { HttpPatientService } from './services/patient_service'
+import { FakePatientService, HttpPatientService } from './services/patient_service'
 
 const app = createApp(App)
 
 const baseUrl = 'http://192.168.10.69:8000'
 const axiosAdapter = new AxiosAdapter()
-const patientService = new HttpPatientService(axiosAdapter, baseUrl)
+const patientService = new FakePatientService()
 const measurementService = new HttpMeasurementService(axiosAdapter, baseUrl)
 const alertService = new HttpAlertService(axiosAdapter, baseUrl)
 const webSocket = new WebSocket('ws://192.168.10.69:8000/alerts/notifications')

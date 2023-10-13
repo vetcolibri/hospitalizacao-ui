@@ -12,11 +12,11 @@ interface Props {
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
-const value = ref()
+const inputValue = ref<string | number | Date>()
 
 function emitValue() {
     if (props.disabled && props.readonly) return
-    emit('update:modelValue', value)
+    emit('update:modelValue', inputValue.value)
 }
 </script>
 
@@ -26,7 +26,7 @@ function emitValue() {
         <input
             v-if="isSelect"
             class="form-control form-select mt-2"
-            :value="value"
+            :placeholder="value ? value : ''"
             :type="type ? type : 'text'"
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"
@@ -36,14 +36,14 @@ function emitValue() {
         <input
             v-else
             class="form-control mt-2"
-            :value="value"
+            :placeholder="value ? value : ''"
             :type="type ? type : 'text'"
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"
             :readonly="readonly ? true : false"
             :required="isRequired"
-            :v-model="value"
-            @input="emitValue"
+            v-model="inputValue"
+            @input="emitValue()"
         />
     </div>
 </template>
