@@ -1,37 +1,15 @@
 import type { Hospitalization } from '@/models/hospitalization'
 import type { HttpClient } from '@/lib/http_client'
 import type { Patient } from '@/models/patient'
+import type { Either } from '@/lib/shared/either'
+import { left, right } from '@/lib/shared/either'
 
 export interface PatientService {
     getAllHospitalized(): Promise<Patient[]>
-    newHospitalization(patientId: string, data: Partial<Hospitalization>): Promise<Patient>
-}
-
-export class FakePatientService implements PatientService {
-    readonly #data: Record<string, Patient> = {}
-
-    constructor() {
-        this.#populate()
-    }
-
-    getAllHospitalized(): Promise<Patient[]> {
-        return Promise.resolve(Object.values(this.#data))
-    }
-
-    newHospitalization(patientId: string, data: Partial<Hospitalization>): Promise<Patient> {
-        throw new Error('Method not implemented.')
-    }
-
-    #populate(): void {
-        const patient1 = {
-            patientId: 'some-id',
-            name: 'Rex',
-            specie: 'CANINE',
-            dateOfAdmission: '2021-05-01T00:00:00Z',
-            hasAlert: true
-        }
-        this.#data[patient1.patientId] = patient1
-    }
+    newHospitalization(
+        patientId: string,
+        data: Partial<Hospitalization>
+    ): Promise<Either<Error, void>>
 }
 
 export class HttpPatientService implements PatientService {
@@ -50,7 +28,12 @@ export class HttpPatientService implements PatientService {
         return patients
     }
 
-    newHospitalization(patientId: string, data: Partial<Hospitalization>): Promise<Patient> {
-        throw new Error('Method not implemented.')
+    async newHospitalization(
+        patientId: string,
+        hospitalizationData: Partial<Hospitalization>
+    ): Promise<Either<Error, void>> {
+        const body = { patientId, hospitalizationData }
+        await this.HttpClient.post(`${this.baseUrl}/${this.resource}/hospitalize`, body)
+        return Promise.resolve(right(undefined))
     }
 }

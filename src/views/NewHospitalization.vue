@@ -8,25 +8,27 @@ import { inject, ref } from 'vue'
 import { PatientService } from '@/services/patient_service'
 import { Provided } from '@/lib/provided'
 import { Hospitalization } from '@/models/hospitalization'
+import { useRouter } from 'vue-router'
 
 const newHospitalization = ref<Hospitalization>({
     age: 0,
     weight: 0,
-    diagnosis: '',
+    diagnostics: '',
     complaints: '',
     entryDate: '',
-    expectedDischargeDate: '',
-    budgetDate: ''
+    dischargeDate: '',
+    estimatedBudgetDate: ''
 })
+
+const router = useRouter()
 const form = ref<HTMLFormElement>()
 const service = inject<PatientService>(Provided.PATIENT_SERVICE)!
 
-function hospitalize() {
+async function hospitalize() {
     const isValid = form.value?.checkValidity()
     if (!isValid) return form.value?.reportValidity()
-    // Validação das datas
-    // Mudar o ID do Paciente
-    service.newHospitalization('some-id', newHospitalization.value)
+    await service.newHospitalization('some-patient-id', newHospitalization.value)
+    router.push({ name: 'ExamGeneralCondition' })
 }
 </script>
 <template>
@@ -42,7 +44,6 @@ function hospitalize() {
                     :disabled="true"
                     :readonly="true"
                 ></InputField>
-
                 <div class="flex space-x-4">
                     <InputField
                         title="Nome do Paciente"
@@ -130,7 +131,7 @@ function hospitalize() {
                     <label class="md:text-sm">Diagnosticos</label>
                     <select
                         class="form-select form-control mt-2"
-                        v-model="newHospitalization!.diagnosis"
+                        v-model="newHospitalization!.diagnostics"
                         required
                     >
                         <option value="" selected>Escolher diagnosticos</option>
@@ -147,13 +148,13 @@ function hospitalize() {
                     :is-required="true"
                 />
                 <InputField
-                    v-model="newHospitalization!.expectedDischargeDate"
+                    v-model="newHospitalization!.estimatedBudgetDate"
                     title="Data prevista de Alta"
                     type="date"
                     :is-required="true"
                 />
                 <InputField
-                    v-model="newHospitalization!.budgetDate"
+                    v-model="newHospitalization!.dischargeDate"
                     title="Orçamento previsto até"
                     type="date"
                     :is-required="true"

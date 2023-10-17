@@ -29,7 +29,7 @@ onMounted(async () => {
                     :patientId="patient.patientId"
                     :name="patient.name"
                     :specie="patient.specie"
-                    :dateOfAdmission="patient.dateOfAdmission"
+                    :entryDate="patient.entryDate"
                     :hasAlert="patient.hasAlert"
                 />
             </section>

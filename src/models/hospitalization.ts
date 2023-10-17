@@ -1,9 +1,9 @@
 export interface Hospitalization {
     readonly age: number
     readonly weight: number
-    readonly diagnosis: string
     readonly complaints: string
+    readonly diagnostics: string
     readonly entryDate: string
-    readonly expectedDischargeDate: string
-    readonly budgetDate: string
+    readonly dischargeDate: string
+    readonly estimatedBudgetDate: string
 }

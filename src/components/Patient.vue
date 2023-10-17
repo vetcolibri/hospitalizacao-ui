@@ -7,7 +7,7 @@ import { ref } from 'vue'
 
 const date = ref()
 const props = defineProps<Patient>()
-date.value = new Date(props.dateOfAdmission)
+date.value = new Date(props.entryDate)
 </script>
 <template>
     <section class="shadow-md rounded bg-white relative">
