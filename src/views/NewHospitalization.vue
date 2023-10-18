@@ -9,6 +9,7 @@ import { PatientService } from '@/services/patient_service'
 import { Provided } from '@/lib/provided'
 import { Hospitalization } from '@/models/hospitalization'
 import { useRouter } from 'vue-router'
+import { useNotificationStore } from '@/store/notificationStore'
 
 const newHospitalization = ref<Hospitalization>({
     age: 0,
@@ -23,11 +24,17 @@ const newHospitalization = ref<Hospitalization>({
 const router = useRouter()
 const form = ref<HTMLFormElement>()
 const service = inject<PatientService>(Provided.PATIENT_SERVICE)!
+const notificationStore = useNotificationStore()
 
 async function hospitalize() {
     const isValid = form.value?.checkValidity()
     if (!isValid) return form.value?.reportValidity()
-    await service.newHospitalization('some-patient-id', newHospitalization.value)
+    const resultOrErr = await service.newHospitalization(
+        'some-patient-id',
+        newHospitalization.value
+    )
+    console.log(resultOrErr.isLeft(), resultOrErr.value)
+    notificationStore.notify('Hospitalização criada com sucesso!', 'success')
     router.push({ name: 'ExamGeneralCondition' })
 }
 </script>
@@ -163,6 +170,6 @@ async function hospitalize() {
         </section>
     </main>
     <Footer>
-        <button type="button" class="btn-success" @click="hospitalize()">Hospitalizar</button>
+        <button class="btn-success" @click="hospitalize()">Hospitalizar</button>
     </Footer>
 </template>

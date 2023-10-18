@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import ExamGeneralCondition from '@/views/ExamGeneralCondition.vue'
+import NotificationVue from '@/components/Notification.vue'
 
 const routes = [
     {

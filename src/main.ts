@@ -3,6 +3,7 @@ import '@/assets/tailwind.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import { createPinia } from 'pinia'
 
 import { AxiosAdapter } from './lib/adapters/axios_adapter'
 import { HttpMeasurementService } from './services/measurement_service'
@@ -10,6 +11,7 @@ import { HttpAlertService } from './services/alert_service'
 import { Provided } from './lib/provided'
 import { HttpPatientService } from './services/patient_service'
 
+const pinia = createPinia()
 const app = createApp(App)
 
 const baseUrl = 'http://192.168.10.69:8000'
@@ -25,5 +27,5 @@ app.provide(Provided.ALERT_SERVICE, alertService)
 app.provide(Provided.WEBSOCKET, webSocket)
 
 app.use(router)
-
+app.use(pinia)
 app.mount('#app')

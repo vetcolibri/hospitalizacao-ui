@@ -29,7 +29,7 @@ webSocket.onmessage = (event) => {
 </script>
 <template>
     <div class="bg-gray-300 relative">
-        <router-view></router-view>
+        <router-view />
         <Alert ref="alertElement">
             <ParameterAlerts
                 :alert-id="alertId"

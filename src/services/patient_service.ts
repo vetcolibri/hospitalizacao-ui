@@ -3,6 +3,7 @@ import type { HttpClient } from '@/lib/http_client'
 import type { Patient } from '@/models/patient'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
+import { AxiosError } from 'axios'
 
 export interface PatientService {
     getAllHospitalized(): Promise<Patient[]>
@@ -33,7 +34,13 @@ export class HttpPatientService implements PatientService {
         hospitalizationData: Partial<Hospitalization>
     ): Promise<Either<Error, void>> {
         const body = { patientId, hospitalizationData }
-        await this.HttpClient.post(`${this.baseUrl}/${this.resource}/hospitalize`, body)
-        return Promise.resolve(right(undefined))
+        try {
+            await this.HttpClient.post(`${this.baseUrl}/${this.resource}/hospitalize`, body)
+            return Promise.resolve(right(undefined))
+        } catch (AxiosError) {
+            const axiosError = <AxiosError>AxiosError
+            const { error } = axiosError.response!.data
+            return Promise.resolve(left(new Error(error)))
+        }
     }
 }
