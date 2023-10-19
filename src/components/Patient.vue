@@ -14,7 +14,11 @@ date.value = new Date(props.entryDate)
         <router-link :to="`/${$route.params.page}/${patientId}`">
             <div class="flex p-8 gap-8 items-center">
                 <div class="w-[8rem]">
-                    <img :src="iconUrl" alt="pet-foot-image" />
+                    <img
+                        :src="iconUrl"
+                        alt="pet-foot-image"
+                        class="w-[80px] md:w-[105px] mx-auto"
+                    />
                 </div>
                 <ul class="flex-1 space-y-2">
                     <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">

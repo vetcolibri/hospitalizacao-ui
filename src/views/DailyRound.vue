@@ -54,95 +54,105 @@ onBeforeMount(async () => {
     <Header title="Ronda diária">
         <GoBack />
     </Header>
-    <main class="main-content py-8">
-        <section class="container">
-            <ExamTime />
-            <form ref="form" class="grid grid-row-1 space-y-4">
-                <HeartRate
-                    :name="parameters.heartRate.name"
-                    :title="parameters.heartRate.title"
-                    :helpText="parameters.heartRate.helpText"
-                    v-model="parameters.heartRate.measurement"
-                    :last-measurement="
-                        lastMeasurement(parameters.heartRate.name, latestMeasurements)
-                    "
-                />
-                <RespiratoryRate
-                    :name="parameters.respiratoryRate.name"
-                    :title="parameters.respiratoryRate.title"
-                    :helpText="parameters.respiratoryRate.helpText"
-                    v-model="parameters.respiratoryRate.measurement"
-                    :last-measurement="
-                        lastMeasurement(parameters.respiratoryRate.name, latestMeasurements)
-                    "
-                />
-                <TRC
-                    :name="parameters.trc.name"
-                    :title="parameters.trc.title"
-                    :helpText="parameters.trc.helpText"
-                    v-model="parameters.trc.measurement"
-                    :last-measurement="lastMeasurement(parameters.trc.name, latestMeasurements)"
-                />
-                <AVDN
-                    :name="parameters.avdn.name"
-                    :title="parameters.avdn.title"
-                    :options="parameters.avdn.options"
-                    v-model="parameters.avdn.measurement"
-                    :last-measurement="lastMeasurement(parameters.avdn.name, latestMeasurements)"
-                />
-                <Mucosas
-                    :name="parameters.mucosas.name"
-                    :title="parameters.mucosas.title"
-                    :options="parameters.mucosas.options"
-                    v-model="parameters.mucosas.measurement"
-                    :last-measurement="lastMeasurement(parameters.mucosas.name, latestMeasurements)"
-                />
+    <main class="main-content">
+        <section class="px-12">
+            <section class="container mt-8">
+                <ExamTime />
+                <form ref="form" class="grid grid-row-1 space-y-4">
+                    <HeartRate
+                        :name="parameters.heartRate.name"
+                        :title="parameters.heartRate.title"
+                        :helpText="parameters.heartRate.helpText"
+                        v-model="parameters.heartRate.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.heartRate.name, latestMeasurements)
+                        "
+                    />
+                    <RespiratoryRate
+                        :name="parameters.respiratoryRate.name"
+                        :title="parameters.respiratoryRate.title"
+                        :helpText="parameters.respiratoryRate.helpText"
+                        v-model="parameters.respiratoryRate.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.respiratoryRate.name, latestMeasurements)
+                        "
+                    />
+                    <TRC
+                        :name="parameters.trc.name"
+                        :title="parameters.trc.title"
+                        :helpText="parameters.trc.helpText"
+                        v-model="parameters.trc.measurement"
+                        :last-measurement="lastMeasurement(parameters.trc.name, latestMeasurements)"
+                    />
+                    <AVDN
+                        :name="parameters.avdn.name"
+                        :title="parameters.avdn.title"
+                        :options="parameters.avdn.options"
+                        v-model="parameters.avdn.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.avdn.name, latestMeasurements)
+                        "
+                    />
+                    <Mucosas
+                        :name="parameters.mucosas.name"
+                        :title="parameters.mucosas.title"
+                        :options="parameters.mucosas.options"
+                        v-model="parameters.mucosas.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.mucosas.name, latestMeasurements)
+                        "
+                    />
 
-                <Temperature
-                    :name="parameters.temperature.name"
-                    :title="parameters.temperature.title"
-                    :helpText="parameters.temperature.helpText"
-                    v-model="parameters.temperature.measurement"
-                    :last-measurement="
-                        lastMeasurement(parameters.temperature.name, latestMeasurements)
-                    "
-                />
-                <Glicemia
-                    :name="parameters.glicemia.name"
-                    :title="parameters.glicemia.title"
-                    :helpText="parameters.glicemia.helpText"
-                    v-model="parameters.glicemia.measurement"
-                    :last-measurement="
-                        lastMeasurement(parameters.glicemia.name, latestMeasurements)
-                    "
-                />
-                <HCT
-                    :name="parameters.hct.name"
-                    :title="parameters.hct.title"
-                    :helpText="parameters.hct.helpText"
-                    v-model="parameters.hct.measurement"
-                    :last-measurement="lastMeasurement(parameters.hct.name, latestMeasurements)"
-                />
-                <BloodPressure
-                    :name="parameters.bloodPressure.name"
-                    :title="parameters.bloodPressure.title"
-                    :type="parameters.bloodPressure.type"
-                    :helpText="parameters.bloodPressure.helpText"
-                    v-model="parameters.bloodPressure.measurement"
-                    :last-measurement="
-                        lastMeasurement(parameters.bloodPressure.name, latestMeasurements)
-                    "
-                />
-                <div class="flex items-center">
-                    <input type="checkbox" class="focus:ring-0 rounded" v-model="alertCheckbox" />
-                    <label
-                        class="ml-2 block text-gray-900"
-                        @click="() => (alertCheckbox = !alertCheckbox)"
-                    >
-                        Criar alerta de monitorização
-                    </label>
-                </div>
-            </form>
+                    <Temperature
+                        :name="parameters.temperature.name"
+                        :title="parameters.temperature.title"
+                        :helpText="parameters.temperature.helpText"
+                        v-model="parameters.temperature.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.temperature.name, latestMeasurements)
+                        "
+                    />
+                    <Glicemia
+                        :name="parameters.glicemia.name"
+                        :title="parameters.glicemia.title"
+                        :helpText="parameters.glicemia.helpText"
+                        v-model="parameters.glicemia.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.glicemia.name, latestMeasurements)
+                        "
+                    />
+                    <HCT
+                        :name="parameters.hct.name"
+                        :title="parameters.hct.title"
+                        :helpText="parameters.hct.helpText"
+                        v-model="parameters.hct.measurement"
+                        :last-measurement="lastMeasurement(parameters.hct.name, latestMeasurements)"
+                    />
+                    <BloodPressure
+                        :name="parameters.bloodPressure.name"
+                        :title="parameters.bloodPressure.title"
+                        :type="parameters.bloodPressure.type"
+                        :helpText="parameters.bloodPressure.helpText"
+                        v-model="parameters.bloodPressure.measurement"
+                        :last-measurement="
+                            lastMeasurement(parameters.bloodPressure.name, latestMeasurements)
+                        "
+                    />
+                    <div class="flex items-center">
+                        <input
+                            type="checkbox"
+                            class="focus:ring-0 rounded"
+                            v-model="alertCheckbox"
+                        />
+                        <label
+                            class="ml-2 block text-gray-900"
+                            @click="() => (alertCheckbox = !alertCheckbox)"
+                        >
+                            Criar alerta de monitorização
+                        </label>
+                    </div>
+                </form>
+            </section>
         </section>
     </main>
     <Footer>

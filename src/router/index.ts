@@ -1,13 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ExamGeneralCondition from '@/views/ExamGeneralCondition.vue'
-import NotificationVue from '@/components/Notification.vue'
+import Dashboard from '@/views/Dashboard.vue'
 
 const routes = [
     {
         path: '/',
+        name: 'Dashboard',
+        component: Dashboard
+    },
+    {
+        path: '/exam-general-condition/',
         name: 'ExamGeneralCondition',
-        component: ExamGeneralCondition
+        component: () => import('@/views/ExamGeneralCondition.vue')
     },
     {
         path: '/choose-patient/:page',
@@ -35,9 +39,14 @@ const routes = [
         component: () => import('@/views/PatientMeasurements.vue')
     },
     {
-        path: '/new-hospitalization/',
-        name: 'NewHospitalization',
-        component: () => import('@/views/NewHospitalization.vue')
+        path: '/hospitalization/',
+        name: 'Hospitalization',
+        component: () => import('@/views/Hospitalization.vue')
+    },
+    {
+        path: '/recurring-patient/',
+        name: 'RecurringPatient',
+        component: () => import('@/views/RecurringPatient.vue')
     }
 ]
 

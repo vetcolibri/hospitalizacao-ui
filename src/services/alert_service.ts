@@ -1,5 +1,5 @@
 import type { Alert } from '@/models/alert'
-import type { HttpClient } from '../lib/http_client'
+import type { APIClient } from '../lib/api_client'
 
 export interface AlertService {
     scheduleAlert(alert: Alert): void
@@ -7,11 +7,11 @@ export interface AlertService {
 }
 
 export class HttpAlertService implements AlertService {
-    readonly httpClient: HttpClient
+    readonly httpClient: APIClient
     readonly baseUrl: string
     readonly resource: string
 
-    constructor(httpClient: HttpClient, baseUrl: string) {
+    constructor(httpClient: APIClient, baseUrl: string) {
         this.httpClient = httpClient
         this.baseUrl = baseUrl
         this.resource = 'alerts'

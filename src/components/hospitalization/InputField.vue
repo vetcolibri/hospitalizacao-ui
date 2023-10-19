@@ -2,9 +2,10 @@
 import { ref } from 'vue'
 
 interface Props {
-    title: string
+    title?: string
     value?: string
     type?: string
+    placeholder?: string
     disabled?: boolean
     readonly?: boolean
     isSelect?: boolean
@@ -22,11 +23,11 @@ function emitValue() {
 
 <template>
     <div>
-        <label class="text-sm">{{ title }}</label>
+        <label v-if="title" class="text-sm">{{ title }}</label>
         <input
             v-if="isSelect"
-            class="form-control form-select mt-2"
-            :placeholder="value ? value : ''"
+            class="form-control form-select"
+            :placeholder="placeholder ? placeholder : ''"
             :type="type ? type : 'text'"
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"
@@ -35,8 +36,8 @@ function emitValue() {
         />
         <input
             v-else
-            class="form-control mt-2"
-            :placeholder="value ? value : ''"
+            class="form-control"
+            :placeholder="placeholder ? placeholder : ''"
             :type="type ? type : 'text'"
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"

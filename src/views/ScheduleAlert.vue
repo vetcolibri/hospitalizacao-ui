@@ -73,38 +73,40 @@ onMounted(() => {
 <template>
     <div>
         <Header title="Alerta na monitorização" />
-        <main class="main-content py-8">
-            <section class="container">
-                <form class="space-y-3">
-                    <ScheduleTime v-model="scheduleTime" />
-                    <ScheduleRate v-model="repeatEvery" />
-                    <div class="overflow-y-auto border rounded space-y-2 p-3">
-                        <div v-for="parameter in parameters" class="flex items-center">
-                            <input
-                                type="checkbox"
-                                class="rounded focus:ring-0"
-                                :name="parameter.name"
-                                :checked="wasSelected(parameter.name)"
-                                @click="selectParameter(parameter.name)"
-                            />
-                            <label
-                                class="ml-2 block text-gray-900"
-                                @click="selectParameter(parameter.name)"
-                            >
-                                {{ parameter.title }}
-                            </label>
+        <main class="main-content">
+            <section class="px-12">
+                <section class="container mt-8">
+                    <form class="space-y-3">
+                        <ScheduleTime v-model="scheduleTime" />
+                        <ScheduleRate v-model="repeatEvery" />
+                        <div class="overflow-y-auto border rounded space-y-2 p-3">
+                            <div v-for="parameter in parameters" class="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    class="rounded focus:ring-0"
+                                    :name="parameter.name"
+                                    :checked="wasSelected(parameter.name)"
+                                    @click="selectParameter(parameter.name)"
+                                />
+                                <label
+                                    class="ml-2 block text-gray-900"
+                                    @click="selectParameter(parameter.name)"
+                                >
+                                    {{ parameter.title }}
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <textarea
-                        ref="textareaElement"
-                        name="comments"
-                        class="form-control resize-none focus:ring-0 overflow-hidden"
-                        placeholder="Observações"
-                        rows="4"
-                        v-model="comments"
-                    >
-                    </textarea>
-                </form>
+                        <textarea
+                            ref="textareaElement"
+                            name="comments"
+                            class="form-control resize-none focus:ring-0 overflow-hidden"
+                            placeholder="Observações"
+                            rows="4"
+                            v-model="comments"
+                        >
+                        </textarea>
+                    </form>
+                </section>
             </section>
         </main>
         <Footer>

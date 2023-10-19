@@ -1,5 +1,5 @@
 import type { Measurement } from '@/models/measurement'
-import type { HttpClient } from '@/lib/http_client'
+import type { APIClient } from '@/lib/api_client'
 
 export interface MeasurementService {
     newMeasurements(patientId: string, measurements: Measurement[]): Promise<void>
@@ -8,11 +8,11 @@ export interface MeasurementService {
 }
 
 export class HttpMeasurementService implements MeasurementService {
-    readonly httpClient: HttpClient
+    readonly httpClient: APIClient
     readonly baseUrl: string
     readonly resource: string
 
-    constructor(httpClient: HttpClient, baseUrl: string) {
+    constructor(httpClient: APIClient, baseUrl: string) {
         this.httpClient = httpClient
         this.baseUrl = baseUrl
         this.resource = 'measurements'

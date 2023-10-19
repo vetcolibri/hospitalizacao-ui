@@ -13,8 +13,12 @@ const patients = ref<Patient[]>([])
 
 onMounted(async () => {
     const patientService = inject<PatientService>(Provided.PATIENT_SERVICE)!
-    const data = await patientService.getAllHospitalized()
-    patients.value = data
+    const responseOrErr = await patientService.getAllHospitalized()
+    if (responseOrErr.isLeft()) {
+        console.error(responseOrErr.value)
+        return
+    }
+    patients.value = responseOrErr.value
 })
 </script>
 <template>
@@ -22,16 +26,18 @@ onMounted(async () => {
         <Header title="Escolha o paciente">
             <GoBack />
         </Header>
-        <main class="main-content py-8">
-            <section class="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:mx-auto xl:max-w-7xl">
-                <PatientHospitalized
-                    v-for="patient in patients"
-                    :patientId="patient.patientId"
-                    :name="patient.name"
-                    :specie="patient.specie"
-                    :entryDate="patient.entryDate"
-                    :hasAlert="patient.hasAlert"
-                />
+        <main class="main-content">
+            <section class="py-8 px-12">
+                <section class="grid grid-cols-1 gap-4 xl:grid-cols-2 xl:mx-auto xl:max-w-7xl">
+                    <PatientHospitalized
+                        v-for="patient in patients"
+                        :patientId="patient.patientId"
+                        :name="patient.name"
+                        :specie="patient.specie"
+                        :entryDate="patient.entryDate"
+                        :hasAlert="patient.hasAlert"
+                    />
+                </section>
             </section>
         </main>
         <Footer />
