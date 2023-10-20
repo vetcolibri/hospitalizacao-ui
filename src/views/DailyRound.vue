@@ -12,7 +12,7 @@ import Temperature from '@/components/ParameterTemperature.vue'
 import Glicemia from '@/components/ParameterGlicemia.vue'
 import HCT from '@/components/ParameterHCT.vue'
 import BloodPressure from '@/components/ParameterBloodPressure.vue'
-import Summary from '@/components/ParametersSummary.vue'
+import Summary from '@/components/parameters/ParametersSummary.vue'
 
 import { inject, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

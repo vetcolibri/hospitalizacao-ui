@@ -9,4 +9,6 @@ export interface Parameter {
     measurement?: Measurement
     lastMeasurement?: Measurement
     chooseVisibility?: boolean
+    state?: string
+    value?: string
 }

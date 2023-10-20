@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import AlertIcon from '@/components/icons/AlertIcon.vue'
-
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -48,7 +46,6 @@ function confirm() {
         </div>
         <ul class="space-y-4">
             <li v-for="name in parameters" class="flex items-center w-full gap-2">
-                <alert-icon class="text-yellow-600" />
                 {{ findParameterName(name) }}
             </li>
         </ul>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AlertIcon from '@/components/icons/AlertIcon.vue'
 import { iconUrl } from '@/lib/data/patients'
 import { makeDateFormat } from '@/lib/shared/utils'
 import type { Patient } from '@/models/patient'
@@ -35,8 +34,8 @@ date.value = new Date(props.entryDate)
                     </li>
                 </ul>
             </div>
-            <div v-if="hasAlert" class="absolute left-3 bottom-3 text-end text-yellow-600">
-                <alert-icon class="inline-block" />
+            <div v-if="hasAlert" class="absolute left-3 bottom-3 text-end">
+                <i class="bi bi-exclamation-circle text-yellow-600"></i>
             </div>
         </router-link>
     </section>
