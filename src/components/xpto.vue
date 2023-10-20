@@ -4,12 +4,13 @@ import GoBack from '@/components/GoBack.vue'
 import Footer from '@/components/Footer.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
 import Notification from '@/components/Notification.vue'
-import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+
 import { inject, ref } from 'vue'
-import { PatientService } from '@/services/patient_service'
-import { Provided } from '@/lib/provided'
-import { Hospitalization } from '@/models/hospitalization'
 import { useRouter } from 'vue-router'
+import { Provided } from '@/lib/provided'
+import type { PatientService } from '@/services/patient_service'
+import type { Hospitalization } from '@/models/hospitalization'
+import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
 import { useNotificationStore } from '@/store/notificationStore'
 
 const newHospitalization = ref<Hospitalization>({

@@ -3,11 +3,12 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import Search from '@/components/hospitalization/InputField.vue'
 import GoBack from '@/components/GoBack.vue'
+import HospitalizationForm from '@/components/HospitalizationForm.vue'
+
 import { inject, ref } from 'vue'
 import { Provided } from '@/lib/provided'
-import { PatientService } from '@/services/patient_service'
-import { Patient } from '@/models/patient'
-import HospitalizationForm from '@/components/HospitalizationForm.vue'
+import type { PatientService } from '@/services/patient_service'
+import type { Patient } from '@/models/patient'
 
 const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
 const patient = ref<Patient>()

@@ -4,7 +4,7 @@ import AlertIcon from '@/components/icons/AlertIcon.vue'
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { HttpAlertService } from '@/services/alert_service'
+import { AlertServiceAPI } from '@/services/alert_service'
 import { findParameterName } from '@/lib/shared/utils'
 import type { Alert } from '@/models/alert'
 import { Provided } from '@/lib/provided'
@@ -13,7 +13,7 @@ const router = useRouter()
 const props = defineProps<Alert>()
 const emit = defineEmits(['close'])
 const notShowAgain = ref<boolean>(false)
-const alertClient = inject<HttpAlertService>(Provided.ALERT_SERVICE)!
+const alertClient = inject<AlertServiceAPI>(Provided.ALERT_SERVICE)!
 
 function convert(seconds: number) {
     let unity = 'minuto'

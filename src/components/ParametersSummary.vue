@@ -1,8 +1,8 @@
 <script lang="ts">
 import AlertIcon from '@/components/icons/AlertIcon.vue'
 import CheckCircle from '@/components/icons/CheckCircle.vue'
-import { Parameter } from '@/models/parameter'
 import { ref } from 'vue'
+import type { Parameter } from '@/models/parameter'
 </script>
 
 <script setup lang="ts">

@@ -2,7 +2,7 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
-import { RouterLink } from 'vue-router'
+
 import { inject, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -12,18 +12,21 @@ import {
     findParameterName,
     findParameterUnity
 } from '@/lib/shared/utils'
-import { Measurement } from '@/models/measurement'
-import { MeasurementService } from '@/services/measurement_service'
+import type { Measurement } from '@/models/measurement'
+import type { MeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 
-const parameters = ref<Measurement[]>([])
+const measurements = ref<Measurement[]>([])
 const route = useRoute()
 const patientId = `${route.params.patientId}`
 const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 onMounted(async () => {
-    const data = await measurmentService.getAllMeasurements(patientId)
-    parameters.value = data
+    const measurementsOrError = await measurmentService.getAllMeasurements(patientId)
+    if (measurementsOrError.isLeft()) {
+        return
+    }
+    measurements.value = measurementsOrError.value
 })
 </script>
 <template>
@@ -68,9 +71,9 @@ onMounted(async () => {
                                     <th scope="col" class="px-6 py-3">Hora</th>
                                 </tr>
                             </thead>
-                            <tbody v-if="parameters.length > 0">
+                            <tbody v-if="measurements.length > 0">
                                 <tr
-                                    v-for="parameter of parameters"
+                                    v-for="parameter of measurements"
                                     class="border-t border-gray-200"
                                 >
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-90">

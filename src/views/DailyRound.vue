@@ -20,7 +20,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { parameters } from '@/lib/data/parameters'
 import type { Measurement } from '@/models/measurement'
 import { makeParameters, openSummary, lastMeasurement } from '@/lib/shared/utils'
-import { HttpMeasurementService } from '@/services/measurement_service'
+import { MeasurementServiceAPI } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 
 const dailyRound = ref(parameters)
@@ -32,7 +32,7 @@ const latestMeasurements = ref<Measurement[]>([])
 const route = useRoute()
 const router = useRouter()
 const patientId = `${route.params.patientId}`
-const measurmentClient = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
+const measurmentClient = inject<MeasurementServiceAPI>(Provided.MEASUREMENT_SERVICE)!
 
 function confirm() {
     const parameters = dailyRound.value
@@ -47,7 +47,11 @@ function confirm() {
 }
 
 onBeforeMount(async () => {
-    latestMeasurements.value = await measurmentClient.latestMeasurements(patientId)
+    const measurementsOrError = await measurmentClient.latestMeasurements(patientId)
+    if (measurementsOrError.isLeft()) {
+        return
+    }
+    latestMeasurements.value = measurementsOrError.value
 })
 </script>
 <template>

@@ -1,4 +1,4 @@
-import { Either } from './shared/either'
+import type { Either } from './shared/either'
 
 export interface APIError {
     status?: number

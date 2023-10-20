@@ -22,7 +22,7 @@ import { parameters } from '@/lib/data/parameters'
 import { useRoute, useRouter } from 'vue-router'
 import type { Measurement } from '@/models/measurement'
 import { openSummary, lastMeasurement, makeParameters } from '@/lib/shared/utils'
-import { HttpMeasurementService } from '@/services/measurement_service'
+import { MeasurementServiceAPI } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 
 const choiceOfParameters = ref(parameters)
@@ -37,7 +37,7 @@ const latestMeasurements = ref<Measurement[]>([])
 const router = useRouter()
 const route = useRoute()
 const patientId = `${route.params.patientId}`
-const measurmentService = inject<HttpMeasurementService>(Provided.MEASUREMENT_SERVICE)!
+const measurmentService = inject<MeasurementServiceAPI>(Provided.MEASUREMENT_SERVICE)!
 
 function toogleParameterList() {
     parameterListVisibility.value = !parameterListVisibility.value
@@ -108,7 +108,11 @@ onBeforeMount(() => {
 })
 
 onMounted(async () => {
-    latestMeasurements.value = await measurmentService.latestMeasurements(patientId)
+    const measurementsOrError = await measurmentService.latestMeasurements(patientId)
+    if (measurementsOrError.isLeft()) {
+        return
+    }
+    latestMeasurements.value = measurementsOrError.value
     showSelectedParameters()
     localStorage.clear()
     document.addEventListener('click', clickOutsideHandler)

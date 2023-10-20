@@ -2,9 +2,9 @@
 import InputField from '@/components/hospitalization/InputField.vue'
 import Notification from '@/components/Notification.vue'
 
-import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
-import { Hospitalization } from '@/models/hospitalization'
 import { ref } from 'vue'
+import type { Hospitalization } from '@/models/hospitalization'
+import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
 
 interface RecurringHospitalization {
     patientId: string
