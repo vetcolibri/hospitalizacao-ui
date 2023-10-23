@@ -3,20 +3,20 @@ import InputField from '@/components/hospitalization/InputField.vue'
 import Notification from '@/components/Notification.vue'
 
 import { ref } from 'vue'
-import type { Hospitalization } from '@/models/hospitalization'
 import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+import type { Hospitalization } from '@/models/hospitalization'
 
-interface RecurringHospitalization {
-    patientId: string
-    name: string
-    specie: string
+interface Props {
+    patientId?: string
+    name?: string
+    specie?: string
     breed?: string
     ownerId?: string
     ownerName?: string
     ownerPhone?: string
 }
 
-defineProps<RecurringHospitalization>()
+defineProps<Props>()
 
 const newHospitalization = ref<Hospitalization>({
     age: 0,

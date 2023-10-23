@@ -11,11 +11,11 @@ import Temperature from '@/components/parameters/ParameterTemperature.vue'
 import Glicemia from '@/components/parameters/ParameterGlicemia.vue'
 import Hct from '@/components/parameters/ParameterHct.vue'
 import BloodPressure from '@/components/parameters/ParameterBloodPressure.vue'
+import Summary from '@/components/parameters/ParametersSummary.vue'
 import ExamTime from '@/components/ExamTime.vue'
 
 import { ref, onMounted } from 'vue'
 import { states } from '@/lib/data/parameters_state'
-import Summary from '@/components/parameters/ParametersSummary.vue'
 
 const form = ref<HTMLFormElement>()
 const showParameters = ref(false)

@@ -69,5 +69,7 @@ async function findPatient() {
             </section>
         </section>
     </main>
-    <Footer></Footer>
+    <Footer>
+        <button v-show="patient?.patientId" class="btn btn-success">Hospitalizar</button>
+    </Footer>
 </template>

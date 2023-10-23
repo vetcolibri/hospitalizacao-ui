@@ -17,7 +17,7 @@ import GoBack from '@/components/GoBack.vue'
                         <span>Buscar paciente</span>
                     </li>
                 </router-link>
-                <router-link :to="{ name: 'Hospitalization' }">
+                <router-link :to="{ name: 'RegisterPatient' }">
                     <li class="menu-item">
                         <i class="bi bi-plus-circle-fill text-3xl text-yellow-500"></i>
                         <span>Novo Paciente</span>

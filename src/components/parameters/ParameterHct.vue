@@ -18,7 +18,7 @@ const updateValue = () => {
             class="form-control"
             placeholder="Valor"
             min="0"
-            max="10"
+            max="100"
             required
             type="number"
             v-model="hct"

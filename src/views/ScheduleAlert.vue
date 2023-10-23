@@ -114,8 +114,12 @@ onMounted(() => {
                 <router-link :to="{ name: 'ExamGeneralCondition' }">
                     <button class="btn-secondary">Cancelar</button>
                 </router-link>
-                <button v-if="!scheduleButton" class="btn-light disabled">Agendar</button>
-                <button v-if="scheduleButton" type="button" class="btn-success" @click="schedule()">
+                <button v-if="!scheduleButton" class="btn-light disabled">
+                    <i class="bi bi-clock"></i>
+                    Agendar
+                </button>
+                <button v-if="scheduleButton" class="btn-success" @click="schedule()">
+                    <i class="bi bi-clock text-white"></i>
                     Agendar
                 </button>
             </div>
