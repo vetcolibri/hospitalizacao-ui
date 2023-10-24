@@ -3,7 +3,25 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
+import { ref } from 'vue'
+import type { Hospitalization } from '@/models/hospitalization'
 import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+
+const newHospitalization = ref<Hospitalization>({
+    name: '',
+    specie: '',
+    breed: '',
+    ownerId: '',
+    ownerName: '',
+    ownerPhoneNumber: '',
+    age: 0,
+    weight: 0,
+    diagnostics: '',
+    complaints: '',
+    entryDate: '',
+    dischargeDate: '',
+    estimatedBudgetDate: ''
+})
 </script>
 
 <template>
@@ -19,12 +37,13 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             title="Nome do Paciente"
                             class="flex-1"
                             placeholder="Nome do Paciente"
+                            v-model="newHospitalization.name"
                             :is-required="true"
                         />
                         <div class="flex-1">
                             <label class="md:text-sm">Espécie</label>
                             <select class="form-select form-control" required>
-                                <option value selected>Escolher espécie</option>
+                                <option value="" selected>Escolher espécie</option>
                                 <option value="canino">CANINO</option>
                                 <option value="felino">FELINO</option>
                             </select>
@@ -35,12 +54,14 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             title="Raça"
                             class="flex-1"
                             placeholder="Raça"
+                            v-model="newHospitalization.breed"
                             :is-required="true"
                         />
                         <InputField
                             title="ID Proprietário"
                             class="flex-1"
                             placeholder="ID Próprietário"
+                            v-model="newHospitalization.ownerId"
                             :is-required="true"
                         />
                     </div>
@@ -49,12 +70,14 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             title="Nome do Proprietário"
                             class="flex-1"
                             placeholder="Nome do Proprietário"
+                            v-model="newHospitalization.ownerName"
                             :is-required="true"
                         />
                         <InputField
                             title="Telemóvel"
                             class="flex-1"
                             placeholder="Telemóvel"
+                            v-model="newHospitalization.ownerPhoneNumber"
                             :is-required="true"
                         />
                     </div>
@@ -64,13 +87,16 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             type="number"
                             class="flex-1"
                             placeholder="Idade"
+                            v-model="newHospitalization.age"
                             :is-required="true"
+                            @input="$emit('sendData', newHospitalization)"
                         />
                         <InputField
                             title="Peso Kg"
                             type="number"
                             class="flex-1"
                             placeholder="Peso Kg"
+                            v-model="newHospitalization.weight"
                             :is-required="true"
                         />
                     </div>
@@ -83,7 +109,6 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             </option>
                         </select>
                     </div>
-
                     <div>
                         <label class="md:text-sm">Diagnosticos</label>
                         <select class="form-select form-control mt-2" required>
@@ -93,9 +118,24 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
                             </option>
                         </select>
                     </div>
-                    <InputField title="Data de entrada" type="date" :is-required="true" />
-                    <InputField title="Data prevista de Alta" type="date" :is-required="true" />
-                    <InputField title="Orçamento previsto até" type="date" :is-required="true" />
+                    <InputField
+                        title="Data de entrada"
+                        type="date"
+                        v-model="newHospitalization.entryDate"
+                        :is-required="true"
+                    />
+                    <InputField
+                        title="Data prevista de Alta"
+                        type="date"
+                        v-model="newHospitalization.dischargeDate"
+                        :is-required="true"
+                    />
+                    <InputField
+                        title="Orçamento previsto até"
+                        type="date"
+                        v-model="newHospitalization.estimatedBudgetDate"
+                        :is-required="true"
+                    />
                 </form>
             </section>
         </section>

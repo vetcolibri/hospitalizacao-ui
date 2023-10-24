@@ -36,7 +36,8 @@ function confirm() {
     if (!form.value?.checkValidity()) {
         return form.value?.reportValidity()
     }
-    parametersSummaryRef.value?.addParameters(Object.values(parametersState.value))
+    const parameters = Object.values(parametersState.value)
+    parametersSummaryRef.value?.addParameters(parameters)
     parametersSummaryRef.value?.open()
     if (alertCheckbox.value) {
         parametersSummaryRef.value?.close()
