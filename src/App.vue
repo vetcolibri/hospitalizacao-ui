@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import Alert from './components/Alert.vue'
-import ParameterAlerts from './components/ParameterAlerts.vue'
+import ParametersAlert from './components/parameters/ParametersAlert.vue'
 
 import { inject, ref } from 'vue'
 import { Provided } from './lib/provided'
 
-const alertElement = ref<typeof Alert>()
+const parametersAlertRef = ref<typeof ParametersAlert>()
 const alertId = ref<string>('')
 const patientId = ref<string>('')
 const parameters = ref<string[]>([])
@@ -24,21 +23,19 @@ webSocket.onmessage = (event) => {
     parameters.value = data.parameters
     repeatEvery.value = data.repeatEvery
     comments.value = data.comments
-    alertElement.value?.show()
+    parametersAlertRef.value?.open()
 }
 </script>
 <template>
     <div class="bg-gray-300 relative">
         <router-view />
-        <Alert ref="alertElement">
-            <ParameterAlerts
-                :alert-id="alertId"
-                :patient-id="patientId"
-                :parameters="parameters"
-                :repeat-every="repeatEvery"
-                :comments="comments"
-                @close="() => alertElement?.close()"
-            />
-        </Alert>
+        <ParametersAlert
+            ref="parametersAlertRef"
+            alert-id="120"
+            comments="Atenção a glicemia do paciente"
+            patient-id="1"
+            :repeat-every="120"
+            :parameters="['AVDN', 'Glicemia']"
+        />
     </div>
 </template>

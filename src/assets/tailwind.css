@@ -71,6 +71,10 @@ form:invalid select:required {
     @apply bg-red-50 text-red-500 focus:ring-red-400 p-1.5 hover:bg-red-200;
 }
 
+.form-invalid {
+    @apply border-red-500 !important;
+}
+
 /* Menu */
 
 .menu-item {

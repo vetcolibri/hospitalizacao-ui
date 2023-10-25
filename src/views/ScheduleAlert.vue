@@ -4,16 +4,15 @@ import Footer from '@/components/Footer.vue'
 import ScheduleTime from '@/components/ScheduleTime.vue'
 import ScheduleRate from '@/components/ScheduleRepeatEvery.vue'
 
-import { inject, onMounted, ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
 import { AlertServiceAPI } from '@/services/alert_service'
-import type { RepeatEvery } from '@/models/repeat_every'
 import { Provided } from '@/lib/provided'
+import type { RepeatEvery } from '@/models/repeat_every'
 
-let selectedParameters = ref<string[]>([])
+const selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
 const repeatEvery = ref<RepeatEvery>({ rate: 0, unity: '' })
 const comments = ref<string>('')
@@ -31,22 +30,35 @@ function wasSelected(name: string) {
 }
 
 function selectParameter(name: string) {
-    if (!wasSelected(name)) return selectedParameters.value.push(name)
+    if (!wasSelected(name)) {
+        selectedParameters.value.push(name)
+        changeScheduleButton()
+        return
+    }
     selectedParameters.value = selectedParameters.value.filter((element) => element !== name)
+    changeScheduleButton()
     return selectedParameters.value
 }
 
-function repeatEveryToSeconds() {
+function convertToSeconds() {
     const { rate, unity } = repeatEvery.value
-    if (unity === 'minutes') {
-        return rate * 60
+    switch (unity) {
+        case 'minutes':
+            return rate * 60
+        case 'hours':
+            return rate * 3600
+        default:
+            return rate
     }
-    return rate * 60 * 60
 }
 
 function schedule() {
     const date = timeFromString(scheduleTime.value)
-    const rate = repeatEveryToSeconds()
+    const rate = convertToSeconds()
+    if (rate < 0) {
+        alert('O intervalo de tempo não pode ser negativo')
+        return
+    }
     const alertData = {
         patientId: patientId,
         parameters: selectedParameters.value,
@@ -54,21 +66,25 @@ function schedule() {
         repeatEvery: rate,
         comments: comments.value
     }
-
     alertService.scheduleAlert(alertData)
     alert('Alerta agendado com sucesso')
     return router.push({ name: 'ExamGeneralCondition' })
 }
 
-onMounted(() => {
-    textareaElement.value?.addEventListener('input', (event) => {
-        const textarea = (event.target as HTMLTextAreaElement).value
-        if (textarea.length > 0 && selectedParameters.value.length > 0) {
-            return (scheduleButton.value = true)
-        }
-        return (scheduleButton.value = false)
-    })
-})
+function hasParameterSelected() {
+    return selectedParameters.value.length > 0
+}
+
+function hasContent() {
+    return comments.value.length > 0
+}
+
+function changeScheduleButton() {
+    if (hasParameterSelected() && hasContent()) {
+        return (scheduleButton.value = true)
+    }
+    return (scheduleButton.value = false)
+}
 </script>
 <template>
     <div>
@@ -80,18 +96,18 @@ onMounted(() => {
                         <ScheduleTime v-model="scheduleTime" />
                         <ScheduleRate v-model="repeatEvery" />
                         <div class="overflow-y-auto border rounded space-y-2 p-3">
-                            <div v-for="parameter in parameters" class="flex items-center">
+                            <div
+                                v-for="parameter in parameters"
+                                class="flex items-center"
+                                @click="selectParameter(parameter.name)"
+                            >
                                 <input
                                     type="checkbox"
                                     class="rounded focus:ring-0"
                                     :name="parameter.name"
                                     :checked="wasSelected(parameter.name)"
-                                    @click="selectParameter(parameter.name)"
                                 />
-                                <label
-                                    class="ml-2 block text-gray-900"
-                                    @click="selectParameter(parameter.name)"
-                                >
+                                <label class="ml-2 block text-gray-900">
                                     {{ parameter.title }}
                                 </label>
                             </div>
@@ -103,6 +119,7 @@ onMounted(() => {
                             placeholder="Observações"
                             rows="4"
                             v-model="comments"
+                            @input="changeScheduleButton()"
                         >
                         </textarea>
                     </form>

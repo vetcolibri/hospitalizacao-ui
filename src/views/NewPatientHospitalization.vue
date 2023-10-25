@@ -5,7 +5,7 @@ import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
 import { ref } from 'vue'
 import type { Hospitalization } from '@/models/hospitalization'
-import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+import { COMPLAINTS, DIAGNOSIS, BREEDS } from '@/lib/data/hospitalization'
 
 const newHospitalization = ref<Hospitalization>({
     name: '',
@@ -42,7 +42,11 @@ const newHospitalization = ref<Hospitalization>({
                         />
                         <div class="flex-1">
                             <label class="md:text-sm">Espécie</label>
-                            <select class="form-select form-control" required>
+                            <select
+                                class="form-select form-control"
+                                required
+                                v-model="newHospitalization.specie"
+                            >
                                 <option value="" selected>Escolher espécie</option>
                                 <option value="canino">CANINO</option>
                                 <option value="felino">FELINO</option>
@@ -50,13 +54,26 @@ const newHospitalization = ref<Hospitalization>({
                         </div>
                     </div>
                     <div class="flex space-x-4">
-                        <InputField
-                            title="Raça"
-                            class="flex-1"
-                            placeholder="Raça"
-                            v-model="newHospitalization.breed"
-                            :is-required="true"
-                        />
+                        <div class="flex-1">
+                            <label class="md:text-sm">Espécie</label>
+                            <select
+                                class="form-select form-control"
+                                required
+                                v-model="newHospitalization.breed"
+                            >
+                                <option value="" selected>Escolher raça</option>
+                                <optgroup label="Cães">
+                                    <option v-for="breed in BREEDS.caes" :value="breed">
+                                        {{ breed }}
+                                    </option>
+                                </optgroup>
+                                <optgroup label="Gatos">
+                                    <option v-for="breed in BREEDS.gatos" :value="breed">
+                                        {{ breed }}
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
                         <InputField
                             title="ID Proprietário"
                             class="flex-1"
@@ -89,7 +106,6 @@ const newHospitalization = ref<Hospitalization>({
                             placeholder="Idade"
                             v-model="newHospitalization.age"
                             :is-required="true"
-                            @input="$emit('sendData', newHospitalization)"
                         />
                         <InputField
                             title="Peso Kg"
@@ -102,7 +118,11 @@ const newHospitalization = ref<Hospitalization>({
                     </div>
                     <div>
                         <label class="md:text-sm">Queixas</label>
-                        <select class="form-select form-control mt-2" required>
+                        <select
+                            class="form-select form-control mt-2"
+                            required
+                            v-model="newHospitalization.complaints"
+                        >
                             <option value="" selected>Escolher queixas</option>
                             <option v-for="complaint in COMPLAINTS" :value="complaint">
                                 {{ complaint }}
@@ -111,7 +131,11 @@ const newHospitalization = ref<Hospitalization>({
                     </div>
                     <div>
                         <label class="md:text-sm">Diagnosticos</label>
-                        <select class="form-select form-control mt-2" required>
+                        <select
+                            class="form-select form-control mt-2"
+                            required
+                            v-model="newHospitalization.diagnostics"
+                        >
                             <option value="" selected>Escolher diagnosticos</option>
                             <option v-for="diagnosis in DIAGNOSIS" :value="diagnosis">
                                 {{ diagnosis }}
@@ -141,6 +165,9 @@ const newHospitalization = ref<Hospitalization>({
         </section>
     </main>
     <Footer>
-        <button class="btn btn-success">Hospitalizar</button>
+        <button class="btn btn-success space-x-3">
+            <i class="bi bi-floppy2"></i>
+            <span class="font-semibold"> Hospitalizar</span>
+        </button>
     </Footer>
 </template>

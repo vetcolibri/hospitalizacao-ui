@@ -1,25 +1,6 @@
 import type { Measurement } from '@/models/measurement'
 import { PARAMETERS_NAME, PARAMETERS_UNITY } from '../data/parameters'
 
-export function openSummary(form: HTMLFormElement, summary: any, parameters: any) {
-    if (!form.checkValidity()) return form.reportValidity()
-    if (parameters.length > 0) {
-        summary.addParameters(parameters)
-        summary.show()
-    }
-}
-
-export function makeParameters(parameters: Object) {
-    const measurements: Measurement[] = []
-    for (let parameter of Object.values(parameters)) {
-        measurements.push({
-            name: parameter.name,
-            value: parameter.measurement!.value
-        })
-    }
-    return measurements
-}
-
 export function lastMeasurement(parameter: string, measurements: Measurement[]) {
     const measurement = measurements.find((measurement: any) => measurement.name === parameter)
     if (measurement) return measurement

@@ -6,37 +6,25 @@ import { ref } from 'vue'
 
 const date = ref()
 const props = defineProps<Patient>()
-date.value = new Date(props.entryDate)
+date.value = makeDateFormat(new Date(props.entryDate))
 </script>
 <template>
-    <section class="shadow-md rounded bg-white relative">
-        <router-link :to="`/${$route.params.page}/${patientId}`">
-            <div class="flex p-8 gap-8 items-center">
-                <div class="w-[8rem]">
-                    <img
-                        :src="iconUrl"
-                        alt="pet-foot-image"
-                        class="w-[80px] md:w-[105px] mx-auto"
-                    />
+    <router-link :to="`/${$route.params.page}/${patientId}`">
+        <section class="w-full bg-white border border-gray-200 rounded shadow relative">
+            <div class="flex flex-col items-center p-8">
+                <img class="w-16 h-16 md:w-24 md:h-24" :src="iconUrl" alt="patient-icon" />
+                <h5 class="mb-1 text-sm md:text-lg font-medium text-gray-500">{{ patientId }}</h5>
+                <h5 class="mb-1 text-sm md:text-lg font-medium text-gray-900">{{ name }}</h5>
+                <span class="text-sm text-gray-500">{{ specie }}</span>
+                <div class="text-sm text-gray-500 space-x-1 mb-1">
+                    <i class="bi bi-clock"></i>
+                    <span>{{ date }}</span>
                 </div>
-                <ul class="flex-1 space-y-2">
-                    <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        {{ patientId }}
-                    </li>
-                    <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        {{ name }}
-                    </li>
-                    <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        {{ specie }}
-                    </li>
-                    <li class="w-full border-2 rounded text-gray-500 bg-gray-100 px-3 py-2">
-                        {{ makeDateFormat(date) }}
-                    </li>
-                </ul>
+                <i
+                    v-if="hasAlert"
+                    class="bi bi-exclamation-triangle-fill md:text-lg text-yellow-600"
+                ></i>
             </div>
-            <div v-if="hasAlert" class="absolute left-3 bottom-3 text-end">
-                <i class="bi bi-exclamation-circle text-yellow-600"></i>
-            </div>
-        </router-link>
-    </section>
+        </section>
+    </router-link>
 </template>

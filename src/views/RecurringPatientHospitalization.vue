@@ -3,6 +3,7 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import Search from '@/components/hospitalization/InputField.vue'
 import GoBack from '@/components/GoBack.vue'
+import InputField from '@/components/hospitalization/InputField.vue'
 
 import { inject, ref } from 'vue'
 import { Provided } from '@/lib/provided'
@@ -195,6 +196,9 @@ async function findPatient() {
         </section>
     </main>
     <Footer>
-        <button v-show="patient?.patientId" class="btn btn-success">Hospitalizar</button>
+        <button v-show="patient?.patientId" class="btn btn-success space-x-3">
+            <i class="bi bi-floppy2"></i>
+            <span class="font-semibold">Hospitalizar</span>
+        </button>
     </Footer>
 </template>

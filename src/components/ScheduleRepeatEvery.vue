@@ -3,9 +3,19 @@ import { onBeforeMount, ref } from 'vue'
 import { units } from '@/lib/data/alerts'
 
 const repeatEvery = ref({ rate: 30, unity: 'minutes' })
+const message = ref<string>('')
 const emit = defineEmits()
 const updateValue = () => {
     emit('update:modelValue', repeatEvery.value)
+}
+
+function isValid() {
+    if (repeatEvery.value.rate < 1) {
+        message.value = 'O valor deve ser maior que 1'
+        return true
+    }
+    message.value = ''
+    return false
 }
 
 onBeforeMount(() => {
@@ -24,13 +34,15 @@ onBeforeMount(() => {
                     name="rate"
                     v-model="repeatEvery.rate"
                     @input="updateValue()"
+                    :class="isValid() ? 'form-invalid' : ''"
                 />
             </div>
-            <div class="w-32">
+            <div class="w-24">
                 <select class="form-control" name="unity" v-model="repeatEvery.unity">
                     <option v-for="unity in units" :value="unity.value">{{ unity.name }}</option>
                 </select>
             </div>
         </div>
+        <small class="text-sm text-red-500">{{ message }}</small>
     </div>
 </template>

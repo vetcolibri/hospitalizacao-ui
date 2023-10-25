@@ -2,8 +2,9 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
+import Pagination from '@/components/Pagination.vue'
 
-import { inject, onMounted, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import {
@@ -21,6 +22,22 @@ const route = useRoute()
 const patientId = `${route.params.patientId}`
 const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
+const currentPage = ref<number>(1)
+const perPage = 8
+
+const pages = computed(() => {
+    return Math.ceil(measurements.value.length / perPage)
+})
+
+const results = computed(() => {
+    const start = (currentPage.value - 1) * perPage
+    return measurements.value.slice(start, start + perPage)
+})
+
+function updatePage(page: number) {
+    currentPage.value = page
+}
+
 onMounted(async () => {
     const measurementsOrError = await measurmentService.getAllMeasurements(patientId)
     if (measurementsOrError.isLeft()) {
@@ -36,7 +53,7 @@ onMounted(async () => {
         </Header>
         <main class="main-content">
             <section class="px-12">
-                <section class="container mt-8">
+                <section class="container my-8">
                     <ul class="flex space-x-2">
                         <li>
                             <router-link
@@ -72,10 +89,7 @@ onMounted(async () => {
                                 </tr>
                             </thead>
                             <tbody v-if="measurements.length > 0">
-                                <tr
-                                    v-for="parameter of measurements"
-                                    class="border-t border-gray-200"
-                                >
+                                <tr v-for="parameter of results" class="border-t border-gray-200">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-90">
                                         {{ findParameterName(parameter.name) }}
                                     </th>
@@ -104,6 +118,12 @@ onMounted(async () => {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination
+                        v-if="pages > 1"
+                        :current-page="currentPage"
+                        :pages="pages"
+                        @update-page="(page) => updatePage(page)"
+                    ></Pagination>
                 </section>
             </section>
         </main>
