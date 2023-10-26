@@ -55,7 +55,7 @@ const newHospitalization = ref<Hospitalization>({
                     </div>
                     <div class="flex space-x-4">
                         <div class="flex-1">
-                            <label class="md:text-sm">Espécie</label>
+                            <label class="md:text-sm">Raça</label>
                             <select
                                 class="form-select form-control"
                                 required
