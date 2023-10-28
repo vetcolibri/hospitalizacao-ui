@@ -5,7 +5,7 @@ import Search from '@/components/hospitalization/InputField.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
 
-import { inject, ref } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { PatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
@@ -15,7 +15,9 @@ import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
 const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
 const patient = ref<Patient>()
 const message = ref<string>('')
-const patientId = ref<string>('')
+const query = ref<string>('')
+const patients = ref<Patient[]>([])
+const results = ref<Patient[]>([])
 
 const newHospitalization = ref<Hospitalization>({
     age: 0,
@@ -35,39 +37,79 @@ function showMessage(text: string) {
     message.value = text
 }
 
-async function findPatient() {
-    if (patientId.value === '') {
-        showMessage('Preencha o campo de busca.')
+function searchPatient() {
+    if (query.value.length === 0) {
+        showMessage('')
+        clearResults()
         return
     }
-    const patientOrError = await patientService.findPatientById(patientId.value)
-    if (patientOrError.isLeft() && patientOrError.value.status === 404) {
-        showMessage(`Paciente com ID ${patientId.value} não foi encontrado.`)
+
+    if (query.value.length < 3) {
+        clearResults()
+        showMessage('A pesquisa deve ter no mínimo 3 caracteres.')
         return
     }
-    patient.value = <Patient>patientOrError.value
+
+    const patientsFound = patients.value.filter((patient) =>
+        patient.name.toLowerCase().includes(query.value.toLowerCase())
+    )
+
+    if (patientsFound.length === 0) {
+        clearResults()
+        showMessage('Nenhum paciente encontrado.')
+        return
+    }
+    results.value = patientsFound
 }
+
+function clearResults() {
+    results.value = []
+}
+
+onMounted(async () => {
+    const patientsOrError = await patientService.nonHospitalized()
+    patients.value = patientsOrError.value as Patient[]
+})
 </script>
 <template>
     <Header title="Nova Hospitalização">
         <GoBack />
     </Header>
-    <main v-if="isEmpty()" class="main-content flex flex-col justify-center px-12">
-        <section class="container">
-            <p class="text-gray-600">
-                Encontre o <strong>Paciente</strong> pelo seu ID para ser hospitalizado.
+    <main v-if="isEmpty()" class="main-content px-12">
+        <section class="container my-8">
+            <h1 class="font-medium">Pesquiar paciente</h1>
+            <p class="text-gray-500 text-sm">
+                Encontre facilmente um paciente para ser hospitalizado.
             </p>
             <div class="flex items-center gap-3">
                 <Search
-                    placeholder="Digite o ID do Paciente"
+                    placeholder="Digite o ID, Nome ou Nome do Proprietário"
                     class="w-full mt-0"
-                    v-model="patientId"
+                    v-model="query"
+                    @update:model-value="() => searchPatient()"
                 />
-                <button type="button" @click="findPatient()">
-                    <i class="bi bi-search text-base md:text-2xl text-yellow-500"></i>
-                </button>
+                <i class="bi bi-search text-base md:text-2xl text-yellow-500"></i>
             </div>
             <p class="text-xs text-red-500">{{ message }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Espécie</th>
+                        <th>Raça</th>
+                        <th>Telemóvel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="patient in results" :key="patient.patientId">
+                        <td>{{ patient.patientId }}</td>
+                        <td>{{ patient.name }}</td>
+                        <td>{{ patient.specie }}</td>
+                        <td>{{ patient.breed }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
     <main v-else class="main-content">

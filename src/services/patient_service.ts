@@ -1,5 +1,5 @@
 import type { Hospitalization } from '@/models/hospitalization'
-import type { APIClient, APIError } from '@/lib/api_client'
+import type { APIClient, APIError, APIResponse } from '@/lib/api_client'
 import type { Patient } from '@/models/patient'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
@@ -10,7 +10,7 @@ export interface PatientService {
         patientId: string,
         data: Partial<Hospitalization>
     ): Promise<Either<APIError, void>>
-    findPatientById(patientId: string): Promise<Either<APIError, Patient>>
+    nonHospitalized(): Promise<Either<APIError, Patient[]>>
 }
 
 export class PatientServiceAPI implements PatientService {
@@ -29,10 +29,10 @@ export class PatientServiceAPI implements PatientService {
             `${this.baseUrl}/${this.resource}/hospitalized`
         )
         if (patientsOrErr.isLeft()) {
-            return Promise.resolve(left(patientsOrErr.value))
+            return left(patientsOrErr.value)
         }
         const patients = patientsOrErr.value.data
-        return Promise.resolve(right(patients))
+        return right(patients)
     }
 
     async newHospitalization(
@@ -45,19 +45,15 @@ export class PatientServiceAPI implements PatientService {
             body
         )
         if (responseOrErr.isLeft()) {
-            return Promise.resolve(left(responseOrErr.value))
+            return left(responseOrErr.value)
         }
-        return Promise.resolve(right(undefined))
+        return right(undefined)
     }
 
-    async findPatientById(patientId: string): Promise<Either<APIError, Patient>> {
-        const patientOrErr = await this.apiClient.get(
-            `${this.baseUrl}/${this.resource}/${patientId}`
-        )
-        if (patientOrErr.isLeft()) {
-            return Promise.resolve(left(patientOrErr.value))
-        }
-        const patient = patientOrErr.value.data
-        return Promise.resolve(right(patient))
+    async nonHospitalized(): Promise<Either<APIError, Patient[]>> {
+        const patientsOrError = await this.apiClient.get(`${this.baseUrl}/${this.resource}/`)
+        if (patientsOrError.isLeft()) return left(patientsOrError.value)
+        const patients = patientsOrError.value
+        return right(patients.data)
     }
 }
