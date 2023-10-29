@@ -66,7 +66,7 @@ function schedule() {
         repeatEvery: rate,
         comments: comments.value
     }
-    alertService.scheduleAlert(alertData)
+    alertService.schedule(alertData)
     alert('Alerta agendado com sucesso')
     return router.push({ name: 'ExamGeneralCondition' })
 }

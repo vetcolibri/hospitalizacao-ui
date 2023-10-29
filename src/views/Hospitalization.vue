@@ -20,7 +20,7 @@ import GoBack from '@/components/GoBack.vue'
                 <router-link :to="{ name: 'RegisterPatient' }">
                     <li class="menu-item">
                         <i class="bi bi-plus-circle-fill text-sm md:text-2xl text-yellow-500"></i>
-                        <span>Novo Paciente</span>
+                        <span>Novo paciente</span>
                     </li>
                 </router-link>
             </ul>

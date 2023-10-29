@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { useParametersStore } from '@/store/parametersStore'
 import { AlertServiceAPI } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
+import { states } from '@/lib/data/parameters_state'
 
 const dialogRef = ref<typeof BaseDialog>()
 const title = ref<string>('')
@@ -48,9 +49,18 @@ function convert() {
     }
 }
 
+function getParameterByName(name: string) {
+    const parameters = Object.entries(states)
+    for (let parameter of parameters) {
+        if (parameter[0] === name) {
+            return parameter[1].name
+        }
+    }
+}
+
 async function confirm() {
     if (disabledAlert.value) {
-        const voidOrError = await alertService.disableAlert(alertId.value)
+        const voidOrError = await alertService.cancel(alertId.value)
         if (voidOrError.isLeft()) {
             alert(voidOrError.value.message)
             return
@@ -77,16 +87,18 @@ defineExpose({ open, close })
     <BaseDialog ref="dialogRef" :title="title">
         <section class="space-y-4">
             <div class="flex items-center gap-4">
-                <p>Parâmetro:</p>
+                <p class="text-sm">Parâmetro:</p>
                 <span class="text-sm text-red-500">A cada {{ convert() }}</span>
             </div>
             <ul class="space-y-1">
                 <li v-for="name in parameters" class="w-full flex items-center gap-4">
                     <i class="bi bi-exclamation-triangle-fill text-yellow-600 md:text-lg"></i>
-                    <span>{{ name }}</span>
+                    <span class="text-sm text-red-500 underline">{{
+                        getParameterByName(name)
+                    }}</span>
                 </li>
             </ul>
-            <p class="text-sm md:text-base text-justify text-gray-500">{{ comments }}</p>
+            <p class="text-sm text-justify text-gray-500">{{ comments }}</p>
             <p class="flex items-center" @click="() => (disabledAlert = !disabledAlert)">
                 <input type="checkbox" class="rounded focus:ring-0" v-model="disabledAlert" />
                 <label for="notShowAgain" class="block ml-2 text-sm text-gray-900">
@@ -94,6 +106,9 @@ defineExpose({ open, close })
                 </label>
             </p>
         </section>
-        <button class="btn-success w-full mt-8" @click="confirm()">Confirmar</button>
+        <button class="w-full mt-8 text-sm btn-success" @click="confirm()">
+            <i class="bi bi-check2"></i>
+            Confirmar
+        </button>
     </BaseDialog>
 </template>
