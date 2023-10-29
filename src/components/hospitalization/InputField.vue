@@ -9,6 +9,8 @@ interface Props {
     disabled?: boolean
     readonly?: boolean
     isSelect?: boolean
+    min?: number
+    max?: number
     isRequired?: boolean
 }
 const props = defineProps<Props>()
@@ -43,6 +45,8 @@ function emitValue() {
             :disabled="disabled ? true : false"
             :readonly="readonly ? true : false"
             :required="isRequired"
+            :min="min ? min : ''"
+            :max="max ? max : ''"
             v-model="inputValue"
             @input="emitValue()"
         />

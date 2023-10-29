@@ -3,9 +3,18 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
-import { ref } from 'vue'
-import type { Hospitalization } from '@/models/hospitalization'
+
+import { inject, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { Provided } from '@/lib/provided'
 import { COMPLAINTS, DIAGNOSIS, BREEDS } from '@/lib/data/hospitalization'
+import type { Hospitalization } from '@/models/hospitalization'
+import type { PatientService } from '@/services/patient_service'
+
+const form = ref<HTMLFormElement>()
+const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
+const router = useRouter()
+const status = ref<string>('Hospitalizar')
 
 const newHospitalization = ref<Hospitalization>({
     name: '',
@@ -22,6 +31,20 @@ const newHospitalization = ref<Hospitalization>({
     dischargeDate: '',
     estimatedBudgetDate: ''
 })
+
+async function hospitalize() {
+    if (!form.value?.checkValidity()) return form.value?.reportValidity()
+    status.value = 'A hospitalizar...'
+    const voidOrError = await patientService.newPatient(newHospitalization.value)
+    if (voidOrError.isLeft()) {
+        status.value = 'Hospitalizar'
+        alert(voidOrError.value.message)
+        return
+    }
+
+    alert('Paciente hospitalizado com sucesso.')
+    router.push({ name: 'Dashboard' })
+}
 </script>
 
 <template>
@@ -48,8 +71,8 @@ const newHospitalization = ref<Hospitalization>({
                                 v-model="newHospitalization.specie"
                             >
                                 <option value="" selected>Escolher espécie</option>
-                                <option value="canino">CANINO</option>
-                                <option value="felino">FELINO</option>
+                                <option value="CANINO">CANINO</option>
+                                <option value="FELINO">FELINO</option>
                             </select>
                         </div>
                     </div>
@@ -106,6 +129,8 @@ const newHospitalization = ref<Hospitalization>({
                             placeholder="Idade"
                             v-model="newHospitalization.age"
                             :is-required="true"
+                            :max="20"
+                            :min="1"
                         />
                         <InputField
                             title="Peso Kg"
@@ -114,6 +139,8 @@ const newHospitalization = ref<Hospitalization>({
                             placeholder="Peso Kg"
                             v-model="newHospitalization.weight"
                             :is-required="true"
+                            :max="100"
+                            :min="1"
                         />
                     </div>
                     <div>
@@ -165,9 +192,9 @@ const newHospitalization = ref<Hospitalization>({
         </section>
     </main>
     <Footer>
-        <button class="btn btn-success space-x-3">
+        <button class="btn btn-success space-x-3" @click="hospitalize()">
             <i class="bi bi-floppy2"></i>
-            <span class="font-semibold"> Hospitalizar</span>
+            <span class="font-medium">{{ status }}</span>
         </button>
     </Footer>
 </template>

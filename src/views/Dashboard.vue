@@ -10,13 +10,15 @@ import Footer from '@/components/Footer.vue'
             <ul class="flex flex-col gap-4 w-full lg:max-w-lg xl:max-w-xl">
                 <router-link :to="{ name: 'Hospitalization' }">
                     <li class="menu-item">
-                        <i class="bi bi-hospital-fill text-3xl text-yellow-500"></i>
+                        <i class="bi bi-hospital-fill text-sm md:text-2xl text-yellow-500"></i>
                         <span>Hospitalização</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'ExamGeneralCondition' }">
                     <li class="menu-item">
-                        <i class="bi bi-clipboard2-data-fill text-3xl text-yellow-500"></i>
+                        <i
+                            class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
+                        ></i>
                         <span>Exame Estado Geral</span>
                     </li>
                 </router-link>

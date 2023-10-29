@@ -11,6 +11,7 @@ export interface PatientService {
         data: Partial<Hospitalization>
     ): Promise<Either<APIError, void>>
     nonHospitalized(): Promise<Either<APIError, Patient[]>>
+    newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>>
 }
 
 export class PatientServiceAPI implements PatientService {
@@ -55,5 +56,40 @@ export class PatientServiceAPI implements PatientService {
         if (patientsOrError.isLeft()) return left(patientsOrError.value)
         const patients = patientsOrError.value
         return right(patients.data)
+    }
+
+    async newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>> {
+        const body = this.makeHospitalizationData(newPatientData)
+        const responseOrErr = await this.apiClient.post(
+            `${this.baseUrl}/${this.resource}/new-patient`,
+            body
+        )
+        if (responseOrErr.isLeft()) {
+            return left(responseOrErr.value)
+        }
+        return right(undefined)
+    }
+
+    private makeHospitalizationData(newPatientData: Partial<Hospitalization>) {
+        const body = {
+            patientData: {
+                name: newPatientData.name,
+                specie: newPatientData.specie,
+                breed: newPatientData.breed,
+                ownerId: newPatientData.ownerId,
+                ownerName: newPatientData.ownerName,
+                ownerPhoneNumber: newPatientData.ownerPhoneNumber
+            },
+            hospitalizationData: {
+                age: newPatientData.age,
+                weight: newPatientData.weight,
+                complaints: newPatientData.complaints,
+                diagnostics: newPatientData.diagnostics,
+                entryDate: newPatientData.entryDate,
+                dischargeDate: newPatientData.dischargeDate,
+                estimatedBudgetDate: newPatientData.estimatedBudgetDate
+            }
+        }
+        return body
     }
 }

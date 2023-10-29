@@ -23,7 +23,8 @@ export class AxiosAdapter implements APIClient {
         } catch (Error) {
             const error = <AxiosError>Error
             const { message } = <APIError>error.response?.data
-            return Promise.resolve(left({ status: error.response?.status, message: message }))
+            const data = JSON.parse(message)
+            return Promise.resolve(left({ status: error.response?.status, message: data }))
         }
     }
 }

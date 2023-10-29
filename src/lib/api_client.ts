@@ -2,7 +2,7 @@ import type { Either } from './shared/either'
 
 export interface APIError {
     status?: number
-    message: string
+    message: any
 }
 
 export interface APIResponse {

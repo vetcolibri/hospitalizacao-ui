@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import Search from '@/components/hospitalization/InputField.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
 
-import { computed, inject, onMounted, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { PatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
 import type { Hospitalization } from '@/models/hospitalization'
 import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+import { useRouter } from 'vue-router'
 
 const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
 const patient = ref<Patient>()
 const message = ref<string>('')
 const query = ref<string>('')
+const status = ref<string>('Hospitalizar')
 const patients = ref<Patient[]>([])
 const results = ref<Patient[]>([])
+const form = ref<HTMLFormElement>()
+const router = useRouter()
 
 const newHospitalization = ref<Hospitalization>({
     age: 0,
@@ -50,8 +53,11 @@ function searchPatient() {
         return
     }
 
-    const patientsFound = patients.value.filter((patient) =>
-        patient.name.toLowerCase().includes(query.value.toLowerCase())
+    const patientsFound = patients.value.filter(
+        (patient) =>
+            patient.name.toLowerCase().includes(query.value.toLowerCase()) ||
+            patient.patientId.toLowerCase().includes(query.value.toLowerCase()) ||
+            patient.ownerName!.toLowerCase().includes(query.value.toLowerCase())
     )
 
     if (patientsFound.length === 0) {
@@ -66,6 +72,24 @@ function clearResults() {
     results.value = []
 }
 
+async function hospitalize() {
+    if (!form.value?.checkValidity()) return form.value?.reportValidity()
+    status.value = 'A hospitalizar...'
+    const voidOrError = await patientService.newHospitalization(
+        patient.value!.patientId,
+        newHospitalization.value
+    )
+
+    if (voidOrError.isLeft()) {
+        alert(voidOrError.value.message)
+        status.value = 'Hospitalizar'
+        return
+    }
+
+    alert('Paciente hospitalizado com sucesso.')
+    router.push({ name: 'Dashboard' })
+}
+
 onMounted(async () => {
     const patientsOrError = await patientService.nonHospitalized()
     patients.value = patientsOrError.value as Patient[]
@@ -77,36 +101,43 @@ onMounted(async () => {
     </Header>
     <main v-if="isEmpty()" class="main-content px-12">
         <section class="container my-8">
-            <h1 class="font-medium">Pesquiar paciente</h1>
-            <p class="text-gray-500 text-sm">
-                Encontre facilmente um paciente para ser hospitalizado.
+            <h1 class="font-medium text-xs md:text-base">Pesquiar paciente</h1>
+            <p class="text-gray-500 text-xs sm:text-sm">
+                Encontre aqui um paciente para ser hospitalizado.
             </p>
-            <div class="flex items-center gap-3">
-                <Search
+            <div class="flex items-center gap-1 px-3 rounded shadow-sm border border-gray-300">
+                <i class="bi bi-search text-base md:text-xl text-yellow-500"></i>
+                <input
+                    class="w-full text-sm p-2.5 border-0 focus:border-gray-300 focus:ring-0"
+                    type="text"
                     placeholder="Digite o ID, Nome ou Nome do Proprietário"
-                    class="w-full mt-0"
                     v-model="query"
-                    @update:model-value="() => searchPatient()"
+                    @input="searchPatient()"
                 />
-                <i class="bi bi-search text-base md:text-2xl text-yellow-500"></i>
             </div>
             <p class="text-xs text-red-500">{{ message }}</p>
-            <table>
-                <thead>
+            <table v-if="results.length > 0" class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Espécie</th>
-                        <th>Raça</th>
-                        <th>Telemóvel</th>
+                        <th scope="col" class="px-6 py-3">ID Paciente</th>
+                        <th scope="col" class="px-6 py-3">Nome</th>
+                        <th scope="col" class="px-6 py-3">Espécie</th>
+                        <th scope="col" class="px-6 py-3">Raça</th>
+                        <th scope="col" class="px-6 py-3">Telemóvel</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="patient in results" :key="patient.patientId">
-                        <td>{{ patient.patientId }}</td>
-                        <td>{{ patient.name }}</td>
-                        <td>{{ patient.specie }}</td>
-                        <td>{{ patient.breed }}</td>
+                <tbody class="bg-white border-b hover:bg-gray-50">
+                    <tr
+                        v-for="item in results"
+                        :key="item.patientId"
+                        class="cursor-pointer"
+                        @click="() => (patient = item)"
+                    >
+                        <td class="px-6 py-4">{{ item.patientId }}</td>
+                        <td class="px-6 py-4">{{ item.name }}</td>
+                        <td class="px-6 py-4">{{ item.specie }}</td>
+                        <td class="px-6 py-4">{{ item.breed }}</td>
+                        <td class="px-6 py-4">{{ item.ownerPhoneNumber }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -142,7 +173,7 @@ onMounted(async () => {
                     <div class="flex space-x-4">
                         <InputField
                             title="Raça"
-                            placeholder="Bulldog"
+                            :placeholder="patient?.breed"
                             :disabled="true"
                             :readonly="true"
                             :is-select="true"
@@ -150,7 +181,7 @@ onMounted(async () => {
                         />
                         <InputField
                             title="ID Proprietário"
-                            placeholder="PR - 2921/KJ23"
+                            :placeholder="patient?.ownerId"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1"
@@ -159,14 +190,14 @@ onMounted(async () => {
                     <div class="flex space-x-4">
                         <InputField
                             title="Nome do Proprietário"
-                            placeholder="João Santos"
+                            :placeholder="patient?.ownerName"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1"
                         />
                         <InputField
                             title="Telemóvel"
-                            placeholder="933843893"
+                            :placeholder="patient?.ownerPhoneNumber"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1"
@@ -177,16 +208,21 @@ onMounted(async () => {
                             title="Idade"
                             type="number"
                             class="flex-1"
+                            placeholder="Idade do paciente"
                             v-model="newHospitalization!.age"
                             :is-required="true"
-                            @input="$emit('sendData', newHospitalization)"
+                            :min="1"
+                            :max="20"
                         />
                         <InputField
                             title="Peso Kg"
                             type="number"
                             class="flex-1"
+                            placeholder="Peso do paciente (Kg)"
                             v-model="newHospitalization!.weight"
                             :is-required="true"
+                            :min="1"
+                            :max="100"
                         />
                     </div>
                     <div>
@@ -237,10 +273,15 @@ onMounted(async () => {
             </section>
         </section>
     </main>
+
     <Footer>
-        <button v-show="patient?.patientId" class="btn btn-success space-x-3">
+        <button
+            v-show="patient?.patientId"
+            class="btn btn-success space-x-3"
+            @click="hospitalize()"
+        >
             <i class="bi bi-floppy2"></i>
-            <span class="font-semibold">Hospitalizar</span>
+            <span class="font-medium">{{ status }}</span>
         </button>
     </Footer>
 </template>
