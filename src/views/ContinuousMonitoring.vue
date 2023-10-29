@@ -16,6 +16,7 @@ import ExamTime from '@/components/ExamTime.vue'
 
 import { ref, onMounted } from 'vue'
 import { states } from '@/lib/data/parameters_state'
+import { useParametersStore } from '@/store/parametersStore'
 
 const form = ref<HTMLFormElement>()
 const showParameters = ref(false)
@@ -24,6 +25,7 @@ const parametersState = ref(states)
 const parametersMenuEl = ref()
 const alertCheckbox = ref<boolean>(false)
 const parametersSummaryRef = ref<typeof Summary>()
+const parametersStore = useParametersStore()
 
 function toogleParameterList() {
     showParameters.value = !showParameters.value
@@ -71,6 +73,19 @@ function closeParametersMenu(event: Event) {
     }
 }
 
+function showParametersInStore() {
+    if (parametersStore.getParameters.length > 0) {
+        for (let name of parametersStore.getParameters) {
+            for (let parameter of Object.entries(parametersState.value)) {
+                if (name === parameter[0]) {
+                    changeVisibility(parameter[1].id)
+                }
+            }
+        }
+        parametersStore.clear()
+    }
+}
+
 function confirm() {
     if (!form.value?.checkValidity() || form.value?.elements.length === 0) {
         return form.value?.reportValidity()
@@ -82,6 +97,7 @@ function confirm() {
 
 onMounted(async () => {
     document.addEventListener('click', closeParametersMenu)
+    showParametersInStore()
 })
 </script>
 <template>

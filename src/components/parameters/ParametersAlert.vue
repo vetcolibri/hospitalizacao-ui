@@ -1,33 +1,66 @@
 <script lang="ts" setup>
 import BaseDialog from '@/components/BaseDialog.vue'
 
-import { ref, inject, onMounted } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
+
+import { useParametersStore } from '@/store/parametersStore'
 import { AlertServiceAPI } from '@/services/alert_service'
-import type { Alert } from '@/models/alert'
 import { Provided } from '@/lib/provided'
 
 const dialogRef = ref<typeof BaseDialog>()
-const props = defineProps<Alert>()
 const title = ref<string>('')
+const patient = ref({ patientId: '', name: '' })
+const alertId = ref<string>('')
+const parameters = ref<string[]>([])
+const comments = ref<string>('')
+const repeatEvery = ref<number>()
 const disabledAlert = ref<boolean>(false)
 const router = useRouter()
-const alertClient = inject<AlertServiceAPI>(Provided.ALERT_SERVICE)!
+const alertService = <AlertServiceAPI>inject(Provided.ALERT_SERVICE)!
+const webSocket = <WebSocket>inject(Provided.WEBSOCKET)
+const parametersStore = useParametersStore()
 
-function convert(seconds: number) {
-    if (seconds >= 3600) {
-        const hours = Math.floor(seconds / 3600)
+webSocket.onopen = () => {
+    console.log('Websocket Connected.')
+}
+
+webSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data)
+    patient.value = { patientId: data.patient.patientId, name: data.patient.name }
+    alertId.value = data.alertId
+    parameters.value = data.parameters
+    comments.value = data.comments
+    repeatEvery.value = data.repeatEvery
+    title.value = `Alerta - ${patient.value.patientId} - ${patient.value.name}`
+    open()
+}
+
+function convert() {
+    if (repeatEvery.value! >= 3600) {
+        const hours = Math.floor(repeatEvery.value! / 3600)
         return `${hours} hora${hours > 1 ? 's' : ''}`
-    } else if (seconds >= 60) {
-        const minutes = Math.floor(seconds / 60)
+    } else if (repeatEvery.value! >= 60) {
+        const minutes = Math.floor(repeatEvery.value! / 60)
         return `${minutes} minuto${minutes > 1 ? 's' : ''}`
     } else {
-        return `${seconds} segundo${seconds !== 1 ? 's' : ''}`
+        return `${repeatEvery.value!} segundo${repeatEvery.value! !== 1 ? 's' : ''}`
     }
 }
 
-function confirm() {
+async function confirm() {
+    if (disabledAlert.value) {
+        const voidOrError = await alertService.disableAlert(alertId.value)
+        if (voidOrError.isLeft()) {
+            alert(voidOrError.value.message)
+            return
+        }
+        alert('Alerta foi cancelado com sucesso.')
+    }
+
+    parametersStore.$patch({ parameters: parameters.value })
     dialogRef.value?.close()
+    router.push({ name: 'ChooseParameters', params: { patientId: patient.value.patientId } })
 }
 
 function open() {
@@ -39,16 +72,13 @@ function close() {
 }
 
 defineExpose({ open, close })
-onMounted(() => {
-    title.value = `Alerta - ${props.patientId}`
-})
 </script>
 <template>
     <BaseDialog ref="dialogRef" :title="title">
         <section class="space-y-4">
             <div class="flex items-center gap-4">
                 <p>Parâmetro:</p>
-                <span class="text-sm text-red-500">A cada {{ convert(2100) }}</span>
+                <span class="text-sm text-red-500">A cada {{ convert() }}</span>
             </div>
             <ul class="space-y-1">
                 <li v-for="name in parameters" class="w-full flex items-center gap-4">
