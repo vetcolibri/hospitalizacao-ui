@@ -1,8 +1,7 @@
 export interface Alert {
     alertId?: string
-    patientId: string
     parameters: string[]
-    repeatEvery: number
+    rate: number
     comments: string
-    date?: string
+    time: string
 }

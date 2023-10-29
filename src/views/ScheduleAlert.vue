@@ -52,7 +52,7 @@ function convertToSeconds() {
     }
 }
 
-function schedule() {
+async function schedule() {
     const date = timeFromString(scheduleTime.value)
     const rate = convertToSeconds()
     if (rate < 0) {
@@ -60,15 +60,19 @@ function schedule() {
         return
     }
     const alertData = {
-        patientId: patientId,
         parameters: selectedParameters.value,
-        date: date.toISOString(),
-        repeatEvery: rate,
+        time: date.toISOString(),
+        rate: rate,
         comments: comments.value
     }
-    alertService.schedule(alertData)
+    const voidOrError = await alertService.schedule(patientId, alertData)
+    if (voidOrError.isLeft()) {
+        alert(voidOrError.value.message)
+        return
+    }
+
     alert('Alerta agendado com sucesso')
-    return router.push({ name: 'ExamGeneralCondition' })
+    return router.push({ name: 'Dashboard' })
 }
 
 function hasParameterSelected() {

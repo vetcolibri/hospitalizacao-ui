@@ -4,7 +4,7 @@ import type { Alert } from '@/models/alert'
 import { left, right } from '@/lib/shared/either'
 
 export interface AlertService {
-    schedule(alert: Alert): Promise<Either<APIError, void>>
+    schedule(patientId: string, alertData: Alert): Promise<Either<APIError, void>>
     cancel(alertId: string): Promise<Either<APIError, void>>
 }
 
@@ -19,10 +19,14 @@ export class AlertServiceAPI implements AlertService {
         this.resource = 'alerts'
     }
 
-    async schedule(alert: Alert): Promise<Either<APIError, void>> {
+    async schedule(patientId: string, alertData: Alert): Promise<Either<APIError, void>> {
+        const body = {
+            patientId,
+            alertData
+        }
         const resultOrError = await this.apiClient.post(
             `${this.baseUrl}/${this.resource}/schedule`,
-            alert
+            body
         )
         if (resultOrError.isLeft()) {
             return left(resultOrError.value)
