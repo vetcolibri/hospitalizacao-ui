@@ -205,10 +205,9 @@ onMounted(async () => {
                     </div>
                     <div class="flex space-x-4">
                         <InputField
-                            title="Idade"
-                            type="number"
+                            title="Data de nascimento"
+                            type="date"
                             class="flex-1"
-                            placeholder="Idade do paciente"
                             v-model="newHospitalization!.age"
                             :is-required="true"
                             :min="1"

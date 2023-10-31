@@ -25,10 +25,11 @@ function parameterState() {
     }
     emit('state', message.value)
 }
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="Glicemia" helpText="(60 - 100) mg/dl">
+    <BaseParameter title="Glicemia" helpText="(60 - 100) mg/dl" :measurement="latestMeasurement">
         <input
             class="form-control"
             placeholder="Valor"

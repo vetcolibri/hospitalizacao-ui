@@ -23,10 +23,12 @@ function parameterState() {
     }
     emit('state', message.value)
 }
+
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="TRC" helpText="(> 2')">
+    <BaseParameter title="TRC" helpText="(> 2')" :measurement="latestMeasurement">
         <input
             class="form-control"
             placeholder="Valor"

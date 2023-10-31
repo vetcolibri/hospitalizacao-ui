@@ -25,10 +25,16 @@ function parameterState() {
     }
     emit('state', message.value)
 }
+
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="Frequência Respiratória" helpText="(10 - 30) RPM">
+    <BaseParameter
+        title="Frequência Respiratória"
+        helpText="(10 - 30) RPM"
+        :measurement="latestMeasurement"
+    >
         <input
             class="form-control"
             placeholder="Valor"

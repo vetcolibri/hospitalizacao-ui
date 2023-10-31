@@ -4,7 +4,7 @@ import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
 
 export interface MeasurementService {
-    newMeasurements(patientId: string, measurements: Measurement[]): Promise<Either<APIError, void>>
+    newMeasurements(patientId: string, measurements: any): Promise<Either<APIError, void>>
     latestMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>>
     getAllMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>>
 }
@@ -17,22 +17,18 @@ export class MeasurementServiceAPI implements MeasurementService {
     constructor(apiClient: APIClient, baseUrl: string) {
         this.apiClient = apiClient
         this.baseUrl = baseUrl
-        this.resource = 'measurements'
+        this.resource = 'rounds'
     }
 
-    async newMeasurements(
-        patientId: string,
-        measurements: Measurement[]
-    ): Promise<Either<APIError, void>> {
-        const date = new Date()
+    async newMeasurements(patientId: string, measurements: any): Promise<Either<APIError, void>> {
         const requestBody = {
             patientId,
             userId: 'some-user-id',
-            date: date.toISOString(),
             parameters: measurements
         }
+        console.log(requestBody)
         const resultOrError = await this.apiClient.post(
-            `${this.baseUrl}/${this.resource}/`,
+            `${this.baseUrl}/${this.resource}/new`,
             requestBody
         )
         if (resultOrError.isLeft()) {
@@ -42,11 +38,8 @@ export class MeasurementServiceAPI implements MeasurementService {
     }
 
     async latestMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>> {
-        const measurementsOrError = await this.apiClient.post(
-            `${this.baseUrl}/${this.resource}/latest`,
-            {
-                patientId
-            }
+        const measurementsOrError = await this.apiClient.get(
+            `${this.baseUrl}/${this.resource}/latest-measurements/${patientId}`
         )
         if (measurementsOrError.isLeft()) {
             return Promise.resolve(left(measurementsOrError.value))

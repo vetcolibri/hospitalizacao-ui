@@ -9,10 +9,11 @@ const emit = defineEmits(['update:modelValue'])
 const updateValue = (event: InputEvent) => {
     emit('update:modelValue', (event.target as HTMLSelectElement).value)
 }
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="AVDN">
+    <BaseParameter title="AVDN" :measurement="latestMeasurement">
         <select
             class="form-control text-gray-500"
             required

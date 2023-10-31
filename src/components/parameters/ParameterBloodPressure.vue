@@ -48,10 +48,15 @@ function parameterState() {
     }
     emit('state', message.value)
 }
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="Pressão Arterial - Sis/Dis (PAM)" helpText="(11/70 - 12/80) mm/Hg - (60)">
+    <BaseParameter
+        title="Pressão Arterial - Sis/Dis (PAM)"
+        helpText="(11/70 - 12/80) mm/Hg - (60)"
+        :measurement="latestMeasurement"
+    >
         <input
             class="form-control"
             placeholder="Valor"

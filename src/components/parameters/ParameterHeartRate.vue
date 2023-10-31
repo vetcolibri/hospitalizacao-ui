@@ -25,10 +25,16 @@ function parameterState() {
     }
     emit('state', message.value)
 }
+
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="Frequência Cardiaca" helpText="(70 - 120) BPM">
+    <BaseParameter
+        title="Frequência Cardiaca"
+        helpText="(70 - 120) BPM"
+        :measurement="latestMeasurement"
+    >
         <input
             class="form-control"
             placeholder="Valor"

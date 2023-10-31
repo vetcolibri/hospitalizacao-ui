@@ -41,7 +41,6 @@ async function hospitalize() {
         alert(voidOrError.value.message)
         return
     }
-
     alert('Paciente hospitalizado com sucesso.')
     router.push({ name: 'Dashboard' })
 }
@@ -123,10 +122,9 @@ async function hospitalize() {
                     </div>
                     <div class="flex space-x-4">
                         <InputField
-                            title="Idade"
-                            type="number"
+                            title="Data de nascimento"
+                            type="date"
                             class="flex-1"
-                            placeholder="Idade"
                             v-model="newHospitalization.age"
                             :is-required="true"
                             :max="20"

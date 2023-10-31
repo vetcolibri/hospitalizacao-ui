@@ -10,10 +10,16 @@ const hct = ref<string>('')
 const updateValue = () => {
     emit('update:modelValue', hct.value)
 }
+
+defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter title="HCT" helpText="Canino (37 - 55)% e Felino (24 - 45)%">
+    <BaseParameter
+        title="HCT"
+        helpText="Canino (37 - 55)% e Felino (24 - 45)%"
+        :measurement="latestMeasurement"
+    >
         <input
             class="form-control"
             placeholder="Valor"
