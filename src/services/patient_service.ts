@@ -81,7 +81,7 @@ export class PatientServiceAPI implements PatientService {
                 ownerPhoneNumber: newPatientData.ownerPhoneNumber
             },
             hospitalizationData: {
-                age: newPatientData.age,
+                age: newPatientData.birthDate,
                 weight: newPatientData.weight,
                 complaints: newPatientData.complaints,
                 diagnostics: newPatientData.diagnostics,

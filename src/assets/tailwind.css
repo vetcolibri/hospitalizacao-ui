@@ -14,6 +14,10 @@ form:invalid select:required {
     @apply w-full border-red-500 rounded shadow-sm focus:border-red-500 focus:ring-0;
 }
 
+select {
+    @apply text-gray-500;
+}
+
 .main-content {
     @apply overflow-y-auto;
 }

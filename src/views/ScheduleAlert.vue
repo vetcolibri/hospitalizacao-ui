@@ -132,7 +132,7 @@ function changeScheduleButton() {
         </main>
         <Footer>
             <div class="space-x-3">
-                <router-link :to="{ name: 'ExamGeneralCondition' }">
+                <router-link :to="{ name: 'Dashboard' }">
                     <button class="btn-secondary">Cancelar</button>
                 </router-link>
                 <button v-if="!scheduleButton" class="btn-light disabled">
@@ -147,4 +147,3 @@ function changeScheduleButton() {
         </Footer>
     </div>
 </template>
-@/models/repeat_every

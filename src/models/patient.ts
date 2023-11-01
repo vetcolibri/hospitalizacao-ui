@@ -7,5 +7,5 @@ export interface Patient {
     ownerPhoneNumber?: string
     ownerId?: string
     hasAlert?: boolean
-    entryDate: string
+    entryDate?: string
 }

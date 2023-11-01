@@ -213,6 +213,10 @@ async function save() {
     parametersSummaryRef.value?.close()
     clearVisibility()
     alert('Parâmetros salvos com sucesso')
+    if (alertCheckbox) {
+        router.push({ name: 'ScheduleAlert', params: { patientId } })
+        return
+    }
     router.push({ name: 'Dashboard' })
 }
 

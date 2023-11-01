@@ -4,12 +4,14 @@ import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
 
-import { inject, onMounted, ref } from 'vue'
+import { iconUrl } from '@/lib/data/patients'
+import { inject, onMounted, reactive, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { PatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
-import type { Hospitalization } from '@/models/hospitalization'
-import { COMPLAINTS, DIAGNOSIS } from '@/lib/data/hospitalization'
+import type { Budget, Hospitalization } from '@/models/hospitalization'
+import { COMPLAINTS } from '@/lib/data/complaints'
+import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
 const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
@@ -22,14 +24,20 @@ const results = ref<Patient[]>([])
 const form = ref<HTMLFormElement>()
 const router = useRouter()
 
-const newHospitalization = ref<Hospitalization>({
-    age: 0,
+const hospitalization = ref<Hospitalization>({
+    birthDate: '',
     weight: 0,
     diagnostics: '',
     complaints: '',
     entryDate: '',
     dischargeDate: '',
     estimatedBudgetDate: ''
+})
+
+const budget = ref<Budget>({
+    startDate: '',
+    endDate: '',
+    status: ''
 })
 
 function isEmpty() {
@@ -77,7 +85,7 @@ async function hospitalize() {
     status.value = 'A hospitalizar...'
     const voidOrError = await patientService.newHospitalization(
         patient.value!.patientId,
-        newHospitalization.value
+        hospitalization.value
     )
 
     if (voidOrError.isLeft()) {
@@ -116,50 +124,38 @@ onMounted(async () => {
                 />
             </div>
             <p class="text-xs text-red-500">{{ message }}</p>
-            <table v-if="results.length > 0" class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">ID Paciente</th>
-                        <th scope="col" class="px-6 py-3">Nome</th>
-                        <th scope="col" class="px-6 py-3">Espécie</th>
-                        <th scope="col" class="px-6 py-3">Raça</th>
-                        <th scope="col" class="px-6 py-3">Telemóvel</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white border-b hover:bg-gray-50">
-                    <tr
-                        v-for="item in results"
-                        :key="item.patientId"
-                        class="cursor-pointer"
-                        @click="() => (patient = item)"
-                    >
-                        <td class="px-6 py-4">{{ item.patientId }}</td>
-                        <td class="px-6 py-4">{{ item.name }}</td>
-                        <td class="px-6 py-4">{{ item.specie }}</td>
-                        <td class="px-6 py-4">{{ item.breed }}</td>
-                        <td class="px-6 py-4">{{ item.ownerPhoneNumber }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="results.length">
+                <div
+                    v-for="item in results"
+                    @click="() => (patient = item)"
+                    class="flex items-center gap-4 border-b p-2 cursor-pointer hover:bg-gray-100"
+                >
+                    <img :src="iconUrl" alt="patient-image" width="40" />
+                    <span>{{ item.name }}</span>
+                </div>
+            </div>
         </section>
     </main>
     <main v-else class="main-content">
         <section class="px-12 my-8">
-            <section class="container">
-                <form ref="form" class="space-y-3">
+            <form ref="form">
+                <section class="container rounded mt-8 mb-4">
+                    <h1 class="font-medium">Paciente</h1>
+                    <p class="text-sm text-gray-500">Dados do paciente.</p>
                     <InputField
-                        title="ID Paciente"
-                        :placeholder="patient?.patientId"
+                        title="Nome do Paciente"
+                        :placeholder="patient?.name"
                         :disabled="true"
                         :readonly="true"
-                    ></InputField>
+                        class="flex-1 text-gray-500"
+                    />
                     <div class="flex space-x-4">
                         <InputField
-                            title="Nome do Paciente"
-                            :placeholder="patient?.name"
+                            title="ID Paciente"
+                            :placeholder="patient?.patientId"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                         <InputField
                             title="Espécie"
@@ -167,7 +163,7 @@ onMounted(async () => {
                             :disabled="true"
                             :readonly="true"
                             :is-select="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                     </div>
                     <div class="flex space-x-4">
@@ -177,14 +173,14 @@ onMounted(async () => {
                             :disabled="true"
                             :readonly="true"
                             :is-select="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                         <InputField
                             title="ID Proprietário"
                             :placeholder="patient?.ownerId"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                     </div>
                     <div class="flex space-x-4">
@@ -193,86 +189,119 @@ onMounted(async () => {
                             :placeholder="patient?.ownerName"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                         <InputField
                             title="Telemóvel"
                             :placeholder="patient?.ownerPhoneNumber"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1"
+                            class="flex-1 text-gray-500"
                         />
                     </div>
+                </section>
+                <section class="container rounded mb-4">
+                    <h1 class="font-medium">Hospitalização</h1>
+                    <p class="text-sm text-gray-500">
+                        Preencha os campos abaixo com os dados da hospitalização.
+                    </p>
                     <div class="flex space-x-4">
                         <InputField
                             title="Data de nascimento"
                             type="date"
-                            class="flex-1"
-                            v-model="newHospitalization!.age"
+                            class="flex-1 text-gray-500"
+                            placeholder="Data de nascimento"
+                            v-model="hospitalization.birthDate"
                             :is-required="true"
-                            :min="1"
-                            :max="20"
                         />
                         <InputField
                             title="Peso Kg"
                             type="number"
-                            class="flex-1"
-                            placeholder="Peso do paciente (Kg)"
-                            v-model="newHospitalization!.weight"
+                            class="flex-1 text-gray-500"
+                            placeholder="Peso Kg"
+                            v-model="hospitalization.weight"
                             :is-required="true"
-                            :min="1"
                             :max="100"
+                            :min="1"
                         />
                     </div>
                     <div>
-                        <label class="md:text-sm">Queixas</label>
                         <select
-                            class="form-select form-control mt-2"
-                            v-model="newHospitalization!.complaints"
+                            class="form-control mt-4"
                             required
+                            v-model="hospitalization.complaints"
                         >
-                            <option value="" selected>Escolher queixas</option>
+                            <option value="" selected>Escolher Queixas</option>
                             <option v-for="complaint in COMPLAINTS" :value="complaint">
                                 {{ complaint }}
                             </option>
                         </select>
                     </div>
                     <div>
-                        <label class="md:text-sm">Diagnosticos</label>
                         <select
-                            class="form-select form-control mt-2"
-                            v-model="newHospitalization!.diagnostics"
+                            class="form-control mt-4"
                             required
+                            v-model="hospitalization.diagnostics"
                         >
-                            <option value="" selected>Escolher diagnosticos</option>
-                            <option v-for="diagnosis in DIAGNOSIS" :value="diagnosis">
+                            <option value="" selected>Escolher Diagnosticos</option>
+                            <option v-for="diagnosis in DIAGNOSTICS" :value="diagnosis">
                                 {{ diagnosis }}
                             </option>
                         </select>
                     </div>
-                    <InputField
-                        v-model="newHospitalization!.entryDate"
-                        title="Data de entrada"
-                        type="date"
-                        :is-required="true"
-                    />
-                    <InputField
-                        v-model="newHospitalization!.dischargeDate"
-                        title="Data prevista de Alta"
-                        type="date"
-                        :is-required="true"
-                    />
-                    <InputField
-                        v-model="newHospitalization!.estimatedBudgetDate"
-                        title="Orçamento previsto até"
-                        type="date"
-                        :is-required="true"
-                    />
-                </form>
-            </section>
+                    <div class="flex space-x-4">
+                        <InputField
+                            title="Data de entrada"
+                            type="date"
+                            class="flex-1 text-gray-500"
+                            v-model="hospitalization.entryDate"
+                            :is-required="true"
+                        />
+                        <InputField
+                            title="Previsão de Alta Médica"
+                            type="date"
+                            class="flex-1 text-gray-500"
+                            v-model="hospitalization.dischargeDate"
+                            :is-required="true"
+                        />
+                    </div>
+                </section>
+                <section class="container rounded mb-4">
+                    <h1 class="font-medium text-base">Orçamento</h1>
+                    <p class="text-sm text-gray-500">
+                        Preencha os campos abaixo com os dados do orçamento.
+                    </p>
+                    <div class="flex items-end space-x-4">
+                        <InputField
+                            title="Inicia em"
+                            type="date"
+                            class="flex-1 text-gray-500"
+                            v-model="budget.startDate"
+                            :is-required="true"
+                        />
+                        <InputField
+                            title="Termina em"
+                            type="date"
+                            class="flex-1 text-gray-500"
+                            v-model="budget.endDate"
+                            :is-required="true"
+                        />
+                    </div>
+                    <div class="flex space-x-4">
+                        <div class="flex-1 mt-2">
+                            <select class="form-control" required v-model="budget.status">
+                                <option value="" selected>Escolher Estado</option>
+                                <option value="UNPAIND">Não Pago</option>
+                                <option value="PENDING">Pendente</option>
+                                <option value="PAID">Pago</option>
+                            </select>
+                        </div>
+                        <div class="flex-1"></div>
+                    </div>
+                </section>
+            </form>
         </section>
     </main>
-
     <Footer>
         <button
             v-show="patient?.patientId"

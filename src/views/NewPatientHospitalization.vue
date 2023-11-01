@@ -7,23 +7,29 @@ import InputField from '@/components/hospitalization/InputField.vue'
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Provided } from '@/lib/provided'
-import { COMPLAINTS, DIAGNOSIS, BREEDS } from '@/lib/data/hospitalization'
-import type { Hospitalization } from '@/models/hospitalization'
+import { COMPLAINTS } from '@/lib/data/complaints'
+import { DIAGNOSTICS } from '@/lib/data/diagnostics'
+import { BREEDS } from '@/lib/data/breeds'
+import type { Hospitalization, Budget } from '@/models/hospitalization'
 import type { PatientService } from '@/services/patient_service'
+import { Patient } from '@/models/patient'
 
-const form = ref<HTMLFormElement>()
-const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
 const router = useRouter()
+const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
 const status = ref<string>('Hospitalizar')
+const form = ref<HTMLFormElement>()
 
-const newHospitalization = ref<Hospitalization>({
+const patient = ref<Patient>({
     name: '',
+    patientId: '',
     specie: '',
     breed: '',
     ownerId: '',
     ownerName: '',
-    ownerPhoneNumber: '',
-    age: 0,
+    ownerPhoneNumber: ''
+})
+const hospitalization = ref<Hospitalization>({
+    birthDate: '',
     weight: 0,
     diagnostics: '',
     complaints: '',
@@ -32,15 +38,15 @@ const newHospitalization = ref<Hospitalization>({
     estimatedBudgetDate: ''
 })
 
+const budget = ref<Budget>({
+    startDate: '',
+    endDate: '',
+    status: ''
+})
+
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
     status.value = 'A hospitalizar...'
-    const voidOrError = await patientService.newPatient(newHospitalization.value)
-    if (voidOrError.isLeft()) {
-        status.value = 'Hospitalizar'
-        alert(voidOrError.value.message)
-        return
-    }
     alert('Paciente hospitalizado com sucesso.')
     router.push({ name: 'Dashboard' })
 }
@@ -52,140 +58,165 @@ async function hospitalize() {
     </Header>
     <main class="main-content">
         <section class="px-12">
-            <section class="container my-8">
-                <form ref="form" class="space-y-3">
-                    <div class="flex items-center space-x-4">
-                        <InputField
-                            title="Nome do Paciente"
-                            class="flex-1"
-                            placeholder="Nome do Paciente"
-                            v-model="newHospitalization.name"
-                            :is-required="true"
-                        />
-                        <div class="flex-1">
-                            <label class="md:text-sm">Espécie</label>
-                            <select
-                                class="form-select form-control"
-                                required
-                                v-model="newHospitalization.specie"
-                            >
-                                <option value="" selected>Escolher espécie</option>
-                                <option value="CANINO">CANINO</option>
-                                <option value="FELINO">FELINO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex space-x-4">
-                        <div class="flex-1">
-                            <label class="md:text-sm">Raça</label>
-                            <select
-                                class="form-select form-control"
-                                required
-                                v-model="newHospitalization.breed"
-                            >
-                                <option value="" selected>Escolher raça</option>
-                                <optgroup label="Cães">
-                                    <option v-for="breed in BREEDS.caes" :value="breed">
-                                        {{ breed }}
-                                    </option>
-                                </optgroup>
-                                <optgroup label="Gatos">
-                                    <option v-for="breed in BREEDS.gatos" :value="breed">
-                                        {{ breed }}
-                                    </option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <InputField
-                            title="ID Proprietário"
-                            class="flex-1"
-                            placeholder="ID Próprietário"
-                            v-model="newHospitalization.ownerId"
-                            :is-required="true"
-                        />
-                    </div>
-                    <div class="flex space-x-4">
-                        <InputField
-                            title="Nome do Proprietário"
-                            class="flex-1"
-                            placeholder="Nome do Proprietário"
-                            v-model="newHospitalization.ownerName"
-                            :is-required="true"
-                        />
-                        <InputField
-                            title="Telemóvel"
-                            class="flex-1"
-                            placeholder="Telemóvel"
-                            v-model="newHospitalization.ownerPhoneNumber"
-                            :is-required="true"
-                        />
-                    </div>
-                    <div class="flex space-x-4">
-                        <InputField
-                            title="Data de nascimento"
-                            type="date"
-                            class="flex-1"
-                            v-model="newHospitalization.age"
-                            :is-required="true"
-                            :max="20"
-                            :min="1"
-                        />
-                        <InputField
-                            title="Peso Kg"
-                            type="number"
-                            class="flex-1"
-                            placeholder="Peso Kg"
-                            v-model="newHospitalization.weight"
-                            :is-required="true"
-                            :max="100"
-                            :min="1"
-                        />
-                    </div>
-                    <div>
-                        <label class="md:text-sm">Queixas</label>
-                        <select
-                            class="form-select form-control mt-2"
-                            required
-                            v-model="newHospitalization.complaints"
-                        >
-                            <option value="" selected>Escolher queixas</option>
-                            <option v-for="complaint in COMPLAINTS" :value="complaint">
-                                {{ complaint }}
-                            </option>
+            <section class="container rounded mt-8 mb-4">
+                <h1 class="font-medium">Paciente</h1>
+                <p class="text-sm text-gray-500">
+                    Preencha os campos abaixo com os dados do paciente.
+                </p>
+                <InputField
+                    placeholder="Nome do Paciente"
+                    v-model="patient.name"
+                    :is-required="true"
+                />
+                <div class="flex items-center space-x-4">
+                    <InputField
+                        class="flex-1"
+                        placeholder="ID do Paciente"
+                        v-model="patient.patientId"
+                        :is-required="true"
+                    />
+                    <div class="flex-1">
+                        <select class="form-control" required v-model="patient.specie">
+                            <option value="" selected>Escolher Espécie</option>
+                            <option value="CANINO">CANINO</option>
+                            <option value="FELINO">FELINO</option>
+                            <option value="AVES">AVES</option>
+                            <option value="EXOTICO">EXÓTICO</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="md:text-sm">Diagnosticos</label>
-                        <select
-                            class="form-select form-control mt-2"
-                            required
-                            v-model="newHospitalization.diagnostics"
-                        >
-                            <option value="" selected>Escolher diagnosticos</option>
-                            <option v-for="diagnosis in DIAGNOSIS" :value="diagnosis">
-                                {{ diagnosis }}
-                            </option>
+                </div>
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <select class="form-control" required v-model="patient.breed">
+                            <option value="" selected>Escolher Raça</option>
+                            <optgroup label="Cães">
+                                <option v-for="breed in BREEDS.caes" :value="breed">
+                                    {{ breed }}
+                                </option>
+                            </optgroup>
+                            <optgroup label="Gatos">
+                                <option v-for="breed in BREEDS.gatos" :value="breed">
+                                    {{ breed }}
+                                </option>
+                            </optgroup>
                         </select>
                     </div>
+                    <InputField
+                        class="flex-1"
+                        placeholder="ID Próprietário"
+                        v-model="patient.ownerId"
+                        :is-required="true"
+                    />
+                </div>
+                <div class="flex space-x-4">
+                    <InputField
+                        class="flex-1"
+                        placeholder="Nome do Proprietário"
+                        v-model="patient.ownerName"
+                        :is-required="true"
+                    />
+                    <InputField
+                        class="flex-1"
+                        placeholder="Telemóvel"
+                        v-model="patient.ownerPhoneNumber"
+                        :is-required="true"
+                    />
+                </div>
+            </section>
+            <section class="container rounded mb-4">
+                <h1 class="font-medium text-base">Hospitalização</h1>
+                <p class="text-sm text-gray-500">
+                    Preencha os campos abaixo com os dados da hospitalização.
+                </p>
+                <div class="flex space-x-4">
+                    <InputField
+                        title="Data de nascimento"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        placeholder="Data de nascimento"
+                        v-model="hospitalization.birthDate"
+                        :is-required="true"
+                    />
+                    <InputField
+                        title="Peso Kg"
+                        type="number"
+                        class="flex-1 text-gray-500"
+                        placeholder="Peso Kg"
+                        v-model="hospitalization.weight"
+                        :is-required="true"
+                        :max="100"
+                        :min="1"
+                    />
+                </div>
+                <div>
+                    <select class="form-control mt-4" required v-model="hospitalization.complaints">
+                        <option value="" selected>Escolher Queixas</option>
+                        <option v-for="complaint in COMPLAINTS" :value="complaint">
+                            {{ complaint }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <select
+                        class="form-control mt-4"
+                        required
+                        v-model="hospitalization.diagnostics"
+                    >
+                        <option value="" selected>Escolher Diagnosticos</option>
+                        <option v-for="diagnosis in DIAGNOSTICS" :value="diagnosis">
+                            {{ diagnosis }}
+                        </option>
+                    </select>
+                </div>
+                <div class="flex space-x-4">
                     <InputField
                         title="Data de entrada"
                         type="date"
-                        v-model="newHospitalization.entryDate"
+                        class="flex-1 text-gray-500"
+                        v-model="hospitalization.entryDate"
                         :is-required="true"
                     />
                     <InputField
-                        title="Data prevista de Alta"
+                        title="Previsão de Alta Médica"
                         type="date"
-                        v-model="newHospitalization.dischargeDate"
+                        class="flex-1 text-gray-500"
+                        v-model="hospitalization.dischargeDate"
+                        :is-required="true"
+                    />
+                </div>
+            </section>
+            <section class="container rounded mb-4">
+                <h1 class="font-medium text-base">Orçamento</h1>
+                <p class="text-sm text-gray-500">
+                    Preencha os campos abaixo com os dados do orçamento.
+                </p>
+                <div class="flex items-end space-x-4">
+                    <InputField
+                        title="Inicia em"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        v-model="budget.startDate"
                         :is-required="true"
                     />
                     <InputField
-                        title="Orçamento previsto até"
+                        title="Termina em"
                         type="date"
-                        v-model="newHospitalization.estimatedBudgetDate"
+                        class="flex-1 text-gray-500"
+                        v-model="budget.endDate"
                         :is-required="true"
                     />
-                </form>
+                </div>
+                <div class="flex space-x-4">
+                    <div class="flex-1 mt-2">
+                        <select class="form-control" required v-model="budget.status">
+                            <option value="" selected>Escolher Estado</option>
+                            <option value="UNPAIND">Não Pago</option>
+                            <option value="PENDING">Pendente</option>
+                            <option value="PAID">Pago</option>
+                        </select>
+                    </div>
+                    <div class="flex-1"></div>
+                </div>
             </section>
         </section>
     </main>

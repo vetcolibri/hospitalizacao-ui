@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { iconUrl } from '@/lib/data/patients'
 import { makeDateFormat } from '@/lib/shared/utils'
-import type { Patient } from '@/models/patient'
 import { ref } from 'vue'
+import type { Patient } from '@/models/patient'
 
 const date = ref()
 const props = defineProps<Patient>()
