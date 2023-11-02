@@ -12,7 +12,8 @@ import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { BREEDS } from '@/lib/data/breeds'
 import type { Hospitalization, Budget } from '@/models/hospitalization'
 import type { PatientService } from '@/services/patient_service'
-import { Patient } from '@/models/patient'
+import type { Patient } from '@/models/patient'
+import SelectField from '@/components/hospitalization/SelectField.vue'
 
 const router = useRouter()
 const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
@@ -31,8 +32,8 @@ const patient = ref<Patient>({
 const hospitalization = ref<Hospitalization>({
     birthDate: '',
     weight: 0,
-    diagnostics: '',
-    complaints: '',
+    complaints: [],
+    diagnostics: [],
     entryDate: '',
     dischargeDate: '',
     estimatedBudgetDate: ''
@@ -148,26 +149,18 @@ async function hospitalize() {
                         :min="1"
                     />
                 </div>
-                <div>
-                    <select class="form-control mt-4" required v-model="hospitalization.complaints">
-                        <option value="" selected>Escolher Queixas</option>
-                        <option v-for="complaint in COMPLAINTS" :value="complaint">
-                            {{ complaint }}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                    <select
-                        class="form-control mt-4"
-                        required
-                        v-model="hospitalization.diagnostics"
-                    >
-                        <option value="" selected>Escolher Diagnosticos</option>
-                        <option v-for="diagnosis in DIAGNOSTICS" :value="diagnosis">
-                            {{ diagnosis }}
-                        </option>
-                    </select>
-                </div>
+                <SelectField
+                    title="Escolher Queixas"
+                    :options="COMPLAINTS"
+                    :limit="10"
+                    v-model="hospitalization.complaints"
+                />
+                <SelectField
+                    title="Escolher Diagnosticos"
+                    :options="DIAGNOSTICS"
+                    :limit="5"
+                    v-model="hospitalization.diagnostics"
+                />
                 <div class="flex space-x-4">
                     <InputField
                         title="Data de entrada"

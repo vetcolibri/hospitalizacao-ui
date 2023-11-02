@@ -18,6 +18,11 @@ select {
     @apply text-gray-500;
 }
 
+input[type="checkbox"] {
+    @apply form-checkbox rounded text-blue-600 bg-gray-100 border-gray-300 focus:ring-0;
+
+}
+
 .main-content {
     @apply overflow-y-auto;
 }
