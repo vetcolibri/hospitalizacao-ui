@@ -3,6 +3,7 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import InputField from '@/components/hospitalization/InputField.vue'
+import SelectField from '@/components/hospitalization/SelectField.vue'
 
 import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, reactive, ref } from 'vue'
@@ -27,8 +28,8 @@ const router = useRouter()
 const hospitalization = ref<Hospitalization>({
     birthDate: '',
     weight: 0,
-    diagnostics: '',
-    complaints: '',
+    diagnostics: [],
+    complaints: [],
     entryDate: '',
     dischargeDate: '',
     estimatedBudgetDate: ''
@@ -212,7 +213,6 @@ onMounted(async () => {
                             class="flex-1 text-gray-500"
                             placeholder="Data de nascimento"
                             v-model="hospitalization.birthDate"
-                            :is-required="true"
                         />
                         <InputField
                             title="Peso Kg"
@@ -220,49 +220,24 @@ onMounted(async () => {
                             class="flex-1 text-gray-500"
                             placeholder="Peso Kg"
                             v-model="hospitalization.weight"
-                            :is-required="true"
                             :max="100"
                             :min="1"
                         />
                     </div>
-                    <div>
-                        <select
-                            class="form-control mt-4"
-                            required
-                            v-model="hospitalization.complaints"
-                        >
-                            <option value="" selected>Escolher Queixas</option>
-                            <option v-for="complaint in COMPLAINTS" :value="complaint">
-                                {{ complaint }}
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                        <select
-                            class="form-control mt-4"
-                            required
-                            v-model="hospitalization.diagnostics"
-                        >
-                            <option value="" selected>Escolher Diagnosticos</option>
-                            <option v-for="diagnosis in DIAGNOSTICS" :value="diagnosis">
-                                {{ diagnosis }}
-                            </option>
-                        </select>
-                    </div>
+                    <SelectField title="Escolher Queixas" :options="COMPLAINTS" :limit="10" />
+                    <SelectField title="Escolher Diagnosticos" :options="DIAGNOSTICS" :limit="5" />
                     <div class="flex space-x-4">
                         <InputField
                             title="Data de entrada"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="hospitalization.entryDate"
-                            :is-required="true"
                         />
                         <InputField
                             title="Previsão de Alta Médica"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="hospitalization.dischargeDate"
-                            :is-required="true"
                         />
                     </div>
                 </section>
@@ -277,19 +252,17 @@ onMounted(async () => {
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="budget.startDate"
-                            :is-required="true"
                         />
                         <InputField
                             title="Termina em"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="budget.endDate"
-                            :is-required="true"
                         />
                     </div>
                     <div class="flex space-x-4">
                         <div class="flex-1 mt-2">
-                            <select class="form-control" required v-model="budget.status">
+                            <select class="form-control" v-model="budget.status">
                                 <option value="" selected>Escolher Estado</option>
                                 <option value="UNPAIND">Não Pago</option>
                                 <option value="PENDING">Pendente</option>
