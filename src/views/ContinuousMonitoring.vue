@@ -17,11 +17,11 @@ import ExamTime from '@/components/ExamTime.vue'
 import { ref, onMounted, inject } from 'vue'
 import { states } from '@/lib/data/parameters_state'
 import { useParametersStore } from '@/store/parametersStore'
-import { MeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 import { useRoute } from 'vue-router'
+import type { MeasurementService } from '@/services/measurement_service'
+import type { Measurement } from '@/models/measurement'
 import router from '@/router'
-import { Measurement } from '@/models/measurement'
 
 const route = useRoute()
 const form = ref<HTMLFormElement>()
@@ -119,92 +119,6 @@ function confirm() {
 
 async function save() {
     let parameters = {}
-    for (let param of records()) {
-        if (param.value !== '') {
-            if (param.id === '1') {
-                let heartRate = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    heartRate
-                }
-            }
-            if (param.id === '2') {
-                let respiratoryRate = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    respiratoryRate
-                }
-            }
-            if (param.id === '3') {
-                let trc = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    trc
-                }
-            }
-            if (param.id === '4') {
-                let avdn = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    avdn
-                }
-            }
-            if (param.id === '5') {
-                let mucosas = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    mucosas
-                }
-            }
-            if (param.id === '6') {
-                let temperature = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    temperature
-                }
-            }
-            if (param.id === '7') {
-                let bloodGlucose = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    bloodGlucose
-                }
-            }
-            if (param.id === '8') {
-                let hct = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    hct
-                }
-            }
-            if (param.id === '9') {
-                let bloodPressure = {
-                    value: param.value
-                }
-                parameters = {
-                    ...parameters,
-                    bloodPressure
-                }
-            }
-        }
-    }
-
     const resultOrError = await measurementService.newMeasurements(patientId, parameters)
     if (resultOrError.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
@@ -228,7 +142,6 @@ onMounted(async () => {
         return
     }
     latestMeasurements.value = resultOrError.value
-    console.log(latestMeasurements.value)
 })
 </script>
 <template>
