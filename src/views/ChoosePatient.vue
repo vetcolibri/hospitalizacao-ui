@@ -13,12 +13,12 @@ const patients = ref<Patient[]>([])
 
 onMounted(async () => {
     const patientService = inject<PatientService>(Provided.PATIENT_SERVICE)!
-    const responseOrErr = await patientService.getAllHospitalized()
-    if (responseOrErr.isLeft()) {
-        console.error(responseOrErr.value)
+    const responseOrError = await patientService.getAllHospitalized()
+    if (responseOrError.isLeft()) {
+        console.error(responseOrError.value)
         return
     }
-    patients.value = responseOrErr.value
+    patients.value = responseOrError.value
 })
 </script>
 <template>
@@ -31,11 +31,7 @@ onMounted(async () => {
                 <section
                     class="grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl"
                 >
-                    <PatientHospitalized
-                        v-for="patient in patients"
-                        :patient="patient"
-                        @next-page=""
-                    />
+                    <PatientHospitalized v-for="patient in patients" :patient="patient" />
                 </section>
             </section>
         </main>

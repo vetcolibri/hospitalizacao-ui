@@ -18,6 +18,7 @@ import { inject, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import type { Measurement } from '@/models/measurement'
+import { usePatientSelectedStore } from '@/store/patientStore'
 import { MeasurementServiceAPI } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
@@ -31,6 +32,7 @@ const parametersSummaryRef = ref<typeof Summary>()
 const latestMeasurements = ref<Measurement[]>([])
 const patientId = `${route.params.patientId}`
 const measurmentClient = inject<MeasurementServiceAPI>(Provided.MEASUREMENT_SERVICE)!
+const patientStore = usePatientSelectedStore()
 
 function confirm() {
     if (!form.value?.checkValidity()) {
@@ -45,7 +47,11 @@ function confirm() {
     }
 }
 
-onBeforeMount(async () => {})
+onBeforeMount(async () => {
+    if (!patientStore.patient) {
+        router.back()
+    }
+})
 </script>
 <template>
     <Header title="Ronda diária">

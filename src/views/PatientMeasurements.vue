@@ -5,7 +5,6 @@ import GoBack from '@/components/GoBack.vue'
 import Pagination from '@/components/Pagination.vue'
 
 import { computed, inject, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 
 import {
     makeHourFormat,
@@ -16,10 +15,13 @@ import {
 import type { Measurement } from '@/models/measurement'
 import type { MeasurementService } from '@/services/measurement_service'
 import { Provided } from '@/lib/provided'
+import { usePatientSelectedStore } from '@/store/patientStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const measurements = ref<Measurement[]>([])
-const route = useRoute()
-const patientId = `${route.params.patientId}`
+const patientStore = usePatientSelectedStore()
+const patientId = patientStore.patient
 const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
 
 const currentPage = ref<number>(1)
@@ -39,6 +41,10 @@ function updatePage(page: number) {
 }
 
 onMounted(async () => {
+    if (!patientId) {
+        router.back()
+    }
+
     const measurementsOrError = await measurmentService.getAllMeasurements(patientId)
     if (measurementsOrError.isLeft()) {
         return
@@ -53,31 +59,33 @@ onMounted(async () => {
         </Header>
         <main class="main-content">
             <section class="px-12">
-                <section class="container my-8">
-                    <ul class="flex space-x-2">
+                <section class="container rounded mt-8 mb-4">
+                    <ul class="flex space-x-3 text-sm">
                         <li>
                             <router-link
-                                :to="{
-                                    name: 'DailyRound',
-                                    params: { patientId: $route.params.patientId }
-                                }"
+                                :to="{ name: 'DailyRound' }"
+                                class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
                             >
-                                <button class="p-2 border rounded bg-gray-100">Ronda Diária</button>
+                                <i
+                                    class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
+                                ></i>
+                                <span> Ronda diária </span>
                             </router-link>
                         </li>
                         <li>
                             <router-link
-                                :to="{
-                                    name: 'ChooseParameters',
-                                    params: { patientId: $route.params.patientId }
-                                }"
+                                class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
+                                :to="{ name: 'ChooseParameters' }"
                             >
-                                <button class="p-2 border rounded bg-gray-100">
-                                    Monitorização continuada
-                                </button>
+                                <i
+                                    class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
+                                ></i>
+                                <span>Monitorização continuada</span>
                             </router-link>
                         </li>
                     </ul>
+                </section>
+                <section class="container mb-4">
                     <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left">
                             <thead class="text-xs text-gray-700 uppercase">
@@ -127,6 +135,6 @@ onMounted(async () => {
                 </section>
             </section>
         </main>
-        <Footer />
+        <Footer></Footer>
     </div>
 </template>

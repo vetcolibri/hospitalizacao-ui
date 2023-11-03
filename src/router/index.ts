@@ -19,22 +19,22 @@ const routes = [
         component: () => import('@/views/ChoosePatient.vue')
     },
     {
-        path: '/daily-round/:patientId',
+        path: '/daily-round/',
         name: 'DailyRound',
         component: () => import('@/views/DailyRound.vue')
     },
     {
-        path: '/choose-parameters/:patientId/',
+        path: '/choose-parameters/',
         name: 'ChooseParameters',
         component: () => import('@/views/ContinuousMonitoring.vue')
     },
     {
-        path: '/schedule-alert/:patientId/',
+        path: '/schedule-alert/',
         name: 'ScheduleAlert',
         component: () => import('@/views/ScheduleAlert.vue')
     },
     {
-        path: '/measurements/:patientId/',
+        path: '/measurements/',
         name: 'Measurements',
         component: () => import('@/views/PatientMeasurements.vue')
     },

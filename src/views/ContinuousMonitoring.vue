@@ -15,26 +15,28 @@ import Summary from '@/components/parameters/ParametersSummary.vue'
 import ExamTime from '@/components/ExamTime.vue'
 
 import { ref, onMounted, inject } from 'vue'
+import { useRouter } from 'vue-router'
+
 import { states } from '@/lib/data/parameters_state'
-import { useParametersStore } from '@/store/parametersStore'
 import { Provided } from '@/lib/provided'
-import { useRoute } from 'vue-router'
+import { useParametersStore } from '@/store/parametersStore'
+import { usePatientSelectedStore } from '@/store/patientStore'
 import type { MeasurementService } from '@/services/measurement_service'
 import type { Measurement } from '@/models/measurement'
-import router from '@/router'
 
-const route = useRoute()
 const form = ref<HTMLFormElement>()
 const showParameters = ref(false)
 const showAlertCheckbox = ref<boolean>(false)
 const parametersState = ref(states)
 const parametersMenuEl = ref()
 const alertCheckbox = ref<boolean>(false)
+const router = useRouter()
 const parametersSummaryRef = ref<typeof Summary>()
 const parametersStore = useParametersStore()
 const measurementService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
-const patientId = route.params.patientId as string
 const latestMeasurements = ref<Partial<Measurement[]>>([])
+const patientStore = usePatientSelectedStore()
+const patientId = patientStore.patient
 
 function toogleParameterList() {
     showParameters.value = !showParameters.value
@@ -83,26 +85,31 @@ function closeParametersMenu(event: Event) {
 }
 
 function showParametersInStore() {
-    if (parametersStore.getParameters.length > 0) {
-        for (let name of parametersStore.getParameters) {
-            for (let parameter of Object.entries(parametersState.value)) {
-                if (name === parameter[0]) {
-                    changeVisibility(parameter[1].id)
-                }
+    if (parametersStore.getParameters.length === 0) {
+        return
+    }
+
+    for (let name of parametersStore.getParameters) {
+        for (let parameter of Object.entries(parametersState.value)) {
+            if (name === parameter[0]) {
+                changeVisibility(parameter[1].id)
             }
         }
-        parametersStore.clear()
     }
+
+    parametersStore.clear()
 }
 
 function getLatestMeasurement(name: string) {
-    if (latestMeasurements.value.length > 0) {
-        for (let measurement of latestMeasurements.value) {
-            if (measurement!.name === name) {
-                return {
-                    value: measurement!.value,
-                    date: measurement!.issudeAt
-                }
+    if (latestMeasurements.value.length === 0) {
+        return
+    }
+
+    for (let measurement of latestMeasurements.value) {
+        if (measurement!.name === name) {
+            return {
+                value: measurement!.value,
+                date: measurement!.issudeAt
             }
         }
     }
@@ -135,6 +142,10 @@ async function save() {
 }
 
 onMounted(async () => {
+    if (!patientId) {
+        router.back()
+    }
+
     document.addEventListener('click', closeParametersMenu)
     showParametersInStore()
     const resultOrError = await measurementService.latestMeasurements(patientId)
