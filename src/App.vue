@@ -2,7 +2,7 @@
 import ParametersAlert from './components/parameters/ParametersAlert.vue'
 </script>
 <template>
-    <div class="bg-gray-300 relative">
+    <div class="bg-gray-200 relative">
         <router-view />
         <ParametersAlert />
     </div>

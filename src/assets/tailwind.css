@@ -89,3 +89,34 @@ input[type="checkbox"] {
 .menu-item {
     @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-3 py-2 md:p-4 text-sm md:text-base;
 }
+
+
+/* Patient Info */
+
+.patient-info {
+    @apply flex-1 text-sm text-gray-500 space-y-2
+}
+
+.patient-info-item {
+    @apply flex justify-between w-full p-2.5 border rounded bg-gray-50
+}
+
+.patient-info-text {
+    @apply font-normal text-gray-700
+}
+
+/* Badge */
+
+
+.badge {
+    @apply inline-flex items-center px-2 py-1 text-sm font-medium rounded
+}
+
+.badge-dark {
+    @apply text-gray-800 bg-gray-100
+
+}
+
+.badge-success {
+    @apply text-white bg-green-600
+}

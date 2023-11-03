@@ -29,19 +29,16 @@ onMounted(async () => {
         <main class="main-content">
             <section class="py-8 px-12">
                 <section
-                    class="grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-4 mx-auto xl:max-w-7xl"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl"
                 >
                     <PatientHospitalized
                         v-for="patient in patients"
-                        :patientId="patient.patientId"
-                        :name="patient.name"
-                        :specie="patient.specie"
-                        :entryDate="patient.entryDate"
-                        :hasAlert="patient.hasAlert"
+                        :patient="patient"
+                        @next-page=""
                     />
                 </section>
             </section>
         </main>
-        <Footer />
+        <Footer></Footer>
     </div>
 </template>

@@ -224,8 +224,18 @@ onMounted(async () => {
                             :min="1"
                         />
                     </div>
-                    <SelectField title="Escolher Queixas" :options="COMPLAINTS" :limit="10" />
-                    <SelectField title="Escolher Diagnosticos" :options="DIAGNOSTICS" :limit="5" />
+                    <SelectField
+                        title="Escolher Queixas"
+                        :options="COMPLAINTS"
+                        :limit="10"
+                        v-model="hospitalization.complaints"
+                    />
+                    <SelectField
+                        title="Escolher Diagnosticos"
+                        :options="DIAGNOSTICS"
+                        :limit="5"
+                        v-model="hospitalization.diagnostics"
+                    />
                     <div class="flex space-x-4">
                         <InputField
                             title="Data de entrada"

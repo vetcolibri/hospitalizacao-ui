@@ -69,11 +69,7 @@ onMounted(async () => {
             <span v-if="selectedOptions.length > 5"
                 >{{ `(${selectedOptions.length})` }} opções escolhidas</span
             >
-            <span
-                v-else
-                v-for="option in selectedOptions"
-                class="inline-flex items-center px-2 py-1 mr-2 text-sm font-medium text-gray-800 bg-gray-100 rounded"
-            >
+            <span v-else v-for="option in selectedOptions" class="badge badge-dark mr-2">
                 {{ option }}
             </span>
         </div>

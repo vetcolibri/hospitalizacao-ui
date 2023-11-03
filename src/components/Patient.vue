@@ -1,30 +1,53 @@
 <script setup lang="ts">
+import PatientDetail from './PatientDetail.vue'
+
+import { ref } from 'vue'
 import { iconUrl } from '@/lib/data/patients'
 import { makeDateFormat } from '@/lib/shared/utils'
-import { ref } from 'vue'
-import type { Patient } from '@/models/patient'
 
 const date = ref()
-const props = defineProps<Patient>()
-date.value = makeDateFormat(new Date(props.entryDate))
+const props = defineProps(['patient'])
+const patientDetailRef = ref<typeof PatientDetail>()
+
+function openDetails() {
+    patientDetailRef.value?.open()
+}
+
+date.value = makeDateFormat(new Date(props.patient.entryDate!))
 </script>
 <template>
-    <router-link :to="`/${$route.params.page}/${patientId}`">
-        <section class="w-full bg-white border border-gray-200 rounded shadow relative">
-            <div class="flex flex-col items-center p-8">
-                <img class="w-16 h-16 md:w-24 md:h-24" :src="iconUrl" alt="patient-icon" />
-                <h5 class="mb-1 text-sm md:text-lg font-medium text-gray-500">{{ patientId }}</h5>
-                <h5 class="mb-1 text-sm md:text-lg font-medium text-gray-900">{{ name }}</h5>
-                <span class="text-sm text-gray-500">{{ specie }}</span>
-                <div class="text-sm text-gray-500 space-x-1 mb-1">
-                    <i class="bi bi-clock"></i>
-                    <span>{{ date }}</span>
-                </div>
-                <i
-                    v-if="hasAlert"
-                    class="bi bi-exclamation-triangle-fill md:text-lg text-yellow-600"
-                ></i>
+    <section
+        class="bg-white p-3.5 rounded shadow-sm border border-gray-100 space-y-4 cursor-pointer"
+    >
+        <div class="flex gap-2 border-b pb-1">
+            <div class="flex flex-1 gap-2 items-center">
+                <img class="w-4 h-4 md:w-8 md:h-8" :src="iconUrl" alt="patient-icon" />
+                <h5 class="flex-1 font-medium">{{ patient.name }}</h5>
             </div>
-        </section>
-    </router-link>
+            <i
+                class="bi bi-info-circle-fill text-blue-500 cursor-pointer z-[1000]"
+                @click="openDetails()"
+            ></i>
+        </div>
+        <div class="flex gap-4 mt-4">
+            <ul class="patient-info">
+                <li class="patient-info-item">
+                    <span>ID Paciente</span>
+                    <span class="patient-info-text">{{ patient.patientId }}</span>
+                </li>
+                <li class="patient-info-item">
+                    <span>Espécie </span>
+                    <span class="patient-info-text">{{ patient.specie }}</span>
+                </li>
+                <li class="patient-info-item">
+                    <span>Data de entrada </span>
+                    <span class="patient-info-text">{{ date }}</span>
+                </li>
+            </ul>
+            <PatientDetail ref="patientDetailRef" :patient="patient" />
+        </div>
+    </section>
 </template>
+
+<!-- <router-link :to="`/${$route.params.page}/${patient.patientId}`">
+</router-link> -->
