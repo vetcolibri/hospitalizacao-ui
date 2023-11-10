@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import BaseDialog from '../BaseDialog.vue'
+
 import { ref } from 'vue'
-import { Parameter } from '@/models/parameter'
+import type { Parameter } from '@/models/parameter'
 
 const dialogRef = ref<typeof BaseDialog>()
 const parameters = ref<Partial<Parameter[]>>([])

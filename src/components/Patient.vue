@@ -23,7 +23,7 @@ function nextPage() {
     router.push(`/${route.params.page}`)
 }
 
-date.value = makeDateFormat(new Date(props.patient.entryDate!))
+date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
 </script>
 <template>
     <section class="bg-white p-3.5 rounded shadow-sm border border-gray-100 space-y-4">

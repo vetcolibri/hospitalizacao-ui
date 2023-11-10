@@ -5,7 +5,7 @@ export interface Hospitalization {
     readonly diagnostics: string[]
     readonly entryDate: string
     readonly dischargeDate: string
-    readonly estimatedBudgetDate: string
+    readonly budget: Budget
 }
 
 export interface Budget {

@@ -59,7 +59,7 @@ export class PatientServiceAPI implements PatientService {
     }
 
     async newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>> {
-        const body = this.makeHospitalizationData(newPatientData)
+        const body = {}
         const responseOrErr = await this.apiClient.post(
             `${this.baseUrl}/${this.resource}/new-patient`,
             body
@@ -68,28 +68,5 @@ export class PatientServiceAPI implements PatientService {
             return left(responseOrErr.value)
         }
         return right(undefined)
-    }
-
-    private makeHospitalizationData(newPatientData: Partial<Hospitalization>) {
-        const body = {
-            patientData: {
-                name: newPatientData.name,
-                specie: newPatientData.specie,
-                breed: newPatientData.breed,
-                ownerId: newPatientData.ownerId,
-                ownerName: newPatientData.ownerName,
-                ownerPhoneNumber: newPatientData.ownerPhoneNumber
-            },
-            hospitalizationData: {
-                age: newPatientData.birthDate,
-                weight: newPatientData.weight,
-                complaints: newPatientData.complaints,
-                diagnostics: newPatientData.diagnostics,
-                entryDate: newPatientData.entryDate,
-                dischargeDate: newPatientData.dischargeDate,
-                estimatedBudgetDate: newPatientData.estimatedBudgetDate
-            }
-        }
-        return body
     }
 }

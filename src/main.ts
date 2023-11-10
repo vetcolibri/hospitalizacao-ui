@@ -14,12 +14,12 @@ import { PatientServiceAPI } from './services/patient_service'
 const pinia = createPinia()
 const app = createApp(App)
 
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'http://192.168.10.69:8000'
 const axiosAdapter = new AxiosAdapter()
 const patientService = new PatientServiceAPI(axiosAdapter, baseUrl)
 const measurementService = new MeasurementServiceAPI(axiosAdapter, baseUrl)
 const alertService = new AlertServiceAPI(axiosAdapter, baseUrl)
-const webSocket = new WebSocket('ws://localhost:8000/alerts/notifications')
+const webSocket = new WebSocket('ws://192.168.10.69:8000/alerts/notifications')
 
 app.provide(Provided.PATIENT_SERVICE, patientService)
 app.provide(Provided.MEASUREMENT_SERVICE, measurementService)
