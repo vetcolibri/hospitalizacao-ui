@@ -8,6 +8,7 @@ import { useParametersStore } from '@/store/parametersStore'
 import { AlertServiceAPI } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
+import { usePatientSelectedStore } from '@/store/patientStore'
 
 const dialogRef = ref<typeof BaseDialog>()
 const title = ref<string>('')
@@ -21,6 +22,7 @@ const router = useRouter()
 const alertService = <AlertServiceAPI>inject(Provided.ALERT_SERVICE)!
 const webSocket = <WebSocket>inject(Provided.WEBSOCKET)
 const parametersStore = useParametersStore()
+const patientStore = usePatientSelectedStore()
 
 webSocket.onopen = () => {
     console.log('Websocket Connected.')
@@ -69,8 +71,9 @@ async function confirm() {
     }
 
     parametersStore.$patch({ parameters: parameters.value })
+    patientStore.$patch({ patientId: patient.value.patientId })
     dialogRef.value?.close()
-    router.push({ name: 'ChooseParameters', params: { patientId: patient.value.patientId } })
+    router.push({ name: 'ChooseParameters' })
 }
 
 function open() {

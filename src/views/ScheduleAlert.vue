@@ -5,12 +5,14 @@ import ScheduleTime from '@/components/ScheduleTime.vue'
 import ScheduleRate from '@/components/ScheduleRepeatEvery.vue'
 
 import { inject, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
 import { AlertServiceAPI } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
 import type { RepeatEvery } from '@/models/repeat_every'
+import { usePatientSelectedStore } from '@/store/patientStore'
 
 const selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
@@ -19,8 +21,8 @@ const comments = ref<string>('')
 const textareaElement = ref<HTMLTextAreaElement>()
 const scheduleButton = ref<boolean>(false)
 const router = useRouter()
-const route = useRoute()
-const patientId = `${route.params.patientId}`
+const patientStore = usePatientSelectedStore()
+const patientId = patientStore.patient
 const alertService = inject<AlertServiceAPI>(Provided.ALERT_SERVICE)!
 
 function wasSelected(name: string) {
@@ -65,6 +67,7 @@ async function schedule() {
         rate: rate,
         comments: comments.value
     }
+
     const voidOrError = await alertService.schedule(patientId, alertData)
     if (voidOrError.isLeft()) {
         alert(voidOrError.value.message)
@@ -92,7 +95,7 @@ function changeScheduleButton() {
 </script>
 <template>
     <div>
-        <Header title="Alerta na monitorização" />
+        <Header title="Alerta na monitorização"></Header>
         <main class="main-content">
             <section class="px-12">
                 <section class="container mt-8">

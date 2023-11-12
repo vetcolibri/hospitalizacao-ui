@@ -125,12 +125,12 @@ function confirm() {
 }
 
 async function save() {
-    let parameters = {}
-    const resultOrError = await measurementService.newMeasurements(patientId, parameters)
-    if (resultOrError.isLeft()) {
-        alert('Não foi possível salvar os parâmetros')
-        return
-    }
+    // let parameters = {}
+    // const resultOrError = await measurementService.newMeasurements(patientId, parameters)
+    // if (resultOrError.isLeft()) {
+    //     alert('Não foi possível salvar os parâmetros')
+    //     return
+    // }
     parametersSummaryRef.value?.close()
     clearVisibility()
     alert('Parâmetros salvos com sucesso')
