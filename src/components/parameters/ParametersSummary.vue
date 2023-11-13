@@ -15,12 +15,12 @@ function close() {
     dialogRef.value?.close()
 }
 
-function addParameters(params: Parameter[]) {
+function add(params: Parameter[]) {
     parameters.value = []
     parameters.value.push(...params)
 }
 
-defineExpose({ open, close, addParameters })
+defineExpose({ open, close, add })
 </script>
 <template>
     <BaseDialog ref="dialogRef" title="Resumo">
