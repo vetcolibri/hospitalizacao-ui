@@ -5,7 +5,7 @@ import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useParametersStore } from '@/store/parametersStore'
-import { AlertServiceAPI } from '@/services/alert_service'
+import { AlertService } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
 import { usePatientSelectedStore } from '@/store/patientStore'
@@ -19,7 +19,7 @@ const comments = ref<string>('')
 const repeatEvery = ref<number>()
 const disabledAlert = ref<boolean>(false)
 const router = useRouter()
-const alertService = <AlertServiceAPI>inject(Provided.ALERT_SERVICE)!
+const alertService = <AlertService>inject(Provided.ALERT_SERVICE)!
 const webSocket = <WebSocket>inject(Provided.WEBSOCKET)
 const parametersStore = useParametersStore()
 const patientStore = usePatientSelectedStore()
