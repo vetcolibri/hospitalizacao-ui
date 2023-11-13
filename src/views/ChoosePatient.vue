@@ -7,18 +7,19 @@ import PatientHospitalized from '@/components/Patient.vue'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { Patient } from '@/models/patient'
-import type { PatientService } from '@/services/patient_service'
+import type { IPatientService } from '@/services/patient_service'
 
 const patients = ref<Patient[]>([])
+const patientService = inject<IPatientService>(Provided.PATIENT_SERVICE)!
 
 onMounted(async () => {
-    const patientService = inject<PatientService>(Provided.PATIENT_SERVICE)!
-    const responseOrError = await patientService.getAllHospitalized()
-    if (responseOrError.isLeft()) {
-        console.error(responseOrError.value)
+    const patientsOrError = await patientService.getAllHospitalized()
+    if (patientsOrError.isLeft()) {
+        alert('Não foi possível carregar os pacientes')
         return
     }
-    patients.value = responseOrError.value
+
+    patients.value = patientsOrError.value
 })
 </script>
 <template>
