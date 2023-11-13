@@ -41,7 +41,7 @@ export const states = {
         value: '',
         state: ''
     },
-    glicemia: {
+    bloodGlucose: {
         id: '7',
         name: 'Glicemia',
         visibility: false,

@@ -19,9 +19,10 @@ import { useRouter } from 'vue-router'
 
 import { states } from '@/lib/data/parameters_state'
 import { Provided } from '@/lib/provided'
+import { getLatestMeasurement } from '@/lib/shared/utils'
 import { useParametersStore } from '@/store/parametersStore'
 import { usePatientSelectedStore } from '@/store/patientStore'
-import type { MeasurementService } from '@/services/measurement_service'
+import type { IRoundService } from '@/services/round_service'
 import type { Measurement } from '@/models/measurement'
 
 const form = ref<HTMLFormElement>()
@@ -33,8 +34,8 @@ const alertCheckbox = ref<boolean>(false)
 const router = useRouter()
 const parametersSummaryRef = ref<typeof Summary>()
 const parametersStore = useParametersStore()
-const measurementService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
-const latestMeasurements = ref<Partial<Measurement[]>>([])
+const roundService = inject<IRoundService>(Provided.ROUND_SERVICE)!
+const latestMeasurements = ref<Measurement[]>([])
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
 
@@ -46,14 +47,14 @@ function records() {
     return Object.values(parametersState.value)
 }
 
+function entries() {
+    return Object.entries(parametersState.value)
+}
+
 function changeVisibility(id: string) {
-    for (const parameter of records()) {
-        if (parameter.id === id) {
-            parameter.visibility = !parameter.visibility
-            changeAlertCheckboxVisibility()
-            return
-        }
-    }
+    const parameter = records().find((parameter) => parameter.id === id)
+    parameter!.visibility = !parameter!.visibility
+    changeAlertCheckboxVisibility()
 }
 
 function changeAlertCheckboxVisibility() {
@@ -70,11 +71,11 @@ function changeAlertCheckboxVisibility() {
 }
 
 function clearVisibility() {
-    const parameters = records()
-    const visibleParameters = parameters.filter((parameter) => parameter.visibility === true)
-    visibleParameters.forEach((parameter) => {
-        parameter.visibility = false
-    })
+    records()
+        .filter((parameter) => parameter.visibility === true)
+        .forEach((parameter) => {
+            parameter.visibility = false
+        })
     showAlertCheckbox.value = false
 }
 
@@ -84,75 +85,75 @@ function closeParametersMenu(event: Event) {
     }
 }
 
-function showParametersInStore() {
-    if (parametersStore.getParameters.length === 0) {
-        return
-    }
+function showParameter(name: string) {
+    entries()
+        .filter(([key, _]) => key === name)
+        .forEach(([_, parameter]) => {
+            changeVisibility(parameter.id)
+        })
+}
 
-    for (let name of parametersStore.getParameters) {
-        for (let parameter of Object.entries(parametersState.value)) {
-            if (name === parameter[0]) {
-                changeVisibility(parameter[1].id)
-            }
-        }
-    }
+function showParametersInStore() {
+    const parameters = parametersStore.getParameters
+    if (parameters.length === 0) return
+
+    parameters.forEach((parameter) => {
+        showParameter(parameter)
+    })
 
     parametersStore.clear()
 }
 
-function getLatestMeasurement(name: string) {
-    if (latestMeasurements.value.length === 0) {
-        return
-    }
-
-    for (let measurement of latestMeasurements.value) {
-        if (measurement!.name === name) {
-            return {
-                value: measurement!.value,
-                date: measurement!.issudeAt
-            }
-        }
-    }
+function isInvalid() {
+    return !form.value?.checkValidity() || form.value?.elements.length === 0
 }
 
 function confirm() {
-    if (!form.value?.checkValidity() || form.value?.elements.length === 0) {
+    if (isInvalid()) {
         return form.value?.reportValidity()
     }
     const parameters = records()
-    parametersSummaryRef.value?.addParameters(parameters)
+    parametersSummaryRef.value?.add(parameters)
     parametersSummaryRef.value?.open()
 }
 
 async function save() {
-    // let parameters = {}
-    // const resultOrError = await measurementService.newMeasurements(patientId, parameters)
-    // if (resultOrError.isLeft()) {
-    //     alert('Não foi possível salvar os parâmetros')
-    //     return
-    // }
+    const parameters = entries()
+        .filter(([_, parameter]) => parameter.visibility === true)
+        .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
+        .reduce((acc, cur) => ({ ...acc, ...cur }), {})
+
+    const voidOrError = await roundService.newRound(patientId, parameters)
+    if (voidOrError.isLeft()) {
+        alert('Não foi possível salvar os parâmetros')
+        return
+    }
+
     parametersSummaryRef.value?.close()
+
     clearVisibility()
+
     alert('Parâmetros salvos com sucesso')
-    if (alertCheckbox) {
-        router.push({ name: 'ScheduleAlert', params: { patientId } })
+
+    if (alertCheckbox.value) {
+        router.push({ name: 'ScheduleAlert' })
         return
     }
     router.push({ name: 'Dashboard' })
 }
 
 onMounted(async () => {
-    if (!patientId) {
-        router.back()
-    }
+    if (!patientId) return router.back()
 
     document.addEventListener('click', closeParametersMenu)
+
+    const measurementsOrError = await roundService.latestMeasurements(patientId)
+
+    if (measurementsOrError.isLeft()) return
+
+    latestMeasurements.value = measurementsOrError.value
+
     showParametersInStore()
-    const resultOrError = await measurementService.latestMeasurements(patientId)
-    if (resultOrError.isLeft()) {
-        return
-    }
-    latestMeasurements.value = resultOrError.value
 })
 </script>
 <template>
@@ -161,7 +162,7 @@ onMounted(async () => {
     </Header>
     <main class="main-content">
         <section class="px-12">
-            <section class="container mt-8">
+            <section class="container my-8">
                 <ExamTime />
                 <section class="relative space-y-2">
                     <div
@@ -172,11 +173,14 @@ onMounted(async () => {
                             class="bi bi-hand-index text-base md:text-xl"
                             @click="toogleParameterList"
                         ></i>
-                        <div class="flex-1 border-0 py-2 focus:ring-0" @click="toogleParameterList">
+                        <div
+                            class="flex-1 border-0 py-2 cursor-pointer focus:ring-0"
+                            @click="toogleParameterList"
+                        >
                             Escolher parâmetros
                         </div>
                         <i
-                            class="bi bi-arrow-clockwise text-base md:text-xl"
+                            class="bi bi-arrow-clockwise text-base cursor-pointer md:text-xl"
                             @click="clearVisibility"
                         ></i>
                     </div>
@@ -205,55 +209,73 @@ onMounted(async () => {
                             <HeartRate
                                 v-if="parametersState.heartRate.visibility"
                                 v-model="parametersState.heartRate.value"
-                                :latest-measurement="getLatestMeasurement('heartRate')"
+                                :latest-measurement="
+                                    getLatestMeasurement('heartRate', latestMeasurements)
+                                "
                                 @state="parametersState.heartRate.state = $event"
                             />
                             <RespiratoryRate
                                 v-if="parametersState.respiratoryRate.visibility"
                                 v-model="parametersState.respiratoryRate.value"
-                                :latest-measurement="getLatestMeasurement('respiratoryRate')"
+                                :latest-measurement="
+                                    getLatestMeasurement('respiratoryRate', latestMeasurements)
+                                "
                                 @state="parametersState.respiratoryRate.state = $event"
                             />
                             <Trc
                                 v-if="parametersState.trc.visibility"
                                 v-model="parametersState.trc.value"
-                                :latest-measurement="getLatestMeasurement('trc')"
+                                :latest-measurement="
+                                    getLatestMeasurement('trc', latestMeasurements)
+                                "
                                 @state="parametersState.trc.state = $event"
                             />
                             <Avdn
                                 v-if="parametersState.avdn.visibility"
                                 v-model="parametersState.avdn.value"
-                                :latest-measurement="getLatestMeasurement('avdn')"
+                                :latest-measurement="
+                                    getLatestMeasurement('avdn', latestMeasurements)
+                                "
                                 @state="parametersState.avdn.state = $event"
                             />
                             <Mucosas
                                 v-if="parametersState.mucosas.visibility"
                                 v-model="parametersState.mucosas.value"
-                                :latest-measurement="getLatestMeasurement('mucosas')"
+                                :latest-measurement="
+                                    getLatestMeasurement('mucosas', latestMeasurements)
+                                "
                                 @state="parametersState.mucosas.state = $event"
                             />
                             <Temperature
                                 v-if="parametersState.temperature.visibility"
                                 v-model="parametersState.temperature.value"
-                                :latest-measurement="getLatestMeasurement('temperature')"
+                                :latest-measurement="
+                                    getLatestMeasurement('temperature', latestMeasurements)
+                                "
                                 @state="parametersState.temperature.state = $event"
                             />
                             <Glicemia
-                                v-if="parametersState.glicemia.visibility"
-                                v-model="parametersState.glicemia.value"
-                                :latest-measurement="getLatestMeasurement('bloodGlucose')"
-                                @state="parametersState.glicemia.state = $event"
+                                v-if="parametersState.bloodGlucose.visibility"
+                                v-model="parametersState.bloodGlucose.value"
+                                :latest-measurement="
+                                    getLatestMeasurement('bloodGlucose', latestMeasurements)
+                                "
+                                @state="parametersState.bloodGlucose.state = $event"
                             />
                             <Hct
                                 v-if="parametersState.hct.visibility"
                                 v-model="parametersState.hct.value"
-                                :latest-measurement="getLatestMeasurement('hct')"
+                                :latest-measurement="
+                                    getLatestMeasurement('hct', latestMeasurements)
+                                "
                                 @state="parametersState.hct.state = $event"
                             />
                             <BloodPressure
                                 v-if="parametersState.bloodPressure.visibility"
                                 v-model="parametersState.bloodPressure.value"
-                                :latest-measurement="getLatestMeasurement('bloodPressure')"
+                                :latest-measurement="
+                                    getLatestMeasurement('bloodPressure', latestMeasurements)
+                                "
                                 @state="parametersState.bloodPressure.state = $event"
                             />
                             <div v-if="showAlertCheckbox" class="flex items-center">
