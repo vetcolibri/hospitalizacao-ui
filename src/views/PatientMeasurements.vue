@@ -13,7 +13,7 @@ import {
     findParameterUnity
 } from '@/lib/shared/utils'
 import type { Measurement } from '@/models/measurement'
-import type { MeasurementService } from '@/services/measurement_service'
+import type { IRoundService } from '@/services/round_service'
 import { Provided } from '@/lib/provided'
 import { usePatientSelectedStore } from '@/store/patientStore'
 import { useRouter } from 'vue-router'
@@ -22,10 +22,10 @@ const router = useRouter()
 const measurements = ref<Measurement[]>([])
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
-const measurmentService = inject<MeasurementService>(Provided.MEASUREMENT_SERVICE)!
+const roundService = inject<IRoundService>(Provided.ROUND_SERVICE)!
 
 const currentPage = ref<number>(1)
-const perPage = 8
+const perPage = 20
 
 const pages = computed(() => {
     return Math.ceil(measurements.value.length / perPage)
@@ -41,14 +41,10 @@ function updatePage(page: number) {
 }
 
 onMounted(async () => {
-    if (!patientId) {
-        router.back()
-    }
+    if (!patientId) return router.back()
 
-    const measurementsOrError = await measurmentService.getAllMeasurements(patientId)
-    if (measurementsOrError.isLeft()) {
-        return
-    }
+    const measurementsOrError = await roundService.getAllMeasurements(patientId)
+    if (measurementsOrError.isLeft()) return
     measurements.value = measurementsOrError.value
 })
 </script>
@@ -85,8 +81,8 @@ onMounted(async () => {
                         </li>
                     </ul>
                 </section>
-                <section class="container mb-4">
-                    <div class="relative overflow-x-auto">
+                <section class="container flex flex-col justify-between mb-8">
+                    <div class="relative">
                         <table class="w-full text-sm text-left">
                             <thead class="text-xs text-gray-700 uppercase">
                                 <tr>
@@ -102,36 +98,31 @@ onMounted(async () => {
                                         {{ findParameterName(parameter.name) }}
                                     </th>
                                     <td class="px-6 py-4">
-                                        {{ parameter.value }}
+                                        {{ parameter.measurement.value }}
                                         {{ findParameterUnity(parameter.name) }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ makeDateFormat(new Date(parameter.date!)) }}
+                                        {{ makeDateFormat(new Date(parameter.issuedAt!)) }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        {{ makeHourFormat(new Date(parameter.date!)) }}
+                                        {{ makeHourFormat(new Date(parameter.issuedAt!)) }}
                                     </td>
-                                </tr>
-                            </tbody>
-                            <tbody v-else>
-                                <tr>
-                                    <th
-                                        scope="row"
-                                        colspan="4"
-                                        class="px-6 py-4 font-medium text-gray-90"
-                                    >
-                                        Nenhuma medição encontrada
-                                    </th>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div
+                        v-if="measurements.length === 0"
+                        class="h-full text-center text-base text-gray-600"
+                    >
+                        Nenhuma medição encontrada
                     </div>
                     <Pagination
                         v-if="pages > 1"
                         :current-page="currentPage"
                         :pages="pages"
                         @update-page="(page) => updatePage(page)"
-                    ></Pagination>
+                    />
                 </section>
             </section>
         </main>

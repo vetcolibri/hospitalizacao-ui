@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
-import { AlertServiceAPI } from '@/services/alert_service'
+import { AlertService } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
 import type { RepeatEvery } from '@/models/repeat_every'
 import { usePatientSelectedStore } from '@/store/patientStore'
@@ -23,7 +23,7 @@ const scheduleButton = ref<boolean>(false)
 const router = useRouter()
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
-const alertService = inject<AlertServiceAPI>(Provided.ALERT_SERVICE)!
+const alertService = inject<AlertService>(Provided.ALERT_SERVICE)!
 
 function wasSelected(name: string) {
     const selected = selectedParameters.value.find((element) => element === name)
