@@ -4,7 +4,10 @@ import { vFormatDate } from '@/lib/directives'
 interface Props {
     title: string
     helpText?: string
-    measurement?: { value: string; date: string }
+    measurement?: {
+        value: string
+        issuedAt: string
+    }
 }
 defineProps<Props>()
 </script>
@@ -26,7 +29,7 @@ defineProps<Props>()
                 />
                 <span
                     v-if="measurement?.value"
-                    v-format-date="measurement?.date"
+                    v-format-date="measurement?.issuedAt"
                     class="text-sm text-gray-600"
                 >
                 </span>
