@@ -1,6 +1,6 @@
 <script lang="ts">
 import BaseParameter from './BaseParameter.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 </script>
 
 <script setup lang="ts">
