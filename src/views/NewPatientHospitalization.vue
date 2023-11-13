@@ -11,12 +11,12 @@ import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { BREEDS } from '@/lib/data/breeds'
 import type { Hospitalization, Budget } from '@/models/hospitalization'
-import type { PatientService } from '@/services/patient_service'
+import type { IPatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
 import SelectField from '@/components/hospitalization/SelectField.vue'
 
 const router = useRouter()
-const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
+const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 const status = ref<string>('Hospitalizar')
 const form = ref<HTMLFormElement>()
 

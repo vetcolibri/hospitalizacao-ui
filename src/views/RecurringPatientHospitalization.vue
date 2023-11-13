@@ -8,14 +8,14 @@ import SelectField from '@/components/hospitalization/SelectField.vue'
 import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, reactive, ref } from 'vue'
 import { Provided } from '@/lib/provided'
-import type { PatientService } from '@/services/patient_service'
+import type { IPatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
 import type { Budget, Hospitalization } from '@/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
-const patientService = <PatientService>inject(Provided.PATIENT_SERVICE)!
+const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 const patient = ref<Patient>()
 const message = ref<string>('')
 const query = ref<string>('')
