@@ -67,3 +67,18 @@ export function findParameterUnity(name: string) {
     if (!result) return
     return result[1]
 }
+
+export function getLatestMeasurement(parameter: string, measurements: Measurement[]) {
+    if (measurements.length === 0) {
+        return
+    }
+
+    for (let measurement of measurements) {
+        if (measurement.name === parameter) {
+            return {
+                value: measurement.value,
+                issuedAt: measurement.issuedAt
+            }
+        }
+    }
+}
