@@ -4,7 +4,7 @@ import type { Patient } from '@/models/patient'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
 
-export interface PatientService {
+export interface IPatientService {
     getAllHospitalized(): Promise<Either<APIError, Patient[]>>
     newHospitalization(
         patientId: string,
@@ -14,7 +14,7 @@ export interface PatientService {
     newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>>
 }
 
-export class PatientServiceAPI implements PatientService {
+export class PatientService implements IPatientService {
     readonly apiClient: APIClient
     readonly baseUrl: string
     readonly resource: string
@@ -29,11 +29,9 @@ export class PatientServiceAPI implements PatientService {
         const patientsOrErr = await this.apiClient.get(
             `${this.baseUrl}/${this.resource}/hospitalized`
         )
-        if (patientsOrErr.isLeft()) {
-            return left(patientsOrErr.value)
-        }
-        const patients = patientsOrErr.value.data
-        return right(patients)
+        if (patientsOrErr.isLeft()) return left(patientsOrErr.value)
+
+        return right(patientsOrErr.value.data)
     }
 
     async newHospitalization(
@@ -45,17 +43,15 @@ export class PatientServiceAPI implements PatientService {
             `${this.baseUrl}/${this.resource}/hospitalize`,
             body
         )
-        if (responseOrErr.isLeft()) {
-            return left(responseOrErr.value)
-        }
+        if (responseOrErr.isLeft()) return left(responseOrErr.value)
+
         return right(undefined)
     }
 
     async nonHospitalized(): Promise<Either<APIError, Patient[]>> {
         const patientsOrError = await this.apiClient.get(`${this.baseUrl}/${this.resource}/`)
         if (patientsOrError.isLeft()) return left(patientsOrError.value)
-        const patients = patientsOrError.value
-        return right(patients.data)
+        return right(patientsOrError.value.data)
     }
 
     async newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>> {
@@ -64,9 +60,8 @@ export class PatientServiceAPI implements PatientService {
             `${this.baseUrl}/${this.resource}/new-patient`,
             body
         )
-        if (responseOrErr.isLeft()) {
-            return left(responseOrErr.value)
-        }
+        if (responseOrErr.isLeft()) return left(responseOrErr.value)
+
         return right(undefined)
     }
 }
