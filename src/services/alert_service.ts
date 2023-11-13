@@ -3,12 +3,12 @@ import type { Either } from '@/lib/shared/either'
 import type { Alert } from '@/models/alert'
 import { left, right } from '@/lib/shared/either'
 
-export interface AlertService {
+export interface IAlertService {
     schedule(patientId: string, alertData: Alert): Promise<Either<APIError, void>>
     cancel(alertId: string): Promise<Either<APIError, void>>
 }
 
-export class AlertServiceAPI implements AlertService {
+export class AlertService implements IAlertService {
     readonly apiClient: APIClient
     readonly baseUrl: string
     readonly resource: string
@@ -20,27 +20,24 @@ export class AlertServiceAPI implements AlertService {
     }
 
     async schedule(patientId: string, alertData: Alert): Promise<Either<APIError, void>> {
-        const body = {
-            patientId,
-            alertData
-        }
+        const body = { patientId, alertData }
         const resultOrError = await this.apiClient.post(
             `${this.baseUrl}/${this.resource}/schedule`,
             body
         )
-        if (resultOrError.isLeft()) {
-            return left(resultOrError.value)
-        }
+        if (resultOrError.isLeft()) return left(resultOrError.value)
+
         return right(undefined)
     }
 
     async cancel(alertId: string): Promise<Either<APIError, void>> {
-        const resultOrError = await this.apiClient.post(`${this.baseUrl}/${this.resource}/cancel`, {
-            alertId
-        })
-        if (resultOrError.isLeft()) {
-            return left(resultOrError.value)
-        }
+        const body = { alertId }
+        const resultOrError = await this.apiClient.post(
+            `${this.baseUrl}/${this.resource}/cancel`,
+            body
+        )
+        if (resultOrError.isLeft()) return left(resultOrError.value)
+
         return right(undefined)
     }
 }
