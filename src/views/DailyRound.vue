@@ -24,12 +24,12 @@ import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
 import { getLatestMeasurement } from '@/lib/shared/utils'
 
-const router = useRouter()
+const form = ref<HTMLFormElement>()
 const parametersState = ref(states)
 const alertCheckbox = ref<boolean>(false)
-const form = ref<HTMLFormElement>()
 const parametersSummaryRef = ref<typeof Summary>()
 const latestMeasurements = ref<Measurement[]>([])
+const router = useRouter()
 const roundService = inject<RoundService>(Provided.ROUND_SERVICE)!
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
