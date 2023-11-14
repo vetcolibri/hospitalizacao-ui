@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 
-export interface Props {
+interface Props {
     title: string
     options: string[]
     limit: number
+    modelValue: string[]
 }
 
 interface Emits {
@@ -12,10 +13,12 @@ interface Emits {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const emits = defineEmits<Emits>()
+
 const query = ref<string>('')
 const showOptions = ref<boolean>(false)
 const selectedOptions = ref<string[]>([])
+const inputRef = ref<HTMLInputElement>()
 const optionsRef = ref()
 
 function toggleOptions() {
@@ -24,16 +27,21 @@ function toggleOptions() {
 
 function selectOption(idx: number) {
     const option = searchOptions.value[idx]
+
     if (selectedOptions.value.includes(option)) {
         selectedOptions.value = selectedOptions.value.filter((selected) => selected !== option)
-        emit('update:modelValue', selectedOptions.value)
+        emits('update:modelValue', selectedOptions.value)
+        if (selectedOptions.value.length === 0) {
+            inputRef.value!.value = ''
+        }
         return
     }
-    if (selectedOptions.value.length === props.limit) {
-        return
-    }
+
+    if (props.modelValue.length === props.limit) return
+
+    inputRef.value!.value = '1'
     selectedOptions.value.push(option)
-    emit('update:modelValue', selectedOptions.value)
+    emits('update:modelValue', selectedOptions.value)
 }
 
 function hasSelected(idx: number) {
@@ -42,6 +50,8 @@ function hasSelected(idx: number) {
 
 function cleanSelectedOptions() {
     selectedOptions.value = []
+    inputRef.value!.value = ''
+    emits('update:modelValue', selectedOptions.value)
 }
 
 function hiddenOptions(event: Event) {
@@ -62,23 +72,26 @@ onMounted(async () => {
 </script>
 <template>
     <div ref="optionsRef" class="relative">
-        <div class="form-control form-select text-gray-500 cursor-pointer" @click="toggleOptions()">
-            <span v-if="selectedOptions.length === 0">
-                {{ title }}
+        <div
+            class="cursor-pointer z-20 absolute w-full h-full top-0 left-0 bg-transparent p-2"
+            @click="toggleOptions()"
+        >
+            <span v-if="modelValue.length > 5">
+                {{ `(${modelValue.length})` }} opções escolhidas
             </span>
-            <span v-if="selectedOptions.length > 5"
-                >{{ `(${selectedOptions.length})` }} opções escolhidas</span
-            >
-            <span v-else v-for="option in selectedOptions" class="badge badge-dark mr-2">
-                {{ option }}
-            </span>
+            <div class="" v-if="modelValue.length > 0 && modelValue.length <= 5">
+                <span v-for="option in modelValue" class="badge badge-dark mr-2">
+                    {{ option }}
+                </span>
+            </div>
         </div>
+        <input ref="inputRef" type="text" class="form-control z-10" required :placeholder="title" />
         <div
             v-if="showOptions"
             class="w-full h-48 absolute border rounded shadow-sm mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-sm text-gray-500"
         >
             <input type="text" class="form-control mb-2" placeholder="Pesquisar" v-model="query" />
-            <div v-if="selectedOptions.length > 0" class="flex justify-between">
+            <div v-if="modelValue.length > 0" class="flex justify-between">
                 <span>São permitidas no máximo {{ limit }} opções</span>
                 <div class="space-x-1 cursor-pointer" @click="cleanSelectedOptions()">
                     <i class="bi bi-trash"></i>

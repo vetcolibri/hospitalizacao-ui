@@ -12,6 +12,8 @@ interface Props {
     min?: number
     max?: number
     isRequired?: boolean
+    pattern?: string
+    helpText?: string
 }
 const props = defineProps<Props>()
 const emit = defineEmits(['update:modelValue'])
@@ -47,6 +49,8 @@ function emitValue() {
             :required="isRequired"
             :min="min ? min : ''"
             :max="max ? max : ''"
+            :pattern="pattern ? pattern : undefined"
+            :title="helpText ? helpText : ''"
             v-model="inputValue"
             @input="emitValue()"
         />

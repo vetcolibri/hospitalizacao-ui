@@ -46,12 +46,12 @@ const routes = [
     {
         path: '/recurring-patient/',
         name: 'RecurringPatient',
-        component: () => import('@/views/RecurringPatientHospitalization.vue')
+        component: () => import('@/views/RecurringHospitalization.vue')
     },
     {
         path: '/register-patient/',
         name: 'RegisterPatient',
-        component: () => import('@/views/NewPatientHospitalization.vue')
+        component: () => import('@/views/NewPatient.vue')
     }
 ]
 

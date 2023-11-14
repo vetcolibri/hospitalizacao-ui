@@ -2,11 +2,11 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
-import InputField from '@/components/hospitalization/InputField.vue'
-import SelectField from '@/components/hospitalization/SelectField.vue'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
 
 import { iconUrl } from '@/lib/data/patients'
-import { inject, onMounted, reactive, ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { IPatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
@@ -32,7 +32,11 @@ const hospitalization = ref<Hospitalization>({
     complaints: [],
     entryDate: '',
     dischargeDate: '',
-    estimatedBudgetDate: ''
+    budget: {
+        startDate: '',
+        endDate: '',
+        status: ''
+    }
 })
 
 const budget = ref<Budget>({
@@ -101,7 +105,7 @@ async function hospitalize() {
 
 onMounted(async () => {
     const patientsOrError = await patientService.nonHospitalized()
-    patients.value = patientsOrError.value as Patient[]
+    patients.value = <Patient[]>patientsOrError.value
 })
 </script>
 <template>
@@ -143,7 +147,7 @@ onMounted(async () => {
                 <section class="container rounded mt-8 mb-4">
                     <h1 class="font-medium">Paciente</h1>
                     <p class="text-sm text-gray-500">Dados do paciente.</p>
-                    <InputField
+                    <BaseInput
                         title="Nome do Paciente"
                         :placeholder="patient?.name"
                         :disabled="true"
@@ -151,14 +155,14 @@ onMounted(async () => {
                         class="flex-1 text-gray-500"
                     />
                     <div class="flex space-x-4">
-                        <InputField
+                        <BaseInput
                             title="ID Paciente"
                             :placeholder="patient?.patientId"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1 text-gray-500"
                         />
-                        <InputField
+                        <BaseInput
                             title="Espécie"
                             :placeholder="patient?.specie"
                             :disabled="true"
@@ -168,7 +172,7 @@ onMounted(async () => {
                         />
                     </div>
                     <div class="flex space-x-4">
-                        <InputField
+                        <BaseInput
                             title="Raça"
                             :placeholder="patient?.breed"
                             :disabled="true"
@@ -176,7 +180,7 @@ onMounted(async () => {
                             :is-select="true"
                             class="flex-1 text-gray-500"
                         />
-                        <InputField
+                        <BaseInput
                             title="ID Proprietário"
                             :placeholder="patient?.ownerId"
                             :disabled="true"
@@ -185,14 +189,14 @@ onMounted(async () => {
                         />
                     </div>
                     <div class="flex space-x-4">
-                        <InputField
+                        <BaseInput
                             title="Nome do Proprietário"
                             :placeholder="patient?.ownerName"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1 text-gray-500"
                         />
-                        <InputField
+                        <BaseInput
                             title="Telemóvel"
                             :placeholder="patient?.ownerPhoneNumber"
                             :disabled="true"
@@ -207,47 +211,51 @@ onMounted(async () => {
                         Preencha os campos abaixo com os dados da hospitalização.
                     </p>
                     <div class="flex space-x-4">
-                        <InputField
+                        <BaseInput
                             title="Data de nascimento"
                             type="date"
                             class="flex-1 text-gray-500"
                             placeholder="Data de nascimento"
                             v-model="hospitalization.birthDate"
+                            :is-required="true"
                         />
-                        <InputField
+                        <BaseInput
                             title="Peso Kg"
                             type="number"
                             class="flex-1 text-gray-500"
                             placeholder="Peso Kg"
                             v-model="hospitalization.weight"
+                            :is-required="true"
                             :max="100"
                             :min="1"
                         />
                     </div>
-                    <SelectField
+                    <BaseSelect
                         title="Escolher Queixas"
                         :options="COMPLAINTS"
                         :limit="10"
                         v-model="hospitalization.complaints"
                     />
-                    <SelectField
+                    <BaseSelect
                         title="Escolher Diagnosticos"
                         :options="DIAGNOSTICS"
                         :limit="5"
                         v-model="hospitalization.diagnostics"
                     />
                     <div class="flex space-x-4">
-                        <InputField
+                        <BaseInput
                             title="Data de entrada"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="hospitalization.entryDate"
+                            :is-required="true"
                         />
-                        <InputField
+                        <BaseInput
                             title="Previsão de Alta Médica"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="hospitalization.dischargeDate"
+                            :is-required="true"
                         />
                     </div>
                 </section>
@@ -257,22 +265,24 @@ onMounted(async () => {
                         Preencha os campos abaixo com os dados do orçamento.
                     </p>
                     <div class="flex items-end space-x-4">
-                        <InputField
+                        <BaseInput
                             title="Inicia em"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="budget.startDate"
+                            :is-required="true"
                         />
-                        <InputField
+                        <BaseInput
                             title="Termina em"
                             type="date"
                             class="flex-1 text-gray-500"
                             v-model="budget.endDate"
+                            :is-required="true"
                         />
                     </div>
                     <div class="flex space-x-4">
                         <div class="flex-1 mt-2">
-                            <select class="form-control" v-model="budget.status">
+                            <select class="form-control" required v-model="budget.status">
                                 <option value="" selected>Escolher Estado</option>
                                 <option value="UNPAIND">Não Pago</option>
                                 <option value="PENDING">Pendente</option>
