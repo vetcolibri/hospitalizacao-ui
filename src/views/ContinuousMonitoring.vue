@@ -112,7 +112,8 @@ function confirm() {
     if (isInvalid()) {
         return form.value?.reportValidity()
     }
-    const parameters = records()
+
+    const parameters = records().filter((parameter) => parameter.visibility === true)
     parametersSummaryRef.value?.add(parameters)
     parametersSummaryRef.value?.open()
 }
@@ -144,6 +145,8 @@ async function save() {
 
 onMounted(async () => {
     if (!patientId) return router.back()
+
+    clearVisibility()
 
     document.addEventListener('click', closeParametersMenu)
 
