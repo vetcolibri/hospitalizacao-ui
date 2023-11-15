@@ -1,5 +1,5 @@
-import type { Hospitalization } from '@/models/hospitalization'
-import type { APIClient, APIError, APIResponse } from '@/lib/api_client'
+import type { Budget, Hospitalization } from '@/models/hospitalization'
+import type { APIClient, APIError } from '@/lib/api_client'
 import type { Patient } from '@/models/patient'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
@@ -8,10 +8,15 @@ export interface IPatientService {
     getAllHospitalized(): Promise<Either<APIError, Patient[]>>
     newHospitalization(
         patientId: string,
-        data: Partial<Hospitalization>
+        hospitalizationData: Hospitalization,
+        budgetData: Budget
     ): Promise<Either<APIError, void>>
     nonHospitalized(): Promise<Either<APIError, Patient[]>>
-    newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>>
+    newPatient(
+        patientData: Patient,
+        hospitalizationData: Hospitalization,
+        budgetData: Budget
+    ): Promise<Either<APIError, void>>
 }
 
 export class PatientService implements IPatientService {
@@ -36,9 +41,16 @@ export class PatientService implements IPatientService {
 
     async newHospitalization(
         patientId: string,
-        hospitalizationData: Partial<Hospitalization>
+        hospitalizationData: Hospitalization,
+        budgetData: Budget
     ): Promise<Either<APIError, void>> {
-        const body = { patientId, hospitalizationData }
+        const body = {
+            patientId,
+            hospitalizationData: {
+                ...hospitalizationData,
+                budget: budgetData
+            }
+        }
         const responseOrErr = await this.apiClient.post(
             `${this.baseUrl}/${this.resource}/hospitalize`,
             body
@@ -54,12 +66,23 @@ export class PatientService implements IPatientService {
         return right(patientsOrError.value.data)
     }
 
-    async newPatient(newPatientData: Partial<Hospitalization>): Promise<Either<APIError, void>> {
-        const body = {}
+    async newPatient(
+        patientData: Patient,
+        hospitalizationData: Hospitalization,
+        budgetData: Budget
+    ): Promise<Either<APIError, void>> {
+        const body = {
+            patientData: patientData,
+            hospitalizationData: {
+                ...hospitalizationData,
+                budget: budgetData
+            }
+        }
         const responseOrErr = await this.apiClient.post(
             `${this.baseUrl}/${this.resource}/new-patient`,
             body
         )
+
         if (responseOrErr.isLeft()) return left(responseOrErr.value)
 
         return right(undefined)

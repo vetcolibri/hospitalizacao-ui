@@ -12,7 +12,7 @@ import Glicemia from '@/components/parameters/ParameterGlicemia.vue'
 import Hct from '@/components/parameters/ParameterHct.vue'
 import BloodPressure from '@/components/parameters/ParameterBloodPressure.vue'
 import Summary from '@/components/parameters/ParametersSummary.vue'
-import ExamTime from '@/components/ExamTime.vue'
+import RoundTime from '@/components/RoundTime.vue'
 
 import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
@@ -166,7 +166,7 @@ onMounted(async () => {
     <main class="main-content">
         <section class="px-12">
             <section class="container my-8">
-                <ExamTime />
+                <RoundTime />
                 <section class="relative space-y-2">
                     <div
                         ref="parametersMenuEl"

@@ -8,6 +8,8 @@ export interface Patient {
     ownerId: string
     ownerName: string
     ownerPhoneNumber: string
+}
+
+export interface PatientHospitalized extends Patient, Hospitalization {
     hasAlert: boolean
-    hospitalization: Hospitalization
 }

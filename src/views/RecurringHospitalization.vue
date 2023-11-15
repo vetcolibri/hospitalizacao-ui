@@ -10,12 +10,11 @@ import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { IPatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
-import type { Budget, Hospitalization } from '@/models/hospitalization'
+import { Budget, Hospitalization, BudgetStatus } from '@/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
-const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 const patient = ref<Patient>()
 const message = ref<string>('')
 const query = ref<string>('')
@@ -24,6 +23,7 @@ const patients = ref<Patient[]>([])
 const results = ref<Patient[]>([])
 const form = ref<HTMLFormElement>()
 const router = useRouter()
+const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 
 const hospitalization = ref<Hospitalization>({
     birthDate: '',
@@ -31,17 +31,12 @@ const hospitalization = ref<Hospitalization>({
     diagnostics: [],
     complaints: [],
     entryDate: '',
-    dischargeDate: '',
-    budget: {
-        startDate: '',
-        endDate: '',
-        status: ''
-    }
+    dischargeDate: ''
 })
 
 const budget = ref<Budget>({
-    startDate: '',
-    endDate: '',
+    startOn: '',
+    endOn: '',
     status: ''
 })
 
@@ -90,11 +85,13 @@ async function hospitalize() {
     status.value = 'A hospitalizar...'
     const voidOrError = await patientService.newHospitalization(
         patient.value!.patientId,
-        hospitalization.value
+        hospitalization.value,
+        budget.value
     )
 
     if (voidOrError.isLeft()) {
-        alert(voidOrError.value.message)
+        // alert(voidOrError.value.message)
+        console.error(voidOrError.value.message)
         status.value = 'Hospitalizar'
         return
     }
@@ -210,26 +207,16 @@ onMounted(async () => {
                     <p class="text-sm text-gray-500">
                         Preencha os campos abaixo com os dados da hospitalização.
                     </p>
-                    <div class="flex space-x-4">
-                        <BaseInput
-                            title="Data de nascimento"
-                            type="date"
-                            class="flex-1 text-gray-500"
-                            placeholder="Data de nascimento"
-                            v-model="hospitalization.birthDate"
-                            :is-required="true"
-                        />
-                        <BaseInput
-                            title="Peso Kg"
-                            type="number"
-                            class="flex-1 text-gray-500"
-                            placeholder="Peso Kg"
-                            v-model="hospitalization.weight"
-                            :is-required="true"
-                            :max="100"
-                            :min="1"
-                        />
-                    </div>
+                    <BaseInput
+                        title="Peso Kg"
+                        type="number"
+                        class="flex-1 text-gray-500"
+                        placeholder="Peso Kg"
+                        v-model="hospitalization.weight"
+                        :is-required="true"
+                        :max="100"
+                        :min="1"
+                    />
                     <BaseSelect
                         title="Escolher Queixas"
                         :options="COMPLAINTS"
@@ -269,14 +256,14 @@ onMounted(async () => {
                             title="Inicia em"
                             type="date"
                             class="flex-1 text-gray-500"
-                            v-model="budget.startDate"
+                            v-model="budget.startOn"
                             :is-required="true"
                         />
                         <BaseInput
                             title="Termina em"
                             type="date"
                             class="flex-1 text-gray-500"
-                            v-model="budget.endDate"
+                            v-model="budget.endOn"
                             :is-required="true"
                         />
                     </div>
@@ -284,9 +271,9 @@ onMounted(async () => {
                         <div class="flex-1 mt-2">
                             <select class="form-control" required v-model="budget.status">
                                 <option value="" selected>Escolher Estado</option>
-                                <option value="UNPAIND">Não Pago</option>
-                                <option value="PENDING">Pendente</option>
-                                <option value="PAID">Pago</option>
+                                <option :value="BudgetStatus.UNPAID">Não Pago</option>
+                                <option :value="BudgetStatus.PENDING">Pendente</option>
+                                <option :value="BudgetStatus.PAID">Pago</option>
                             </select>
                         </div>
                         <div class="flex-1"></div>

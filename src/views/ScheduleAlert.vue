@@ -2,7 +2,7 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import ScheduleTime from '@/components/ScheduleTime.vue'
-import ScheduleRate from '@/components/ScheduleRepeatEvery.vue'
+import ScheduleRate from '@/components/ScheduleRate.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'

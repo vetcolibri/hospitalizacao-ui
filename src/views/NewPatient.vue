@@ -11,7 +11,7 @@ import { Provided } from '@/lib/provided'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { BREEDS } from '@/lib/data/breeds'
-import type { Hospitalization, Budget } from '@/models/hospitalization'
+import { Hospitalization, Budget, BudgetStatus } from '@/models/hospitalization'
 import type { IPatientService } from '@/services/patient_service'
 import type { Patient } from '@/models/patient'
 
@@ -26,12 +26,7 @@ const hospitalization = ref<Hospitalization>({
     complaints: [],
     diagnostics: [],
     entryDate: '',
-    dischargeDate: '',
-    budget: {
-        startDate: '',
-        endDate: '',
-        status: ''
-    }
+    dischargeDate: ''
 })
 
 const patient = ref<Patient>({
@@ -41,32 +36,28 @@ const patient = ref<Patient>({
     breed: '',
     ownerId: '',
     ownerName: '',
-    ownerPhoneNumber: '',
-    hospitalization: {
-        birthDate: '',
-        weight: 0,
-        complaints: [],
-        diagnostics: [],
-        entryDate: '',
-        dischargeDate: '',
-        budget: {
-            startDate: '',
-            endDate: '',
-            status: ''
-        }
-    },
-    hasAlert: false
+    ownerPhoneNumber: ''
 })
 
 const budget = ref<Budget>({
-    startDate: '',
-    endDate: '',
+    startOn: '',
+    endOn: '',
     status: ''
 })
 
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
+
+    const voidOrError = await patientService.newPatient(
+        patient.value,
+        hospitalization.value,
+        budget.value
+    )
     status.value = 'A hospitalizar...'
+    if (voidOrError.isLeft()) {
+        console.error(voidOrError.value.message)
+    }
+
     alert('Paciente hospitalizado com sucesso.')
     router.push({ name: 'Dashboard' })
 }
@@ -210,14 +201,14 @@ async function hospitalize() {
                             title="Inicia em"
                             type="date"
                             class="flex-1"
-                            v-model="budget.startDate"
+                            v-model="budget.startOn"
                             :is-required="true"
                         />
                         <BaseInput
                             title="Termina em"
                             type="date"
                             class="flex-1"
-                            v-model="budget.endDate"
+                            v-model="budget.endOn"
                             :is-required="true"
                         />
                     </div>
@@ -225,9 +216,9 @@ async function hospitalize() {
                         <div class="flex-1 mt-2">
                             <select class="form-control" required v-model="budget.status">
                                 <option value="" selected>Escolher Estado</option>
-                                <option value="UNPAIND">Não Pago</option>
-                                <option value="PENDING">Pendente</option>
-                                <option value="PAID">Pago</option>
+                                <option :value="BudgetStatus.UNPAID">Não Pago</option>
+                                <option :value="BudgetStatus.PENDING">Pendente</option>
+                                <option :value="BudgetStatus.PAID">Pago</option>
                             </select>
                         </div>
                         <div class="flex-1"></div>

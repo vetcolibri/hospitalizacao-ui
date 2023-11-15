@@ -2,7 +2,7 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
-import ExamTime from '@/components/ExamTime.vue'
+import RoundTime from '@/components/RoundTime.vue'
 import HeartRate from '@/components/parameters/ParameterHeartRate.vue'
 import RespiratoryRate from '@/components/parameters/ParameterRespiratoryRate.vue'
 import Trc from '@/components/parameters/ParameterTrc.vue'
@@ -89,7 +89,7 @@ onMounted(async () => {
     <main class="main-content">
         <section class="px-12">
             <section class="container my-8">
-                <ExamTime />
+                <RoundTime />
                 <form ref="form">
                     <div class="space-y-4">
                         <HeartRate

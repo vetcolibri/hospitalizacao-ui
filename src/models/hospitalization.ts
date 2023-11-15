@@ -1,15 +1,20 @@
 export interface Hospitalization {
-    readonly birthDate: string
-    readonly weight: number
-    readonly complaints: string[]
-    readonly diagnostics: string[]
-    readonly entryDate: string
-    readonly dischargeDate: string
-    readonly budget: Budget
+    birthDate: string
+    weight: number
+    complaints: string[]
+    diagnostics: string[]
+    entryDate: string
+    dischargeDate: string
 }
 
 export interface Budget {
-    readonly startDate: string
-    readonly endDate: string
-    readonly status: string
+    startOn: string
+    endOn: string
+    status: string
+}
+
+export const BudgetStatus = {
+    PAID: 'PAGO',
+    UNPAID: 'NÃO PAGO',
+    PENDING: 'PENDENTE'
 }
