@@ -5,11 +5,21 @@ export interface Patient {
     name: string
     specie: string
     breed: string
+    birthDate: string
+}
+
+export interface Owner {
     ownerId: string
-    ownerName: string
-    ownerPhoneNumber: string
+    name: string
+    phoneNumber: string
 }
 
 export interface PatientHospitalized extends Patient, Hospitalization {
     hasAlert: boolean
+}
+
+export interface PatientWithOwner extends Patient {
+    ownerId: string
+    ownerName: string
+    ownerPhoneNumber: string
 }

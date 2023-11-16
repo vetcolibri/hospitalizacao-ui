@@ -13,30 +13,33 @@ import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { BREEDS } from '@/lib/data/breeds'
 import { Hospitalization, Budget, BudgetStatus } from '@/models/hospitalization'
 import type { IPatientService } from '@/services/patient_service'
-import type { Patient } from '@/models/patient'
+import type { Owner, Patient } from '@/models/patient'
 
 const form = ref<HTMLFormElement>()
 const status = ref<string>('Hospitalizar')
 const router = useRouter()
 const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 
-const hospitalization = ref<Hospitalization>({
-    birthDate: '',
-    weight: 0,
-    complaints: [],
-    diagnostics: [],
-    entryDate: '',
-    dischargeDate: ''
-})
-
 const patient = ref<Patient>({
     name: '',
     patientId: '',
     specie: '',
     breed: '',
+    birthDate: ''
+})
+
+const owner = ref<Owner>({
     ownerId: '',
-    ownerName: '',
-    ownerPhoneNumber: ''
+    name: '',
+    phoneNumber: ''
+})
+
+const hospitalization = ref<Hospitalization>({
+    weight: 0,
+    complaints: [],
+    diagnostics: [],
+    entryDate: '',
+    dischargeDate: ''
 })
 
 const budget = ref<Budget>({
@@ -116,7 +119,7 @@ async function hospitalize() {
                         <BaseInput
                             class="flex-1"
                             placeholder="ID Próprietário"
-                            v-model="patient.ownerId"
+                            v-model="owner.ownerId"
                             :is-required="true"
                         />
                     </div>
@@ -124,13 +127,13 @@ async function hospitalize() {
                         <BaseInput
                             class="flex-1"
                             placeholder="Nome do Proprietário"
-                            v-model="patient.ownerName"
+                            v-model="owner.name"
                             :is-required="true"
                         />
                         <BaseInput
                             class="flex-1"
                             placeholder="Telemóvel"
-                            v-model="patient.ownerPhoneNumber"
+                            v-model="owner.phoneNumber"
                             :is-required="true"
                             pattern="^9[1-5]\d{7}$"
                             help-text="Por favor, insira um número de telefone válido para Angola."
@@ -148,7 +151,7 @@ async function hospitalize() {
                             type="date"
                             class="flex-1"
                             placeholder="Data de nascimento"
-                            v-model="hospitalization.birthDate"
+                            v-model="patient.birthDate"
                             :is-required="true"
                         />
                         <BaseInput

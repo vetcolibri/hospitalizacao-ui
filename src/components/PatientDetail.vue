@@ -72,7 +72,7 @@ defineExpose({ open })
             <ul class="patient-info">
                 <li class="patient-info-item">
                     <span>Idade</span>
-                    <span class="patient-info-text">{{ hospitalization.birthDate }}</span>
+                    <span class="patient-info-text">{{ patient.birthDate }}</span>
                 </li>
                 <li class="patient-info-item">
                     <span>Peso (Kg)</span>
@@ -131,7 +131,7 @@ defineExpose({ open })
                         </div>
 
                         <div v-if="budget.status === 'PENDENTE'" class="badge badge-warning">
-                            <i class="bi bi-exclamation-fill mr-1"></i>
+                            <i class="bi bi-exclamation-triangle-fill mr-1"></i>
                             <span>{{ budget.status }}</span>
                         </div>
 

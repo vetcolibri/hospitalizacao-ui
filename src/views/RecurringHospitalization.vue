@@ -9,24 +9,23 @@ import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { IPatientService } from '@/services/patient_service'
-import type { Patient } from '@/models/patient'
+import type { Patient, PatientWithOwner } from '@/models/patient'
 import { Budget, Hospitalization, BudgetStatus } from '@/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
-const patient = ref<Patient>()
+const patient = ref<PatientWithOwner>()
 const message = ref<string>('')
 const query = ref<string>('')
 const status = ref<string>('Hospitalizar')
-const patients = ref<Patient[]>([])
-const results = ref<Patient[]>([])
+const patients = ref<PatientWithOwner[]>([])
+const results = ref<PatientWithOwner[]>([])
 const form = ref<HTMLFormElement>()
 const router = useRouter()
 const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 
 const hospitalization = ref<Hospitalization>({
-    birthDate: '',
     weight: 0,
     diagnostics: [],
     complaints: [],
@@ -73,6 +72,7 @@ function searchPatient() {
         showMessage('Nenhum paciente encontrado.')
         return
     }
+
     results.value = patientsFound
 }
 
@@ -90,7 +90,6 @@ async function hospitalize() {
     )
 
     if (voidOrError.isLeft()) {
-        // alert(voidOrError.value.message)
         console.error(voidOrError.value.message)
         status.value = 'Hospitalizar'
         return
@@ -102,7 +101,7 @@ async function hospitalize() {
 
 onMounted(async () => {
     const patientsOrError = await patientService.nonHospitalized()
-    patients.value = <Patient[]>patientsOrError.value
+    patients.value = <PatientWithOwner[]>patientsOrError.value
 })
 </script>
 <template>
@@ -188,7 +187,7 @@ onMounted(async () => {
                     <div class="flex space-x-4">
                         <BaseInput
                             title="Nome do Proprietário"
-                            :placeholder="patient?.ownerName"
+                            :placeholder="patient?.name"
                             :disabled="true"
                             :readonly="true"
                             class="flex-1 text-gray-500"

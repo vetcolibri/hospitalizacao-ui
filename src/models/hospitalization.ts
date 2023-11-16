@@ -1,5 +1,4 @@
 export interface Hospitalization {
-    birthDate: string
     weight: number
     complaints: string[]
     diagnostics: string[]
