@@ -9,8 +9,9 @@ import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { IPatientService } from '@/services/patient_service'
-import type { Patient, PatientWithOwner } from '@/models/patient'
-import { Budget, Hospitalization, BudgetStatus } from '@/models/hospitalization'
+import type { PatientWithOwner } from '@/models/patient'
+import type { Budget, Hospitalization } from '@/models/hospitalization'
+import { BudgetStatus } from '@/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
@@ -82,6 +83,7 @@ function clearResults() {
 
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
+
     status.value = 'A hospitalizar...'
     const voidOrError = await patientService.newHospitalization(
         patient.value!.patientId,
@@ -145,59 +147,59 @@ onMounted(async () => {
                     <p class="text-sm text-gray-500">Dados do paciente.</p>
                     <BaseInput
                         title="Nome do Paciente"
+                        class="flex-1 text-gray-500"
                         :placeholder="patient?.name"
                         :disabled="true"
                         :readonly="true"
-                        class="flex-1 text-gray-500"
                     />
                     <div class="flex space-x-4">
                         <BaseInput
                             title="ID Paciente"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.patientId"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1 text-gray-500"
                         />
                         <BaseInput
                             title="Espécie"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.specie"
                             :disabled="true"
                             :readonly="true"
                             :is-select="true"
-                            class="flex-1 text-gray-500"
                         />
                     </div>
                     <div class="flex space-x-4">
                         <BaseInput
                             title="Raça"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.breed"
                             :disabled="true"
                             :readonly="true"
                             :is-select="true"
-                            class="flex-1 text-gray-500"
                         />
                         <BaseInput
                             title="ID Proprietário"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.ownerId"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1 text-gray-500"
                         />
                     </div>
                     <div class="flex space-x-4">
                         <BaseInput
                             title="Nome do Proprietário"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.name"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1 text-gray-500"
                         />
                         <BaseInput
                             title="Telemóvel"
+                            class="flex-1 text-gray-500"
                             :placeholder="patient?.ownerPhoneNumber"
                             :disabled="true"
                             :readonly="true"
-                            class="flex-1 text-gray-500"
                         />
                     </div>
                 </section>
@@ -207,7 +209,6 @@ onMounted(async () => {
                         Preencha os campos abaixo com os dados da hospitalização.
                     </p>
                     <BaseInput
-                        title="Peso Kg"
                         type="number"
                         class="flex-1 text-gray-500"
                         placeholder="Peso Kg"
@@ -218,15 +219,15 @@ onMounted(async () => {
                     />
                     <BaseSelect
                         title="Escolher Queixas"
+                        v-model="hospitalization.complaints"
                         :options="COMPLAINTS"
                         :limit="10"
-                        v-model="hospitalization.complaints"
                     />
                     <BaseSelect
                         title="Escolher Diagnosticos"
+                        v-model="hospitalization.diagnostics"
                         :options="DIAGNOSTICS"
                         :limit="5"
-                        v-model="hospitalization.diagnostics"
                     />
                     <div class="flex space-x-4">
                         <BaseInput

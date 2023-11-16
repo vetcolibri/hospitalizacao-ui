@@ -21,22 +21,22 @@ export class AlertService implements IAlertService {
 
     async schedule(patientId: string, alertData: Alert): Promise<Either<APIError, void>> {
         const body = { patientId, alertData }
-        const resultOrError = await this.apiClient.post(
-            `${this.baseUrl}/${this.resource}/schedule`,
-            body
-        )
-        if (resultOrError.isLeft()) return left(resultOrError.value)
+
+        const url = `${this.baseUrl}/${this.resource}/schedule`
+
+        const responseOrError = await this.apiClient.post(url, body)
+        if (responseOrError.isLeft()) return left(responseOrError.value)
 
         return right(undefined)
     }
 
     async cancel(alertId: string): Promise<Either<APIError, void>> {
         const body = { alertId }
-        const resultOrError = await this.apiClient.post(
-            `${this.baseUrl}/${this.resource}/cancel`,
-            body
-        )
-        if (resultOrError.isLeft()) return left(resultOrError.value)
+
+        const url = `${this.baseUrl}/${this.resource}/cancel`
+
+        const responseOrError = await this.apiClient.post(url, body)
+        if (responseOrError.isLeft()) return left(responseOrError.value)
 
         return right(undefined)
     }

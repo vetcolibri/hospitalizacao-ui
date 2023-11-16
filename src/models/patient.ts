@@ -1,4 +1,4 @@
-import { Hospitalization } from './hospitalization'
+import type { Hospitalization } from './hospitalization'
 
 export interface Patient {
     patientId: string

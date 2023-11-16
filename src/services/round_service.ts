@@ -22,28 +22,28 @@ export class RoundService implements IRoundService {
 
     async newRound(patientId: string, measurements: any): Promise<Either<APIError, void>> {
         const body = { patientId, userId: 'some-user-id', parameters: measurements }
-        const resultOrError = await this.apiClient.post(
-            `${this.baseUrl}/${this.resource}/new`,
-            body
-        )
-        if (resultOrError.isLeft()) return left(resultOrError.value)
+
+        const url = `${this.baseUrl}/${this.resource}/new`
+
+        const responseOrError = await this.apiClient.post(url, body)
+        if (responseOrError.isLeft()) return left(responseOrError.value)
 
         return right(undefined)
     }
 
     async latestMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>> {
-        const measurementsOrError = await this.apiClient.get(
-            `${this.baseUrl}/${this.resource}/latest-measurements/${patientId}`
-        )
-        if (measurementsOrError.isLeft()) return left(measurementsOrError.value)
+        const url = `${this.baseUrl}/${this.resource}/latest-measurements/${patientId}`
 
-        return right(measurementsOrError.value.data)
+        const responseOrError = await this.apiClient.get(url)
+        if (responseOrError.isLeft()) return left(responseOrError.value)
+
+        return right(responseOrError.value.data)
     }
 
     async getAllMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>> {
-        const measurementsOrError = await this.apiClient.get(
-            `${this.baseUrl}/${this.resource}/measurements/${patientId}`
-        )
+        const url = `${this.baseUrl}/${this.resource}/measurements/${patientId}`
+
+        const measurementsOrError = await this.apiClient.get(url)
         if (measurementsOrError.isLeft()) return left(measurementsOrError.value)
 
         return right(measurementsOrError.value.data)

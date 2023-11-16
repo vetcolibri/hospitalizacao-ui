@@ -11,7 +11,8 @@ import { Provided } from '@/lib/provided'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { BREEDS } from '@/lib/data/breeds'
-import { Hospitalization, Budget, BudgetStatus } from '@/models/hospitalization'
+import { BudgetStatus } from '@/models/hospitalization'
+import type { Hospitalization, Budget } from '@/models/hospitalization'
 import type { IPatientService } from '@/services/patient_service'
 import type { Owner, Patient } from '@/models/patient'
 
@@ -20,7 +21,7 @@ const status = ref<string>('Hospitalizar')
 const router = useRouter()
 const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
 
-const patient = ref<Patient>({
+const patientData = ref<Patient>({
     name: '',
     patientId: '',
     specie: '',
@@ -28,13 +29,13 @@ const patient = ref<Patient>({
     birthDate: ''
 })
 
-const owner = ref<Owner>({
+const ownerData = ref<Owner>({
     ownerId: '',
     name: '',
     phoneNumber: ''
 })
 
-const hospitalization = ref<Hospitalization>({
+const hospitalizationData = ref<Hospitalization>({
     weight: 0,
     complaints: [],
     diagnostics: [],
@@ -42,7 +43,7 @@ const hospitalization = ref<Hospitalization>({
     dischargeDate: ''
 })
 
-const budget = ref<Budget>({
+const budgetData = ref<Budget>({
     startOn: '',
     endOn: '',
     status: ''
@@ -51,14 +52,17 @@ const budget = ref<Budget>({
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
-    const voidOrError = await patientService.newPatient(
-        patient.value,
-        hospitalization.value,
-        budget.value
-    )
     status.value = 'A hospitalizar...'
+    const voidOrError = await patientService.newPatient(
+        patientData.value,
+        ownerData.value,
+        hospitalizationData.value,
+        budgetData.value
+    )
     if (voidOrError.isLeft()) {
         console.error(voidOrError.value.message)
+        status.value = 'Hospitalizar'
+        return
     }
 
     alert('Paciente hospitalizado com sucesso.')
@@ -80,29 +84,31 @@ async function hospitalize() {
                     </p>
                     <BaseInput
                         placeholder="Nome do Paciente"
-                        v-model="patient.name"
+                        v-model="patientData.name"
                         :is-required="true"
                     />
                     <div class="flex items-center space-x-4">
                         <BaseInput
                             class="flex-1"
                             placeholder="ID do Paciente"
-                            v-model="patient.patientId"
+                            v-model="patientData.patientId"
                             :is-required="true"
                         />
                         <div class="flex-1">
-                            <select class="form-control" required v-model="patient.specie">
+                            <select class="form-control" required v-model="patientData.specie">
                                 <option value="" selected>Escolher Espécie</option>
                                 <option value="CANINO">CANINO</option>
                                 <option value="FELINO">FELINO</option>
                                 <option value="AVES">AVES</option>
                                 <option value="EXOTICO">EXÓTICO</option>
+                                <option value="EXOTICO - MACACO">EXÓTICO - MACACO</option>
+                                <option value="EXOTICO - PAPAGAIO">EXÓTICO - PAPAGAIO</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex space-x-4">
                         <div class="flex-1">
-                            <select class="form-control" required v-model="patient.breed">
+                            <select class="form-control" required v-model="patientData.breed">
                                 <option value="" selected>Escolher Raça</option>
                                 <optgroup label="Cães">
                                     <option v-for="breed in BREEDS.caes" :value="breed">
@@ -119,7 +125,7 @@ async function hospitalize() {
                         <BaseInput
                             class="flex-1"
                             placeholder="ID Próprietário"
-                            v-model="owner.ownerId"
+                            v-model="ownerData.ownerId"
                             :is-required="true"
                         />
                     </div>
@@ -127,13 +133,13 @@ async function hospitalize() {
                         <BaseInput
                             class="flex-1"
                             placeholder="Nome do Proprietário"
-                            v-model="owner.name"
+                            v-model="ownerData.name"
                             :is-required="true"
                         />
                         <BaseInput
                             class="flex-1"
                             placeholder="Telemóvel"
-                            v-model="owner.phoneNumber"
+                            v-model="ownerData.phoneNumber"
                             :is-required="true"
                             pattern="^9[1-5]\d{7}$"
                             help-text="Por favor, insira um número de telefone válido para Angola."
@@ -151,7 +157,7 @@ async function hospitalize() {
                             type="date"
                             class="flex-1"
                             placeholder="Data de nascimento"
-                            v-model="patient.birthDate"
+                            v-model="patientData.birthDate"
                             :is-required="true"
                         />
                         <BaseInput
@@ -159,7 +165,7 @@ async function hospitalize() {
                             type="number"
                             class="flex-1"
                             placeholder="Peso Kg"
-                            v-model="hospitalization.weight"
+                            v-model="hospitalizationData.weight"
                             :is-required="true"
                             :max="100"
                             :min="1"
@@ -169,27 +175,27 @@ async function hospitalize() {
                         title="Escolher Queixas"
                         :options="COMPLAINTS"
                         :limit="10"
-                        v-model="hospitalization.complaints"
+                        v-model="hospitalizationData.complaints"
                     />
                     <BaseSelect
                         title="Escolher Diagnosticos"
                         :options="DIAGNOSTICS"
                         :limit="5"
-                        v-model="hospitalization.diagnostics"
+                        v-model="hospitalizationData.diagnostics"
                     />
                     <div class="flex space-x-4">
                         <BaseInput
                             title="Data de entrada"
                             type="date"
                             class="flex-1"
-                            v-model="hospitalization.entryDate"
+                            v-model="hospitalizationData.entryDate"
                             :is-required="true"
                         />
                         <BaseInput
                             title="Previsão de Alta Médica"
                             type="date"
                             class="flex-1"
-                            v-model="hospitalization.dischargeDate"
+                            v-model="hospitalizationData.dischargeDate"
                             :is-required="true"
                         />
                     </div>
@@ -204,20 +210,20 @@ async function hospitalize() {
                             title="Inicia em"
                             type="date"
                             class="flex-1"
-                            v-model="budget.startOn"
+                            v-model="budgetData.startOn"
                             :is-required="true"
                         />
                         <BaseInput
                             title="Termina em"
                             type="date"
                             class="flex-1"
-                            v-model="budget.endOn"
+                            v-model="budgetData.endOn"
                             :is-required="true"
                         />
                     </div>
                     <div class="flex space-x-4">
                         <div class="flex-1 mt-2">
-                            <select class="form-control" required v-model="budget.status">
+                            <select class="form-control" required v-model="budgetData.status">
                                 <option value="" selected>Escolher Estado</option>
                                 <option :value="BudgetStatus.UNPAID">Não Pago</option>
                                 <option :value="BudgetStatus.PENDING">Pendente</option>

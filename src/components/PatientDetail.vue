@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import BaseDialog from '@/components/BaseDialog.vue'
 import { makeDateFormat } from '@/lib/shared/utils'
-import { Patient } from '@/models/patient'
 
 import { ref } from 'vue'
 
@@ -80,9 +79,9 @@ defineExpose({ open })
                 </li>
                 <li class="patient-info-item flex-col">
                     <span>Queixas</span>
-                    <div class="mt-1 space-x-2">
+                    <div class="mt-1 space-x-2 space-y-2">
                         <span
-                            class="badge badge-dark space-x-1"
+                            class="badge badge-dark"
                             v-for="complaint in hospitalization.complaints"
                         >
                             {{ complaint }}
@@ -91,9 +90,9 @@ defineExpose({ open })
                 </li>
                 <li class="patient-info-item flex-col">
                     <span>Diagnosticos</span>
-                    <div class="mt-1 space-x-2">
+                    <div class="mt-1 space-x-2 space-y-2">
                         <span
-                            class="badge badge-dark space-x-1"
+                            class="badge badge-dark"
                             v-for="diagnostic in hospitalization.diagnostics"
                         >
                             {{ diagnostic }}
