@@ -26,7 +26,10 @@ function nextPage() {
 date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
 </script>
 <template>
-    <section class="bg-white p-3.5 rounded shadow-sm border border-gray-100 space-y-4">
+    <section
+        class="bg-white p-3.5 rounded shadow-sm border space-y-4"
+        :class="patient.hasAlert ? 'border-yellow-500' : 'border-gray-100'"
+    >
         <div class="flex gap-2 border-b pb-1">
             <div class="flex flex-1 gap-2 items-center">
                 <img class="w-4 h-4 md:w-8 md:h-8" :src="iconUrl" alt="patient-icon" />
@@ -53,7 +56,14 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
                 </li>
             </ul>
         </div>
-        <button class="btn btn-success text-sm" @click="nextPage()">Avançar</button>
+        <div class="flex justify-between items-center">
+            <button class="btn btn-success text-sm" @click="nextPage()">Avançar</button>
+            <i
+                v-if="patient.hasAlert"
+                class="bi bi-exclamation-triangle-fill text-base md:text-lg text-yellow-500"
+            >
+            </i>
+        </div>
     </section>
     <PatientDetail ref="patientDetailRef" :patient="patient" />
 </template>
