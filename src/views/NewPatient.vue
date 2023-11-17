@@ -60,7 +60,7 @@ async function hospitalize() {
         budgetData.value
     )
     if (voidOrError.isLeft()) {
-        console.error(voidOrError.value.message)
+        alert(voidOrError.value.message)
         status.value = 'Hospitalizar'
         return
     }

@@ -32,7 +32,7 @@ export class RoundService implements IRoundService {
     }
 
     async latestMeasurements(patientId: string): Promise<Either<APIError, Measurement[]>> {
-        const url = `${this.baseUrl}/${this.resource}/latest-measurements/${patientId}`
+        const url = `${this.baseUrl}/${this.resource}/measurements/latest/${patientId}`
 
         const responseOrError = await this.apiClient.get(url)
         if (responseOrError.isLeft()) return left(responseOrError.value)
