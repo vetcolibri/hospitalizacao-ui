@@ -14,15 +14,15 @@ defineProps<Props>()
 
 <template>
     <section class="flex flex-col gap-2">
-        <p>{{ title }}</p>
-        <div class="flex gap-4">
+        <p class="text-xs sm:text-base">{{ title }}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex flex-col flex-1 gap-1">
                 <slot />
-                <span class="text-sm text-gray-600">{{ helpText }}</span>
+                <span class="text-[8px] sm:text-sm text-gray-600">{{ helpText }}</span>
             </div>
             <div class="flex flex-col flex-1 gap-1">
                 <input
-                    class="form-control disabled"
+                    class="form-control text-sm sm:text-base disabled"
                     disabled
                     type="text"
                     :placeholder="measurement?.value ? measurement.value : 'N/D'"
@@ -30,7 +30,7 @@ defineProps<Props>()
                 <span
                     v-if="measurement?.value"
                     v-format-date="measurement?.issuedAt"
-                    class="text-sm text-gray-600"
+                    class="text-[8px] sm:text-sm text-gray-600"
                 >
                 </span>
             </div>

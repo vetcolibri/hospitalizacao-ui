@@ -33,7 +33,7 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
         <div class="flex gap-2 border-b pb-1">
             <div class="flex flex-1 gap-2 items-center">
                 <img class="w-4 h-4 md:w-8 md:h-8" :src="iconUrl" alt="patient-icon" />
-                <h5 class="flex-1 font-medium">{{ patient.name }}</h5>
+                <h5 class="flex-1 text-xs sm:text-base font-medium">{{ patient.name }}</h5>
             </div>
             <i
                 class="bi bi-info-circle-fill text-blue-500 cursor-pointer z-[1000]"

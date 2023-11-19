@@ -79,7 +79,7 @@ onMounted(async () => {
             <span v-if="modelValue.length > 3">
                 {{ `(${modelValue.length})` }} opções escolhidas
             </span>
-            <div class="" v-if="modelValue.length > 0 && modelValue.length <= 3">
+            <div v-if="modelValue.length > 0 && modelValue.length <= 3">
                 <span v-for="option in modelValue" class="badge badge-dark mr-2">
                     {{ option }}
                 </span>
@@ -91,14 +91,14 @@ onMounted(async () => {
             class="w-full h-48 absolute border rounded shadow-sm mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-sm text-gray-500"
         >
             <input type="text" class="form-control mb-2" placeholder="Pesquisar" v-model="query" />
-            <div v-if="modelValue.length > 0" class="flex justify-between">
+            <div v-if="modelValue.length > 0" class="flex justify-between text-[10px] sm:text-xs">
                 <span>São permitidas no máximo {{ limit }} opções</span>
                 <div class="space-x-1 cursor-pointer" @click="cleanSelected()">
                     <i class="bi bi-trash"></i>
                     <span>Limpar</span>
                 </div>
             </div>
-            <ul class="mt-2">
+            <ul class="mt-2 text-xs sm:text-sm">
                 <li
                     v-for="(option, idx) in search"
                     class="flex items-center gap-2 border-t p-2.5 cursor-pointer hover:bg-gray-50"

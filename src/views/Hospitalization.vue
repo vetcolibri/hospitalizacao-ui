@@ -8,20 +8,18 @@ import GoBack from '@/components/GoBack.vue'
     <Header title="Hospitalização">
         <GoBack />
     </Header>
-    <main class="main-content px-12">
+    <main class="main-content">
         <nav class="flex items-center justify-center h-full">
             <ul class="flex flex-col gap-4 w-full lg:max-w-lg xl:max-w-xl">
                 <router-link :to="{ name: 'RecurringPatient' }">
                     <li class="menu-item">
-                        <i class="bi bi-search sm:text-xl md:text-2xl text-yellow-500"></i>
+                        <i class="bi bi-search icon"></i>
                         <span>Buscar paciente</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'RegisterPatient' }">
                     <li class="menu-item">
-                        <i
-                            class="bi bi-plus-circle-fill sm:text-xl md:text-2xl text-yellow-500"
-                        ></i>
+                        <i class="bi bi-plus-circle-fill icon"></i>
                         <span>Novo paciente</span>
                     </li>
                 </router-link>

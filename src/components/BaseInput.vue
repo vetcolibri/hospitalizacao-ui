@@ -27,7 +27,7 @@ function emitValue() {
 
 <template>
     <div>
-        <label v-if="title" class="text-sm">{{ title }}</label>
+        <label v-if="title" class="text-xs sm:text-sm">{{ title }}</label>
         <input
             v-if="isSelect"
             class="form-control form-select"
@@ -49,6 +49,7 @@ function emitValue() {
             :required="isRequired"
             :min="min ? min : ''"
             :max="max ? max : ''"
+            step="0.1"
             :pattern="pattern ? pattern : undefined"
             :title="helpText ? helpText : ''"
             v-model="inputValue"

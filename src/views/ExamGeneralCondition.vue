@@ -7,30 +7,24 @@ import GoBack from '@/components/GoBack.vue'
     <Header title="Exame Estado Geral">
         <GoBack />
     </Header>
-    <main class="main-content px-12">
+    <main class="main-content">
         <nav class="flex items-center justify-center h-full">
             <ul class="flex flex-col gap-4 w-full lg:max-w-lg xl:max-w-xl">
                 <router-link :to="{ name: 'ChoosePatient', params: { page: 'daily-round' } }">
                     <li class="menu-item">
-                        <i
-                            class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
-                        ></i>
+                        <i class="bi bi-clipboard2-data-fill icon"></i>
                         <span>Ronda diária</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'ChoosePatient', params: { page: 'choose-parameters' } }">
                     <li class="menu-item">
-                        <i
-                            class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
-                        ></i>
+                        <i class="bi bi-clipboard2-data-fill icon"></i>
                         <span>Monitorização continuada</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'ChoosePatient', params: { page: 'measurements' } }">
                     <li class="menu-item">
-                        <i
-                            class="bi bi-clipboard2-pulse-fill text-sm md:text-2xl text-yellow-500"
-                        ></i>
+                        <i class="bi bi-clipboard2-pulse-fill icon"></i>
                         <span>Medições</span>
                     </li>
                 </router-link>

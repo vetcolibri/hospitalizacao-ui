@@ -164,144 +164,133 @@ onMounted(async () => {
         <GoBack />
     </Header>
     <main class="main-content">
-        <section class="px-12">
-            <section class="container my-8">
-                <RoundTime />
-                <section class="relative space-y-2">
+        <section class="container my-8">
+            <RoundTime />
+            <section class="relative space-y-2">
+                <div
+                    ref="parametersMenuEl"
+                    class="flex items-center border gap-3 px-2 rounded text-gray-500"
+                >
+                    <i class="bi bi-hand-index text-xs md:text-xl" @click="toogleParameterList"></i>
                     <div
-                        ref="parametersMenuEl"
-                        class="flex items-center border gap-3 px-2 rounded text-gray-500"
+                        class="flex-1 text-xs sm:text-sm border-0 py-2 cursor-pointer focus:ring-0"
+                        @click="toogleParameterList"
                     >
-                        <i
-                            class="bi bi-hand-index text-base md:text-xl"
-                            @click="toogleParameterList"
-                        ></i>
-                        <div
-                            class="flex-1 border-0 py-2 cursor-pointer focus:ring-0"
-                            @click="toogleParameterList"
-                        >
-                            Escolher parâmetros
-                        </div>
-                        <i
-                            class="bi bi-arrow-clockwise text-base cursor-pointer md:text-xl"
-                            @click="clearVisibility"
-                        ></i>
+                        Escolher parâmetros
                     </div>
+                    <i
+                        class="bi bi-arrow-clockwise text-xs cursor-pointer md:text-xl"
+                        @click="clearVisibility"
+                    ></i>
+                </div>
+                <div
+                    v-if="showParameters"
+                    class="absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3"
+                    @click.stop
+                >
                     <div
-                        v-if="showParameters"
-                        class="absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3"
-                        @click.stop
+                        v-for="parameter in parametersState"
+                        :key="parameter.id"
+                        class="flex items-center gap-2 text-gray-900"
+                        @click="changeVisibility(parameter.id)"
                     >
-                        <div
-                            v-for="parameter in parametersState"
-                            :key="parameter.id"
-                            class="flex items-center gap-2 text-gray-900"
-                            @click="changeVisibility(parameter.id)"
-                        >
+                        <input
+                            type="checkbox"
+                            class="rounded focus:ring-0"
+                            :checked="parameter.visibility"
+                        />
+                        <label class="text-xs sm:text-base">{{ parameter.name }}</label>
+                    </div>
+                </div>
+                <hr />
+                <form ref="form">
+                    <div class="space-y-4">
+                        <HeartRate
+                            v-if="parametersState.heartRate.visibility"
+                            v-model="parametersState.heartRate.value"
+                            :latest-measurement="
+                                getLatestMeasurement('heartRate', latestMeasurements)
+                            "
+                            @state="parametersState.heartRate.state = $event"
+                        />
+                        <RespiratoryRate
+                            v-if="parametersState.respiratoryRate.visibility"
+                            v-model="parametersState.respiratoryRate.value"
+                            :latest-measurement="
+                                getLatestMeasurement('respiratoryRate', latestMeasurements)
+                            "
+                            @state="parametersState.respiratoryRate.state = $event"
+                        />
+                        <Trc
+                            v-if="parametersState.trc.visibility"
+                            v-model="parametersState.trc.value"
+                            :latest-measurement="getLatestMeasurement('trc', latestMeasurements)"
+                            @state="parametersState.trc.state = $event"
+                        />
+                        <Avdn
+                            v-if="parametersState.avdn.visibility"
+                            v-model="parametersState.avdn.value"
+                            :latest-measurement="getLatestMeasurement('avdn', latestMeasurements)"
+                            @state="parametersState.avdn.state = $event"
+                        />
+                        <Mucosas
+                            v-if="parametersState.mucosas.visibility"
+                            v-model="parametersState.mucosas.value"
+                            :latest-measurement="
+                                getLatestMeasurement('mucosas', latestMeasurements)
+                            "
+                            @state="parametersState.mucosas.state = $event"
+                        />
+                        <Temperature
+                            v-if="parametersState.temperature.visibility"
+                            v-model="parametersState.temperature.value"
+                            :latest-measurement="
+                                getLatestMeasurement('temperature', latestMeasurements)
+                            "
+                            @state="parametersState.temperature.state = $event"
+                        />
+                        <Glicemia
+                            v-if="parametersState.bloodGlucose.visibility"
+                            v-model="parametersState.bloodGlucose.value"
+                            :latest-measurement="
+                                getLatestMeasurement('bloodGlucose', latestMeasurements)
+                            "
+                            @state="parametersState.bloodGlucose.state = $event"
+                        />
+                        <Hct
+                            v-if="parametersState.hct.visibility"
+                            v-model="parametersState.hct.value"
+                            :latest-measurement="getLatestMeasurement('hct', latestMeasurements)"
+                            @state="parametersState.hct.state = $event"
+                        />
+                        <BloodPressure
+                            v-if="parametersState.bloodPressure.visibility"
+                            v-model="parametersState.bloodPressure.value"
+                            :latest-measurement="
+                                getLatestMeasurement('bloodPressure', latestMeasurements)
+                            "
+                            @state="parametersState.bloodPressure.state = $event"
+                        />
+                        <div v-if="showAlertCheckbox" class="flex items-center">
                             <input
                                 type="checkbox"
-                                class="rounded focus:ring-0"
-                                :checked="parameter.visibility"
+                                class="focus:ring-0 rounded"
+                                v-model="alertCheckbox"
                             />
-                            <label>{{ parameter.name }}</label>
+                            <label
+                                class="ml-2 text-xs sm:text-base block text-gray-900"
+                                @click="() => (alertCheckbox = !alertCheckbox)"
+                            >
+                                Criar alerta de monitorização
+                            </label>
                         </div>
                     </div>
-                    <hr />
-                    <form ref="form">
-                        <div class="space-y-4">
-                            <HeartRate
-                                v-if="parametersState.heartRate.visibility"
-                                v-model="parametersState.heartRate.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('heartRate', latestMeasurements)
-                                "
-                                @state="parametersState.heartRate.state = $event"
-                            />
-                            <RespiratoryRate
-                                v-if="parametersState.respiratoryRate.visibility"
-                                v-model="parametersState.respiratoryRate.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('respiratoryRate', latestMeasurements)
-                                "
-                                @state="parametersState.respiratoryRate.state = $event"
-                            />
-                            <Trc
-                                v-if="parametersState.trc.visibility"
-                                v-model="parametersState.trc.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('trc', latestMeasurements)
-                                "
-                                @state="parametersState.trc.state = $event"
-                            />
-                            <Avdn
-                                v-if="parametersState.avdn.visibility"
-                                v-model="parametersState.avdn.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('avdn', latestMeasurements)
-                                "
-                                @state="parametersState.avdn.state = $event"
-                            />
-                            <Mucosas
-                                v-if="parametersState.mucosas.visibility"
-                                v-model="parametersState.mucosas.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('mucosas', latestMeasurements)
-                                "
-                                @state="parametersState.mucosas.state = $event"
-                            />
-                            <Temperature
-                                v-if="parametersState.temperature.visibility"
-                                v-model="parametersState.temperature.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('temperature', latestMeasurements)
-                                "
-                                @state="parametersState.temperature.state = $event"
-                            />
-                            <Glicemia
-                                v-if="parametersState.bloodGlucose.visibility"
-                                v-model="parametersState.bloodGlucose.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('bloodGlucose', latestMeasurements)
-                                "
-                                @state="parametersState.bloodGlucose.state = $event"
-                            />
-                            <Hct
-                                v-if="parametersState.hct.visibility"
-                                v-model="parametersState.hct.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('hct', latestMeasurements)
-                                "
-                                @state="parametersState.hct.state = $event"
-                            />
-                            <BloodPressure
-                                v-if="parametersState.bloodPressure.visibility"
-                                v-model="parametersState.bloodPressure.value"
-                                :latest-measurement="
-                                    getLatestMeasurement('bloodPressure', latestMeasurements)
-                                "
-                                @state="parametersState.bloodPressure.state = $event"
-                            />
-                            <div v-if="showAlertCheckbox" class="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    class="focus:ring-0 rounded"
-                                    v-model="alertCheckbox"
-                                />
-                                <label
-                                    class="ml-2 block text-gray-900"
-                                    @click="() => (alertCheckbox = !alertCheckbox)"
-                                >
-                                    Criar alerta de monitorização
-                                </label>
-                            </div>
-                        </div>
-                    </form>
-                </section>
+                </form>
             </section>
         </section>
     </main>
     <Summary ref="parametersSummaryRef">
-        <button class="btn btn-success space-x-3" @click="save()">
+        <button class="btn btn-success space-x-2" @click="save()">
             <i class="bi bi-floppy2"></i>
             <span class="font-semibold">Salvar</span>
         </button>

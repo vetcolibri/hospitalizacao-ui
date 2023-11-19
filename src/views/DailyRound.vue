@@ -87,84 +87,78 @@ onMounted(async () => {
         <GoBack />
     </Header>
     <main class="main-content">
-        <section class="px-12">
-            <section class="container my-8">
-                <RoundTime />
-                <form ref="form">
-                    <div class="space-y-4">
-                        <HeartRate
-                            v-model="parametersState.heartRate.value"
-                            :latest-measurement="
-                                getLatestMeasurement('heartRate', latestMeasurements)
-                            "
-                            @state="parametersState.heartRate.state = $event"
+        <section class="container my-8">
+            <RoundTime />
+            <form ref="form">
+                <div class="space-y-4">
+                    <HeartRate
+                        v-model="parametersState.heartRate.value"
+                        :latest-measurement="getLatestMeasurement('heartRate', latestMeasurements)"
+                        @state="parametersState.heartRate.state = $event"
+                    />
+                    <RespiratoryRate
+                        v-model="parametersState.respiratoryRate.value"
+                        :latest-measurement="
+                            getLatestMeasurement('respiratoryRate', latestMeasurements)
+                        "
+                        @state="parametersState.respiratoryRate.state = $event"
+                    />
+                    <Trc
+                        v-model="parametersState.trc.value"
+                        :latest-measurement="getLatestMeasurement('trc', latestMeasurements)"
+                        @state="parametersState.trc.state = $event"
+                    />
+                    <Avdn
+                        v-model="parametersState.avdn.value"
+                        :latest-measurement="getLatestMeasurement('avdn', latestMeasurements)"
+                        @state="parametersState.avdn.state = $event"
+                    />
+                    <Mucosas
+                        v-model="parametersState.mucosas.value"
+                        :latest-measurement="getLatestMeasurement('mucosas', latestMeasurements)"
+                        @state="parametersState.mucosas.state = $event"
+                    />
+                    <Temperature
+                        v-model="parametersState.temperature.value"
+                        :latest-measurement="
+                            getLatestMeasurement('temperature', latestMeasurements)
+                        "
+                        @state="parametersState.temperature.state = $event"
+                    />
+                    <Glicemia
+                        v-model="parametersState.bloodGlucose.value"
+                        :latest-measurement="
+                            getLatestMeasurement('bloodGlucose', latestMeasurements)
+                        "
+                        @state="parametersState.bloodGlucose.state = $event"
+                    />
+                    <Hct
+                        v-model="parametersState.hct.value"
+                        :latest-measurement="getLatestMeasurement('hct', latestMeasurements)"
+                        @state="parametersState.hct.state = $event"
+                    />
+                    <BloodPressure
+                        v-model="parametersState.bloodPressure.value"
+                        :latest-measurement="
+                            getLatestMeasurement('bloodPressure', latestMeasurements)
+                        "
+                        @state="parametersState.bloodPressure.state = $event"
+                    />
+                    <div class="flex items-center">
+                        <input
+                            type="checkbox"
+                            class="focus:ring-0 rounded"
+                            v-model="alertCheckbox"
                         />
-                        <RespiratoryRate
-                            v-model="parametersState.respiratoryRate.value"
-                            :latest-measurement="
-                                getLatestMeasurement('respiratoryRate', latestMeasurements)
-                            "
-                            @state="parametersState.respiratoryRate.state = $event"
-                        />
-                        <Trc
-                            v-model="parametersState.trc.value"
-                            :latest-measurement="getLatestMeasurement('trc', latestMeasurements)"
-                            @state="parametersState.trc.state = $event"
-                        />
-                        <Avdn
-                            v-model="parametersState.avdn.value"
-                            :latest-measurement="getLatestMeasurement('avdn', latestMeasurements)"
-                            @state="parametersState.avdn.state = $event"
-                        />
-                        <Mucosas
-                            v-model="parametersState.mucosas.value"
-                            :latest-measurement="
-                                getLatestMeasurement('mucosas', latestMeasurements)
-                            "
-                            @state="parametersState.mucosas.state = $event"
-                        />
-                        <Temperature
-                            v-model="parametersState.temperature.value"
-                            :latest-measurement="
-                                getLatestMeasurement('temperature', latestMeasurements)
-                            "
-                            @state="parametersState.temperature.state = $event"
-                        />
-                        <Glicemia
-                            v-model="parametersState.bloodGlucose.value"
-                            :latest-measurement="
-                                getLatestMeasurement('bloodGlucose', latestMeasurements)
-                            "
-                            @state="parametersState.bloodGlucose.state = $event"
-                        />
-                        <Hct
-                            v-model="parametersState.hct.value"
-                            :latest-measurement="getLatestMeasurement('hct', latestMeasurements)"
-                            @state="parametersState.hct.state = $event"
-                        />
-                        <BloodPressure
-                            v-model="parametersState.bloodPressure.value"
-                            :latest-measurement="
-                                getLatestMeasurement('bloodPressure', latestMeasurements)
-                            "
-                            @state="parametersState.bloodPressure.state = $event"
-                        />
-                        <div class="flex items-center">
-                            <input
-                                type="checkbox"
-                                class="focus:ring-0 rounded"
-                                v-model="alertCheckbox"
-                            />
-                            <label
-                                class="ml-2 block text-gray-900"
-                                @click="() => (alertCheckbox = !alertCheckbox)"
-                            >
-                                Criar alerta de monitorização
-                            </label>
-                        </div>
+                        <label
+                            class="ml-2 text-xs sm:text-base block text-gray-900"
+                            @click="() => (alertCheckbox = !alertCheckbox)"
+                        >
+                            Criar alerta de monitorização
+                        </label>
                     </div>
-                </form>
-            </section>
+                </div>
+            </form>
         </section>
     </main>
     <Summary ref="parametersSummaryRef">
@@ -174,6 +168,6 @@ onMounted(async () => {
         </button>
     </Summary>
     <Footer>
-        <button type="button" class="btn-secondary" @click="confirm">Confirmar</button>
+        <button type="button" class="btn btn-secondary" @click="confirm">Confirmar</button>
     </Footer>
 </template>

@@ -74,6 +74,7 @@ function searchPatient() {
         return
     }
 
+    showMessage('')
     results.value = patientsFound
 }
 
@@ -110,107 +111,109 @@ onMounted(async () => {
     <Header title="Nova Hospitalização">
         <GoBack />
     </Header>
-    <main v-if="isEmpty()" class="main-content px-12">
+    <main v-if="isEmpty()" class="main-content">
         <section class="container my-8">
             <h1 class="font-medium text-xs md:text-base">Pesquiar paciente</h1>
-            <p class="text-gray-500 text-xs sm:text-sm">
-                Encontre aqui um paciente para ser hospitalizado.
+            <p class="text-[10px] sm:text-sm text-gray-500">
+                Pesquise pelo ID, Nome do paciente ou do Proprietário.
             </p>
-            <div class="flex items-center gap-1 px-3 rounded shadow-sm border border-gray-300">
-                <i class="bi bi-search text-base md:text-xl text-yellow-500"></i>
+            <div class="flex items-center px-2 rounded shadow-sm border border-gray-300">
+                <i class="bi bi-search icon"></i>
                 <input
-                    class="w-full text-sm p-2.5 border-0 focus:border-gray-300 focus:ring-0"
+                    class="w-full text-xs md:text-sm md:p-2.5 border-0 focus:border-gray-300 focus:ring-0"
                     type="text"
-                    placeholder="Digite o ID, Nome ou Nome do Proprietário"
+                    placeholder="Pesquisar paciente..."
                     v-model="query"
                     @input="searchPatient()"
                 />
             </div>
-            <p class="text-xs text-red-500">{{ message }}</p>
+            <p class="text-[8px] sm:text-xs text-red-500">{{ message }}</p>
             <div v-if="results.length">
                 <div
                     v-for="item in results"
                     @click="() => (patient = item)"
                     class="flex items-center gap-4 border-b p-2 cursor-pointer hover:bg-gray-100"
                 >
-                    <img :src="iconUrl" alt="patient-image" width="40" />
-                    <span>{{ item.name }}</span>
+                    <img :src="iconUrl" class="w-[20px] sm:w-[30px]" alt="patient-image" />
+                    <span class="text-xs sm:text-base font-medium text-gray-700">
+                        {{ item.name }}
+                    </span>
                 </div>
             </div>
         </section>
     </main>
     <main v-else class="main-content">
-        <section class="px-12 my-8">
-            <form ref="form">
-                <section class="container rounded mt-8 mb-4">
-                    <h1 class="font-medium">Paciente</h1>
-                    <p class="text-sm text-gray-500">Dados do paciente.</p>
+        <form ref="form">
+            <section class="container rounded mt-8 mb-4">
+                <h1 class="text-xs sm:text-base font-medium">Paciente</h1>
+                <p class="text-xs sm:text-sm text-gray-500">Dados do paciente.</p>
+                <BaseInput
+                    title="Nome do Paciente"
+                    class="flex-1 text-gray-500"
+                    :placeholder="patient?.name"
+                    :disabled="true"
+                    :readonly="true"
+                />
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
                     <BaseInput
-                        title="Nome do Paciente"
+                        title="ID Paciente"
+                        class="flex-1 text-gray-500"
+                        :placeholder="patient?.patientId"
+                        :disabled="true"
+                        :readonly="true"
+                    />
+                    <BaseInput
+                        title="Espécie"
+                        class="flex-1 text-gray-500"
+                        :placeholder="patient?.specie"
+                        :disabled="true"
+                        :readonly="true"
+                        :is-select="true"
+                    />
+                </div>
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                    <BaseInput
+                        title="Raça"
+                        class="flex-1 text-gray-500"
+                        :placeholder="patient?.breed"
+                        :disabled="true"
+                        :readonly="true"
+                        :is-select="true"
+                    />
+                    <BaseInput
+                        title="ID Proprietário"
+                        class="flex-1 text-gray-500"
+                        :placeholder="patient?.ownerId"
+                        :disabled="true"
+                        :readonly="true"
+                    />
+                </div>
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                    <BaseInput
+                        title="Nome do Proprietário"
                         class="flex-1 text-gray-500"
                         :placeholder="patient?.name"
                         :disabled="true"
                         :readonly="true"
                     />
-                    <div class="flex space-x-4">
-                        <BaseInput
-                            title="ID Paciente"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.patientId"
-                            :disabled="true"
-                            :readonly="true"
-                        />
-                        <BaseInput
-                            title="Espécie"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.specie"
-                            :disabled="true"
-                            :readonly="true"
-                            :is-select="true"
-                        />
-                    </div>
-                    <div class="flex space-x-4">
-                        <BaseInput
-                            title="Raça"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.breed"
-                            :disabled="true"
-                            :readonly="true"
-                            :is-select="true"
-                        />
-                        <BaseInput
-                            title="ID Proprietário"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.ownerId"
-                            :disabled="true"
-                            :readonly="true"
-                        />
-                    </div>
-                    <div class="flex space-x-4">
-                        <BaseInput
-                            title="Nome do Proprietário"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.name"
-                            :disabled="true"
-                            :readonly="true"
-                        />
-                        <BaseInput
-                            title="Telemóvel"
-                            class="flex-1 text-gray-500"
-                            :placeholder="patient?.ownerPhoneNumber"
-                            :disabled="true"
-                            :readonly="true"
-                        />
-                    </div>
-                </section>
-                <section class="container rounded mb-4">
-                    <h1 class="font-medium">Hospitalização</h1>
-                    <p class="text-sm text-gray-500">
-                        Preencha os campos abaixo com os dados da hospitalização.
-                    </p>
+                    <BaseInput
+                        title="Telemóvel"
+                        class="flex-1 text-gray-500"
+                        :placeholder="patient?.ownerPhoneNumber"
+                        :disabled="true"
+                        :readonly="true"
+                    />
+                </div>
+            </section>
+            <section class="container rounded mb-4">
+                <h1 class="text-xs sm:text-base font-medium">Hospitalização</h1>
+                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                    Preencha os campos abaixo com os dados da hospitalização.
+                </p>
+                <div class="flex flex-col space-y-4">
                     <BaseInput
                         type="number"
-                        class="flex-1 text-gray-500"
+                        class="text-gray-500"
                         placeholder="Peso Kg"
                         v-model="hospitalization.weight"
                         :is-required="true"
@@ -229,67 +232,67 @@ onMounted(async () => {
                         :options="DIAGNOSTICS"
                         :limit="5"
                     />
-                    <div class="flex space-x-4">
-                        <BaseInput
-                            title="Data de entrada"
-                            type="date"
-                            class="flex-1 text-gray-500"
-                            v-model="hospitalization.entryDate"
-                            :is-required="true"
-                        />
-                        <BaseInput
-                            title="Previsão de Alta Médica"
-                            type="date"
-                            class="flex-1 text-gray-500"
-                            v-model="hospitalization.dischargeDate"
-                            :is-required="true"
-                        />
+                </div>
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                    <BaseInput
+                        title="Data de entrada"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        v-model="hospitalization.entryDate"
+                        :is-required="true"
+                    />
+                    <BaseInput
+                        title="Previsão de Alta Médica"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        v-model="hospitalization.dischargeDate"
+                        :is-required="true"
+                    />
+                </div>
+            </section>
+            <section class="container rounded mb-4">
+                <h1 class="text-xs sm:text-base font-medium">Orçamento</h1>
+                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                    Preencha os campos abaixo com os dados do orçamento.
+                </p>
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                    <BaseInput
+                        title="Inicia em"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        v-model="budget.startOn"
+                        :is-required="true"
+                    />
+                    <BaseInput
+                        title="Termina em"
+                        type="date"
+                        class="flex-1 text-gray-500"
+                        v-model="budget.endOn"
+                        :is-required="true"
+                    />
+                </div>
+                <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+                    <div class="flex-1 mt-2">
+                        <select class="form-control" required v-model="budget.status">
+                            <option value="" selected>Escolher Estado</option>
+                            <option :value="BudgetStatus.UNPAID">Não Pago</option>
+                            <option :value="BudgetStatus.PENDING">Pendente</option>
+                            <option :value="BudgetStatus.PAID">Pago</option>
+                        </select>
                     </div>
-                </section>
-                <section class="container rounded mb-4">
-                    <h1 class="font-medium text-base">Orçamento</h1>
-                    <p class="text-sm text-gray-500">
-                        Preencha os campos abaixo com os dados do orçamento.
-                    </p>
-                    <div class="flex items-end space-x-4">
-                        <BaseInput
-                            title="Inicia em"
-                            type="date"
-                            class="flex-1 text-gray-500"
-                            v-model="budget.startOn"
-                            :is-required="true"
-                        />
-                        <BaseInput
-                            title="Termina em"
-                            type="date"
-                            class="flex-1 text-gray-500"
-                            v-model="budget.endOn"
-                            :is-required="true"
-                        />
-                    </div>
-                    <div class="flex space-x-4">
-                        <div class="flex-1 mt-2">
-                            <select class="form-control" required v-model="budget.status">
-                                <option value="" selected>Escolher Estado</option>
-                                <option :value="BudgetStatus.UNPAID">Não Pago</option>
-                                <option :value="BudgetStatus.PENDING">Pendente</option>
-                                <option :value="BudgetStatus.PAID">Pago</option>
-                            </select>
-                        </div>
-                        <div class="flex-1"></div>
-                    </div>
-                </section>
-            </form>
-        </section>
+                    <div class="flex-1"></div>
+                </div>
+            </section>
+        </form>
     </main>
     <Footer>
         <button
             v-show="patient?.patientId"
-            class="btn btn-success space-x-3"
+            class="btn btn-success space-x-2"
             @click="hospitalize()"
         >
             <i class="bi bi-floppy2"></i>
-            <span class="font-medium">{{ status }}</span>
+            <span class="font-medium text-xs sm:text-sm">{{ status }}</span>
         </button>
     </Footer>
 </template>
