@@ -98,7 +98,7 @@ onMounted(async () => {
                                     {{ findParameterName(parameter.name) }}
                                 </th>
                                 <td class="px-3 py-1 sm:px-6 sm:py-3">
-                                    {{ parameter.measurement.value }}
+                                    {{ parameter.value }}
                                     {{ findParameterUnity(parameter.name) }}
                                 </td>
                                 <td class="px-3 py-1 sm:px-6 sm:py-3">

@@ -14,12 +14,14 @@ import { PatientService } from './services/patient_service'
 const pinia = createPinia()
 const app = createApp(App)
 
-const baseUrl = 'http://192.168.96.109:8000'
+const SERVER_URL = import.meta.env.VITE_SERVER_URL
+const WS_URL = import.meta.env.VITE_WS_URL
+
 const axiosAdapter = new AxiosAdapter()
-const patientService = new PatientService(axiosAdapter, baseUrl)
-const roundService = new RoundService(axiosAdapter, baseUrl)
-const alertService = new AlertService(axiosAdapter, baseUrl)
-const webSocket = new WebSocket('ws://192.168.96.109:8000/alerts/notifications')
+const patientService = new PatientService(axiosAdapter, SERVER_URL)
+const roundService = new RoundService(axiosAdapter, SERVER_URL)
+const alertService = new AlertService(axiosAdapter, SERVER_URL)
+const webSocket = new WebSocket(`${WS_URL}/alerts/notifications`)
 
 app.provide(Provided.PATIENT_SERVICE, patientService)
 app.provide(Provided.ROUND_SERVICE, roundService)
