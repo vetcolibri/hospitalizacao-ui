@@ -97,52 +97,50 @@ function changeScheduleButton() {
     <div>
         <Header title="Alerta na monitorização"></Header>
         <main class="main-content">
-            <section class="px-12">
-                <section class="container mt-8">
-                    <form class="space-y-3">
-                        <ScheduleTime v-model="scheduleTime" />
-                        <ScheduleRate v-model="repeatEvery" />
-                        <div class="overflow-y-auto border rounded space-y-2 p-3">
-                            <div
-                                v-for="parameter in parameters"
-                                class="flex items-center"
-                                @click="selectParameter(parameter.name)"
-                            >
-                                <input
-                                    type="checkbox"
-                                    class="rounded focus:ring-0"
-                                    :name="parameter.name"
-                                    :checked="wasSelected(parameter.name)"
-                                />
-                                <label class="ml-2 block text-gray-900">
-                                    {{ parameter.title }}
-                                </label>
-                            </div>
-                        </div>
-                        <textarea
-                            ref="textareaElement"
-                            name="comments"
-                            class="form-control resize-none focus:ring-0 overflow-hidden"
-                            placeholder="Observações"
-                            rows="4"
-                            v-model="comments"
-                            @input="changeScheduleButton()"
+            <section class="container my-8">
+                <form class="space-y-3">
+                    <ScheduleTime v-model="scheduleTime" />
+                    <ScheduleRate v-model="repeatEvery" />
+                    <div class="overflow-y-auto text-xs sm:text-base border rounded space-y-2 p-3">
+                        <div
+                            v-for="parameter in parameters"
+                            class="flex items-center"
+                            @click="selectParameter(parameter.name)"
                         >
-                        </textarea>
-                    </form>
-                </section>
+                            <input
+                                type="checkbox"
+                                class="rounded focus:ring-0"
+                                :name="parameter.name"
+                                :checked="wasSelected(parameter.name)"
+                            />
+                            <label class="ml-2 block text-gray-900">
+                                {{ parameter.title }}
+                            </label>
+                        </div>
+                    </div>
+                    <textarea
+                        ref="textareaElement"
+                        name="comments"
+                        class="form-control resize-none focus:ring-0 overflow-hidden"
+                        placeholder="Observações"
+                        rows="4"
+                        v-model="comments"
+                        @input="changeScheduleButton()"
+                    >
+                    </textarea>
+                </form>
             </section>
         </main>
         <Footer>
             <div class="space-x-3">
                 <router-link :to="{ name: 'Dashboard' }">
-                    <button class="btn-secondary">Cancelar</button>
+                    <button class="btn btn-secondary">Cancelar</button>
                 </router-link>
-                <button v-if="!scheduleButton" class="btn-light disabled">
+                <button v-if="!scheduleButton" class="btn btn-light disabled">
                     <i class="bi bi-clock"></i>
                     Agendar
                 </button>
-                <button v-if="scheduleButton" class="btn-success" @click="schedule()">
+                <button v-if="scheduleButton" class="btn btn-success" @click="schedule()">
                     <i class="bi bi-clock text-white"></i>
                     Agendar
                 </button>

@@ -88,28 +88,28 @@ defineExpose({ open, close })
 </script>
 <template>
     <BaseDialog ref="dialogRef" :title="title">
-        <section class="space-y-4">
+        <section class="space-y-4 text-xs sm:text-sm">
             <div class="flex items-center gap-4">
-                <p class="text-sm">Parâmetro:</p>
-                <span class="text-sm text-red-500">A cada {{ convert() }}</span>
+                <p>Parâmetro:</p>
+                <span class="text-red-500">A cada {{ convert() }}</span>
             </div>
             <ul class="space-y-1">
                 <li v-for="name in parameters" class="w-full flex items-center gap-4">
                     <i class="bi bi-exclamation-triangle-fill text-yellow-600 md:text-lg"></i>
-                    <span class="text-sm text-red-500 underline">{{
-                        getParameterByName(name)
-                    }}</span>
+                    <span class="text-red-500 underline">
+                        {{ getParameterByName(name) }}
+                    </span>
                 </li>
             </ul>
-            <p class="text-sm text-justify text-gray-500">{{ comments }}</p>
+            <p class="text-justify text-gray-500">{{ comments }}</p>
             <p class="flex items-center" @click="() => (disabledAlert = !disabledAlert)">
                 <input type="checkbox" class="rounded focus:ring-0" v-model="disabledAlert" />
-                <label for="notShowAgain" class="block ml-2 text-sm text-gray-900">
+                <label for="notShowAgain" class="block ml-2 text-gray-900">
                     Não mostrar novamente
                 </label>
             </p>
         </section>
-        <button class="w-full mt-8 text-sm btn-success" @click="confirm()">
+        <button class="w-full mt-8 text-xs sm:text-sm btn btn-success" @click="confirm()">
             <i class="bi bi-check2"></i>
             Confirmar
         </button>

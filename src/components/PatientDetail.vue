@@ -30,7 +30,7 @@ defineExpose({ open })
 <template>
     <BaseDialog ref="dialogRef" :title="patient.name">
         <div class="border-b border-gray-200 mb-3">
-            <ul class="flex flex-wrap text-sm font-medium text-center text-gray-500">
+            <ul class="flex flex-wrap text-xs sm:text-sm font-medium text-center text-gray-500">
                 <li class="mr-2" @click="showPatientTab()">
                     <span
                         class="inline-flex p-2 border border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 group"
@@ -107,7 +107,7 @@ defineExpose({ open })
                 </li>
             </ul>
             <div class="space-y-2">
-                <h1>Orçamento</h1>
+                <h1 class="text-xs sm:text-sm">Orçamento</h1>
                 <ul class="patient-info">
                     <li class="patient-info-item">
                         <span>Iniciou em</span>

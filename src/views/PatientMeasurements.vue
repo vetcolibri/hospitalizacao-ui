@@ -54,76 +54,75 @@ onMounted(async () => {
             <GoBack />
         </Header>
         <main class="main-content">
-            <section class="px-12">
-                <section class="container rounded mt-8 mb-4">
-                    <ul class="flex space-x-3 text-sm">
-                        <li>
-                            <router-link
-                                :to="{ name: 'DailyRound' }"
-                                class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
-                            >
-                                <i
-                                    class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
-                                ></i>
-                                <span> Ronda diária </span>
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link
-                                class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
-                                :to="{ name: 'ChooseParameters' }"
-                            >
-                                <i
-                                    class="bi bi-clipboard2-data-fill text-sm md:text-2xl text-yellow-500"
-                                ></i>
-                                <span>Monitorização continuada</span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </section>
-                <section class="container flex flex-col justify-between mb-8">
-                    <div class="relative">
-                        <table class="w-full text-sm text-left">
-                            <thead class="text-xs text-gray-700 uppercase">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Parâmetro</th>
-                                    <th scope="col" class="px-6 py-3">Medição (Unit.)</th>
-                                    <th scope="col" class="px-6 py-3">Data</th>
-                                    <th scope="col" class="px-6 py-3">Hora</th>
-                                </tr>
-                            </thead>
-                            <tbody v-if="measurements.length > 0">
-                                <tr v-for="parameter of results" class="border-t border-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-90">
-                                        {{ findParameterName(parameter.name) }}
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        {{ parameter.measurement.value }}
-                                        {{ findParameterUnity(parameter.name) }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ makeDateFormat(new Date(parameter.issuedAt!)) }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ makeHourFormat(new Date(parameter.issuedAt!)) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div
-                        v-if="measurements.length === 0"
-                        class="h-full text-center text-base text-gray-600"
-                    >
-                        Nenhuma medição encontrada
-                    </div>
-                    <Pagination
-                        v-if="pages > 1"
-                        :current-page="currentPage"
-                        :pages="pages"
-                        @update-page="(page) => updatePage(page)"
-                    />
-                </section>
+            <section class="container rounded mt-8 mb-4">
+                <ul class="flex space-x-3 text-xs sm:text-sm">
+                    <li>
+                        <router-link
+                            :to="{ name: 'DailyRound' }"
+                            class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
+                        >
+                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <span>Ronda diária</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link
+                            class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
+                            :to="{ name: 'ChooseParameters' }"
+                        >
+                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <span>Monitorização continuada</span>
+                        </router-link>
+                    </li>
+                </ul>
+            </section>
+            <section class="container flex flex-col justify-between mb-8">
+                <div class="relative overflow-auto">
+                    <table class="w-full text-xs sm:text-sm text-left">
+                        <thead class="text-gray-700 uppercase">
+                            <tr>
+                                <th scope="col" class="px-3 py-1 sm:px-6 sm:py-3">Parâmetro</th>
+                                <th scope="col" class="px-3 py-1 sm:px-6 sm:py-3">
+                                    Medição (Unit.)
+                                </th>
+                                <th scope="col" class="px-3 py-1 sm:px-6 sm:py-3">Data</th>
+                                <th scope="col" class="px-3 py-1 sm:px-6 sm:py-3">Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="measurements.length > 0">
+                            <tr v-for="parameter of results" class="border-t border-gray-200">
+                                <th
+                                    scope="row"
+                                    class="px-3 py-1 sm:px-6 sm:py-4 font-medium text-gray-90"
+                                >
+                                    {{ findParameterName(parameter.name) }}
+                                </th>
+                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                    {{ parameter.measurement.value }}
+                                    {{ findParameterUnity(parameter.name) }}
+                                </td>
+                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                    {{ makeDateFormat(new Date(parameter.issuedAt!)) }}
+                                </td>
+                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                    {{ makeHourFormat(new Date(parameter.issuedAt!)) }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    v-if="measurements.length === 0"
+                    class="h-full text-center text-xs sm:text-base text-gray-600"
+                >
+                    Nenhuma medição encontrada
+                </div>
+                <Pagination
+                    v-if="pages > 1"
+                    :current-page="currentPage"
+                    :pages="pages"
+                    @update-page="(page) => updatePage(page)"
+                />
             </section>
         </main>
         <Footer></Footer>

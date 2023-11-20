@@ -23,7 +23,7 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-    <div class="space-y-1">
+    <div class="space-y-1 text-xs sm:text-base">
         <label for="rate" class="block">Repetir a cada</label>
         <div class="flex items-center space-x-2">
             <div class="w-16">
@@ -43,6 +43,6 @@ onBeforeMount(() => {
                 </select>
             </div>
         </div>
-        <small class="text-sm text-red-500">{{ message }}</small>
     </div>
+    <small class="text-xs sm:text-base text-red-500">{{ message }}</small>
 </template>
