@@ -31,12 +31,12 @@ export default defineConfig({
                     },
                     {
                         sizes: '384x384',
-                        src: './src/assets/icons/cvl-192x192.png',
+                        src: './src/assets/icons/cvl-384x384.png',
                         type: 'image/png'
                     },
                     {
                         sizes: '512x512',
-                        src: './src/assets/icons/cvl-192x192.png',
+                        src: './src/assets/icons/cvl-512x512.png',
                         type: 'image/png'
                     }
                 ],
