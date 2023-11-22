@@ -26,17 +26,17 @@ export default defineConfig({
                 icons: [
                     {
                         sizes: '192x192',
-                        src: './src/assets/icons/cvl-192x192.png',
+                        src: './img/cvl-192x192.png',
                         type: 'image/png'
                     },
                     {
                         sizes: '384x384',
-                        src: './src/assets/icons/cvl-384x384.png',
+                        src: './img/cvl-384x384.png',
                         type: 'image/png'
                     },
                     {
                         sizes: '512x512',
-                        src: './src/assets/icons/cvl-512x512.png',
+                        src: './img/cvl-512x512.png',
                         type: 'image/png'
                     }
                 ],
