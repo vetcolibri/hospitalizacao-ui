@@ -1,52 +1,76 @@
-# cvl-hospitalization-reports
+# Hospitalização UI
 
-This template should help get you started developing with Vue 3 in Vite.
+Gestão da hospitalização dos pacientes.
 
-## Recommended IDE Setup
+## Guia de Implementação
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+-   [Ambiente de produção](#docker---ambiente-de-produção)
+-   [Ambiente de desenvolvimento](#ambiente-de-desenvolvimento)
 
-## Type Support for `.vue` Imports in TS
+### Requisitos
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+-   [Node.js](https://nodejs.org)
+-   [npm](https://npmjs.com/)
+-   [Docker](https:www.docker.com)
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+## Docker - Ambiente de produção
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+Para executar a aplicação atráves de uma imagem em Docker siga os seguintes passos:
 
-## Customize configuration
+1. Clone o repositório do projecto
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+```bash
+$ git clone git@github.com:veticolibri/hospitalization-ui.git
 ```
 
-### Compile and Hot-Reload for Development
+2. Mude para o diretório da aplicação:
 
-```sh
-npm run dev
+```bash
+$ cd hospitalizacao-ui
 ```
 
-### Type-Check, Compile and Minify for Production
+3. Construção da imagem
 
-```sh
-npm run build
+Para construção da imagem é necessário fornecer as seguintes váriaveis de ambiente, `VITE_SERVER_URL` e `VITE_WS_URL`:
+
+```bash
+$ docker build --build-arg VITE_SERVER_URL="server-url" --build-arg VITE_WS_URL="websocket-url" -f ./.build/Dockerfile -t hospitalizacao-ui .
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+> NOTA: Substitua `server-url` e `websocket-url` pelos valores reais do servidor de backoffice.
 
-```sh
-npm run test:unit
+4. Execução do container
+
+Para executar o container com a sua imagem docker criada no passo acima, execute o comando abaixo:
+
+```bash
+$ docker run -d -p 3000:8080 hospitalizacao-ui
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+Depois de executar o comando acima a aplicação estará disponível no seguinte endereço: http://localhost:3000
 
-```sh
-npm run lint
+## Ambiente de desenvolvimento
+
+Se deseja executar a sua aplicação em ambiente de desenvolvimento siga os seguintes passos:
+
+1. Instalação das dependências:
+
+```bash
+$ npm install
 ```
+
+2. Variáveis de ambiente:
+
+```bash
+$ cp .env.example .env.development
+```
+
+> NOTA: Depois de copiar os dados do arquivo `.env.example` para o `.env`, abra o arquivo `.env` com o seu editor de texto preferido de actualize as informação das variáveis de ambiente `VITE_SERVER_URL` e `VITE_WS_URL` para apontarem ao servidor de backoffice.
+
+3. Executar servidor de desenvolvimente:
+
+```bash
+$ npm run dev
+```
+
+Para o ambiente de desenvolvimento a aplicação estará disponível no seguinte endereço: http://localhost:5173
