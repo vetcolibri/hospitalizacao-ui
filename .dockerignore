@@ -9,3 +9,4 @@ dev-dist
 README.md
 .gitignore
 .build
+.prettierrc.json
