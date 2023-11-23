@@ -1,5 +1,11 @@
+.vscode
 node_modules
 dev-dist
 .vscode
 .env.example
 .env
+.env.develpment
+.env.production
+README.md
+.gitignore
+.build
