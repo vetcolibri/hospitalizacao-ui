@@ -2,20 +2,18 @@
 
 Gestão da hospitalização dos pacientes.
 
+### Requisitos
+
+-   [Node.js](https://nodejs.org)
+-   [npmjs](https://npmjs.com/)
+-   [Docker](https:www.docker.com)
+
 ## Guia de Implementação
 
 -   [Ambiente de produção](#docker---ambiente-de-produção)
 -   [Ambiente de desenvolvimento](#ambiente-de-desenvolvimento)
 
-### Requisitos
-
--   [Node.js](https://nodejs.org)
--   [npm](https://npmjs.com/)
--   [Docker](https:www.docker.com)
-
-## Docker - Ambiente de produção
-
-Para executar a aplicação atráves de uma imagem em Docker siga os seguintes passos:
+## Baixar repositório
 
 1. Clone o repositório do projecto
 
@@ -29,7 +27,11 @@ $ git clone git@github.com:veticolibri/hospitalization-ui.git
 $ cd hospitalizacao-ui
 ```
 
-3. Construção da imagem
+## Docker - Ambiente de produção
+
+Para executar a aplicação atráves de uma imagem em Docker siga os seguintes passos:
+
+1. Construção da imagem
 
 Para construção da imagem é necessário fornecer as seguintes váriaveis de ambiente, `VITE_SERVER_URL` e `VITE_WS_URL`:
 
@@ -39,7 +41,7 @@ $ docker build --build-arg VITE_SERVER_URL="server-url" --build-arg VITE_WS_URL=
 
 > NOTA: Substitua `server-url` e `websocket-url` pelos valores reais do servidor de backoffice.
 
-4. Execução do container
+2. Execução do container
 
 Para executar o container com a sua imagem docker criada no passo acima, execute o comando abaixo:
 
@@ -65,7 +67,7 @@ $ npm install
 $ cp .env.example .env.development
 ```
 
-> NOTA: Depois de copiar os dados do arquivo `.env.example` para o `.env`, abra o arquivo `.env` com o seu editor de texto preferido de actualize as informação das variáveis de ambiente `VITE_SERVER_URL` e `VITE_WS_URL` para apontarem ao servidor de backoffice.
+> NOTA: Depois de copiar os dados do arquivo `.env.example` para o `.env.development`, abra o arquivo `.env.development` com o seu editor de texto preferido e atualize as informações das variáveis de ambiente `VITE_SERVER_URL` e `VITE_WS_URL` para apontarem ao servidor de backoffice.
 
 3. Executar servidor de desenvolvimente:
 
