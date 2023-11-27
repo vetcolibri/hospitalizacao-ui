@@ -21,7 +21,7 @@ export class RoundService implements IRoundService {
     }
 
     async newRound(patientId: string, measurements: any): Promise<Either<APIError, void>> {
-        const body = { patientId, userId: 'some-user-id', parameters: measurements }
+        const body = { patientId, parameters: measurements }
 
         const url = `${this.baseUrl}/${this.resource}/new`
 

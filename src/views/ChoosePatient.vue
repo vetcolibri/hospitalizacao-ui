@@ -27,9 +27,9 @@ onMounted(async () => {
         <Header title="Escolha o paciente">
             <GoBack />
         </Header>
-        <main class="main-content my-8">
+        <main class="main-content">
             <section
-                class="grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl"
+                class="my-8 grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl"
             >
                 <PatientHospitalized v-for="patient in patients" :patient="patient" />
             </section>
