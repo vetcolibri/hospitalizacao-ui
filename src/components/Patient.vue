@@ -36,11 +36,11 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
                 <h5 class="flex-1 text-xs sm:text-base font-medium">{{ patient.name }}</h5>
             </div>
             <i
-                class="bi bi-info-circle-fill text-blue-500 cursor-pointer z-[1000]"
+                class="bi bi-info-circle-fill text-blue-500 float-right inline cursor-pointer z-[1000]"
                 @click="openDetails()"
             ></i>
         </div>
-        <div class="flex gap-4 mt-4">
+        <div class="flex flex-col justify-center cursor-pointer gap-1 mt-4" @click="nextPage()">
             <ul class="patient-info">
                 <li class="patient-info-item">
                     <span>ID Paciente</span>
@@ -55,12 +55,9 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
                     <span class="patient-info-text">{{ date }}</span>
                 </li>
             </ul>
-        </div>
-        <div class="flex justify-between items-center">
-            <button class="btn btn-success text-sm" @click="nextPage()">Avançar</button>
             <i
                 v-if="patient.hasAlert"
-                class="bi bi-exclamation-triangle-fill text-base md:text-lg text-yellow-500"
+                class="bi bi-exclamation-triangle-fill text-base text-yellow-500"
             >
             </i>
         </div>

@@ -113,7 +113,7 @@ onMounted(async () => {
     </Header>
     <main v-if="isEmpty()" class="main-content">
         <section class="container my-8">
-            <h1 class="font-medium text-xs md:text-base">Pesquiar paciente</h1>
+            <h1 class="font-medium text-xs md:text-base">Pesquisar paciente</h1>
             <p class="text-[10px] sm:text-sm text-gray-500">
                 Pesquise pelo ID, Nome do paciente ou do Proprietário.
             </p>

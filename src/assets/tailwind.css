@@ -31,11 +31,11 @@ input[type='checkbox'] {
 }
 
 .form-control {
-    @apply w-full p-2.5 block text-xs sm:text-sm border border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-0;
+    @apply w-full p-2.5 block  border border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-0;
 }
 
 .btn {
-    @apply px-4 py-2 rounded text-xs sm:px-6 sm:text-sm;
+    @apply px-4 py-2 rounded sm:px-6;
 }
 
 .btn-success {
@@ -90,17 +90,17 @@ input[type='checkbox'] {
 /* Menu */
 
 .menu-item {
-    @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-3 py-2 md:p-4 text-xs sm:text-base;
+    @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-3 py-2 md:p-4;
 }
 
-.icon  {
+.icon {
     @apply text-sm md:text-xl text-yellow-500;
 }
 
 /* Patient Info */
 
 .patient-info {
-    @apply flex-1 text-xs sm:text-sm text-gray-500 space-y-2;
+    @apply flex-1  text-gray-500 space-y-2;
 }
 
 .patient-info-item {
@@ -114,7 +114,7 @@ input[type='checkbox'] {
 /* Badge */
 
 .badge {
-    @apply inline-flex items-center px-2 py-1 text-xs sm:text-sm font-medium rounded;
+    @apply inline-flex items-center px-2 py-1 font-medium rounded;
 }
 
 .badge-dark {

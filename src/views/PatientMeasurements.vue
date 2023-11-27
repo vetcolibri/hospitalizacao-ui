@@ -55,7 +55,7 @@ onMounted(async () => {
         </Header>
         <main class="main-content">
             <section class="container rounded mt-8 mb-4">
-                <ul class="flex space-x-3 text-xs sm:text-sm">
+                <ul class="flex space-x-3 text-sm">
                     <li>
                         <router-link
                             :to="{ name: 'DailyRound' }"
@@ -78,7 +78,7 @@ onMounted(async () => {
             </section>
             <section class="container flex flex-col justify-between mb-8">
                 <div class="relative overflow-auto">
-                    <table class="w-full text-xs sm:text-sm text-left">
+                    <table class="w-full text-sm text-left">
                         <thead class="text-gray-700 uppercase">
                             <tr>
                                 <th scope="col" class="px-3 py-1 sm:px-6 sm:py-3">Parâmetro</th>
@@ -113,7 +113,7 @@ onMounted(async () => {
                 </div>
                 <div
                     v-if="measurements.length === 0"
-                    class="h-full text-center text-xs sm:text-base text-gray-600"
+                    class="h-full text-center text-sm text-gray-600"
                 >
                     Nenhuma medição encontrada
                 </div>

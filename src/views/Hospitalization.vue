@@ -14,7 +14,7 @@ import GoBack from '@/components/GoBack.vue'
                 <router-link :to="{ name: 'RecurringPatient' }">
                     <li class="menu-item">
                         <i class="bi bi-search icon"></i>
-                        <span>Buscar paciente</span>
+                        <span>Pesquisar paciente</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'RegisterPatient' }">

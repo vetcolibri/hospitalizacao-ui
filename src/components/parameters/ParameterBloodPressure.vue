@@ -54,7 +54,7 @@ defineProps(['latestMeasurement'])
 <template>
     <BaseParameter
         title="Pressão Arterial - Sis/Dis (PAM)"
-        helpText="(11/70 - 12/80) mm/Hg - (60)"
+        helpText="(110/70 - 130/80) mm/Hg - (60)"
         :measurement="latestMeasurement"
     >
         <input
@@ -65,6 +65,8 @@ defineProps(['latestMeasurement'])
             required
             @input="() => updateValue()"
             @keyup="() => parameterState()"
+            pattern="^\d+\/\d+ \(\d+\)$"
+            title="Formato: 110/70 (60)"
         />
     </BaseParameter>
 </template>
