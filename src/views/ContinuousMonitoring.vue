@@ -171,15 +171,15 @@ onMounted(async () => {
                     ref="parametersMenuEl"
                     class="flex items-center border gap-3 px-2 rounded text-gray-500"
                 >
-                    <i class="bi bi-hand-index text-xs md:text-xl" @click="toogleParameterList"></i>
+                    <i class="bi bi-hand-index text-lg md:text-xl" @click="toogleParameterList"></i>
                     <div
-                        class="flex-1 text-xs sm:text-sm border-0 py-2 cursor-pointer focus:ring-0"
+                        class="flex-1 border-0 py-2 cursor-pointer focus:ring-0"
                         @click="toogleParameterList"
                     >
                         Escolher parâmetros
                     </div>
                     <i
-                        class="bi bi-arrow-clockwise text-xs cursor-pointer md:text-xl"
+                        class="bi bi-arrow-clockwise text-lg cursor-pointer md:text-xl"
                         @click="clearVisibility"
                     ></i>
                 </div>
@@ -199,7 +199,7 @@ onMounted(async () => {
                             class="rounded focus:ring-0"
                             :checked="parameter.visibility"
                         />
-                        <label class="text-xs sm:text-base">{{ parameter.name }}</label>
+                        <label>{{ parameter.name }}</label>
                     </div>
                 </div>
                 <hr />
@@ -278,7 +278,7 @@ onMounted(async () => {
                                 v-model="alertCheckbox"
                             />
                             <label
-                                class="ml-2 text-xs sm:text-base block text-gray-900"
+                                class="ml-2 block text-gray-900"
                                 @click="() => (alertCheckbox = !alertCheckbox)"
                             >
                                 Criar alerta de monitorização

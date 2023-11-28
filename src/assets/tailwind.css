@@ -94,7 +94,7 @@ input[type='checkbox'] {
 }
 
 .icon {
-    @apply text-sm md:text-xl text-yellow-500;
+    @apply text-lg md:text-xl text-yellow-500;
 }
 
 /* Patient Info */

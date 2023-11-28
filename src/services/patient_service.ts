@@ -18,6 +18,7 @@ export interface IPatientService {
         hospitalizationData: Hospitalization,
         budgetData: Budget
     ): Promise<Either<APIError, void>>
+    findOwner(ownerId: string): Promise<Either<APIError, Owner>>
 }
 
 export class PatientService implements IPatientService {
@@ -91,5 +92,14 @@ export class PatientService implements IPatientService {
         if (responseOrErr.isLeft()) return left(responseOrErr.value)
 
         return right(undefined)
+    }
+
+    async findOwner(ownerId: string): Promise<Either<APIError, Owner>> {
+        const url = `${this.baseUrl}/${this.resource}/owner/${ownerId}`
+
+        const responsOrError = await this.apiClient.get(url)
+        if (responsOrError.isLeft()) return left(responsOrError.value)
+
+        return right(responsOrError.value.data)
     }
 }

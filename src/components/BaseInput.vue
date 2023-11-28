@@ -27,7 +27,7 @@ function emitValue() {
 
 <template>
     <div>
-        <label v-if="title" class="text-xs sm:text-sm">{{ title }}</label>
+        <label v-if="title">{{ title }}</label>
         <input
             v-if="isSelect"
             class="form-control form-select"

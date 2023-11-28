@@ -4,6 +4,7 @@ import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
+import Message from '@/components/Message.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -18,8 +19,11 @@ import type { Owner, Patient } from '@/models/patient'
 
 const form = ref<HTMLFormElement>()
 const status = ref<string>('Hospitalizar')
+const mainRef = ref<HTMLElement>()
+const messageRef = ref<typeof Message>()
 const router = useRouter()
 const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
+const ownerExists = ref<boolean>(false)
 
 const patientData = ref<Patient>({
     name: '',
@@ -49,6 +53,32 @@ const budgetData = ref<Budget>({
     status: ''
 })
 
+async function findOwner() {
+    if (!ownerData.value.ownerId) {
+        clearOwnerData()
+        return
+    }
+
+    const ownerOrError = await patientService.findOwner(ownerData.value.ownerId)
+
+    if (ownerOrError.isLeft()) {
+        clearOwnerData()
+        return
+    }
+
+    ownerExists.value = true
+    ownerData.value = ownerOrError.value
+}
+
+function clearOwnerData() {
+    ownerExists.value = false
+    ownerData.value = {
+        ownerId: ownerData.value.ownerId,
+        name: '',
+        phoneNumber: ''
+    }
+}
+
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
@@ -60,8 +90,9 @@ async function hospitalize() {
         budgetData.value
     )
     if (voidOrError.isLeft()) {
-        alert(voidOrError.value.message)
         status.value = 'Hospitalizar'
+        messageRef.value?.add(voidOrError.value.message)
+        mainRef.value?.scrollTo({ top: 0 })
         return
     }
 
@@ -74,11 +105,12 @@ async function hospitalize() {
     <Header title="Nova hospitalização">
         <GoBack />
     </Header>
-    <main class="main-content text-gray-500">
+    <main ref="mainRef" class="main-content text-gray-500">
         <form ref="form">
-            <section class="container rounded mt-8 mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Paciente</h1>
-                <p class="text-xs sm:text-sm text-gray-500">
+            <Message ref="messageRef" />
+            <section class="container rounded my-4">
+                <h1 class="font-medium">Paciente</h1>
+                <p class="text-sm text-gray-500">
                     Preencha os campos abaixo com os dados do paciente.
                 </p>
                 <BaseInput
@@ -126,9 +158,13 @@ async function hospitalize() {
                         placeholder="ID Próprietário"
                         v-model="ownerData.ownerId"
                         :is-required="true"
+                        @keyup="findOwner()"
                     />
                 </div>
-                <div class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
+                <div
+                    v-if="!ownerExists"
+                    class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0"
+                >
                     <BaseInput
                         class="flex-1"
                         placeholder="Nome do Proprietário"
@@ -144,10 +180,27 @@ async function hospitalize() {
                         help-text="Por favor, insira um número de telefone válido para Angola."
                     />
                 </div>
+                <div
+                    v-if="ownerExists"
+                    class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0"
+                >
+                    <BaseInput
+                        class="flex-1"
+                        :placeholder="ownerData.name"
+                        :disabled="true"
+                        :readonly="true"
+                    />
+                    <BaseInput
+                        class="flex-1"
+                        :placeholder="ownerData.phoneNumber"
+                        :disabled="true"
+                        :readonly="true"
+                    />
+                </div>
             </section>
             <section class="container rounded mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Hospitalização</h1>
-                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                <h1 class="font-medium">Hospitalização</h1>
+                <p class="text-sm text-gray-500 leading-5">
                     Preencha os campos abaixo com os dados da hospitalização.
                 </p>
                 <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -200,8 +253,8 @@ async function hospitalize() {
                 </div>
             </section>
             <section class="container rounded mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Orçamento</h1>
-                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                <h1 class="font-medium">Orçamento</h1>
+                <p class="text-sm text-gray-500 leading-5">
                     Preencha os campos abaixo com os dados do orçamento.
                 </p>
                 <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -226,6 +279,9 @@ async function hospitalize() {
                             <option value="" selected>Escolher Estado</option>
                             <option :value="BudgetStatus.UNPAID">Não Pago</option>
                             <option :value="BudgetStatus.PENDING">Pendente</option>
+                            <option :value="BudgetStatus.PENDING_WITH_BUDGET_SENT">
+                                Pendente (Orçamento enviado)
+                            </option>
                             <option :value="BudgetStatus.PAID">Pago</option>
                         </select>
                     </div>
@@ -237,7 +293,7 @@ async function hospitalize() {
     <Footer>
         <button class="btn btn-success space-x-2" @click="hospitalize()">
             <i class="bi bi-floppy2"></i>
-            <span class="font-medium text-xs sm:text-sm">{{ status }}</span>
+            <span class="font-medium">{{ status }}</span>
         </button>
     </Footer>
 </template>

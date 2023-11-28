@@ -91,14 +91,14 @@ onMounted(async () => {
             class="w-full h-48 absolute border rounded shadow-sm mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-sm text-gray-500"
         >
             <input type="text" class="form-control mb-2" placeholder="Pesquisar" v-model="query" />
-            <div v-if="modelValue.length > 0" class="flex justify-between text-[10px] sm:text-xs">
+            <div v-if="modelValue.length > 0" class="flex justify-between">
                 <span>São permitidas no máximo {{ limit }} opções</span>
                 <div class="space-x-1 cursor-pointer" @click="cleanSelected()">
                     <i class="bi bi-trash"></i>
                     <span>Limpar</span>
                 </div>
             </div>
-            <ul class="mt-2 text-xs sm:text-sm">
+            <ul class="mt-2">
                 <li
                     v-for="(option, idx) in search"
                     class="flex items-center gap-2 border-t p-2.5 cursor-pointer hover:bg-gray-50"

@@ -8,8 +8,8 @@ const hour = makeHourFormat(date)
 <template>
     <section>
         <ul class="flex justify-end gap-3">
-            <li class="text-xs sm:text-sm p-1 sm:p-2 border rounded bg-gray-100">{{ today }}</li>
-            <li class="text-xs sm:text-sm p-1 sm:p-2 border rounded bg-gray-100">{{ hour }}</li>
+            <li class="p-1 sm:p-2 border rounded bg-gray-100">{{ today }}</li>
+            <li class="p-1 sm:p-2 border rounded bg-gray-100">{{ hour }}</li>
         </ul>
     </section>
 </template>

@@ -32,7 +32,7 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-    <div class="space-y-1 text-xs sm:text-base">
+    <div class="space-y-1">
         <label for="time" class="block">Hora do Alerta</label>
         <div class="w-fit text-center">
             <input

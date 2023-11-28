@@ -4,6 +4,7 @@ import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
+import Message from '@/components/Message.vue'
 
 import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, ref } from 'vue'
@@ -17,11 +18,13 @@ import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
 const patient = ref<PatientWithOwner>()
-const message = ref<string>('')
 const query = ref<string>('')
+const messageRef = ref<typeof Message>()
+const mainRef = ref<HTMLElement>()
 const status = ref<string>('Hospitalizar')
 const patients = ref<PatientWithOwner[]>([])
 const results = ref<PatientWithOwner[]>([])
+const searchMessage = ref<string>('')
 const form = ref<HTMLFormElement>()
 const router = useRouter()
 const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
@@ -45,7 +48,7 @@ function isEmpty() {
 }
 
 function showMessage(text: string) {
-    message.value = text
+    searchMessage.value = text
 }
 
 function searchPatient() {
@@ -93,8 +96,9 @@ async function hospitalize() {
     )
 
     if (voidOrError.isLeft()) {
-        console.error(voidOrError.value.message)
         status.value = 'Hospitalizar'
+        messageRef.value?.add(voidOrError.value.message)
+        mainRef.value?.scrollTo({ top: 0 })
         return
     }
 
@@ -113,21 +117,21 @@ onMounted(async () => {
     </Header>
     <main v-if="isEmpty()" class="main-content">
         <section class="container my-8">
-            <h1 class="font-medium text-xs md:text-base">Pesquisar paciente</h1>
-            <p class="text-[10px] sm:text-sm text-gray-500">
+            <h1 class="font-medium">Pesquisar paciente</h1>
+            <p class="text-sm text-gray-500">
                 Pesquise pelo ID, Nome do paciente ou do Proprietário.
             </p>
             <div class="flex items-center px-2 rounded shadow-sm border border-gray-300">
                 <i class="bi bi-search icon"></i>
                 <input
-                    class="w-full text-xs md:text-sm md:p-2.5 border-0 focus:border-gray-300 focus:ring-0"
+                    class="w-full md:p-2.5 border-0 focus:border-gray-300 focus:ring-0"
                     type="text"
                     placeholder="Pesquisar paciente..."
                     v-model="query"
                     @input="searchPatient()"
                 />
             </div>
-            <p class="text-[8px] sm:text-xs text-red-500">{{ message }}</p>
+            <p class="text-sm text-red-500">{{ searchMessage }}</p>
             <div v-if="results.length">
                 <div
                     v-for="item in results"
@@ -135,18 +139,19 @@ onMounted(async () => {
                     class="flex items-center gap-4 border-b p-2 cursor-pointer hover:bg-gray-100"
                 >
                     <img :src="iconUrl" class="w-[20px] sm:w-[30px]" alt="patient-image" />
-                    <span class="text-xs sm:text-base font-medium text-gray-700">
+                    <span class="font-medium text-gray-700">
                         {{ item.name }}
                     </span>
                 </div>
             </div>
         </section>
     </main>
-    <main v-else class="main-content">
+    <main ref="mainRef" v-else class="main-content">
         <form ref="form">
-            <section class="container rounded mt-8 mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Paciente</h1>
-                <p class="text-xs sm:text-sm text-gray-500">Dados do paciente.</p>
+            <Message ref="messageRef" />
+            <section class="container rounded my-4">
+                <h1 class="font-medium">Paciente</h1>
+                <p class="text-sm text-gray-500">Dados do paciente.</p>
                 <BaseInput
                     title="Nome do Paciente"
                     class="flex-1 text-gray-500"
@@ -206,8 +211,8 @@ onMounted(async () => {
                 </div>
             </section>
             <section class="container rounded mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Hospitalização</h1>
-                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                <h1 class="font-medium">Hospitalização</h1>
+                <p class="text-sm text-gray-500 leading-5">
                     Preencha os campos abaixo com os dados da hospitalização.
                 </p>
                 <div class="flex flex-col space-y-4">
@@ -251,8 +256,8 @@ onMounted(async () => {
                 </div>
             </section>
             <section class="container rounded mb-4">
-                <h1 class="text-xs sm:text-base font-medium">Orçamento</h1>
-                <p class="text-xs sm:text-sm text-gray-500 leading-5">
+                <h1 class="font-medium">Orçamento</h1>
+                <p class="text-sm text-gray-500 leading-5">
                     Preencha os campos abaixo com os dados do orçamento.
                 </p>
                 <div class="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -277,6 +282,9 @@ onMounted(async () => {
                             <option value="" selected>Escolher Estado</option>
                             <option :value="BudgetStatus.UNPAID">Não Pago</option>
                             <option :value="BudgetStatus.PENDING">Pendente</option>
+                            <option :value="BudgetStatus.PENDING_WITH_BUDGET_SENT">
+                                Pendente (Orçamento enviado)
+                            </option>
                             <option :value="BudgetStatus.PAID">Pago</option>
                         </select>
                     </div>
@@ -292,7 +300,7 @@ onMounted(async () => {
             @click="hospitalize()"
         >
             <i class="bi bi-floppy2"></i>
-            <span class="font-medium text-xs sm:text-sm">{{ status }}</span>
+            <span class="font-medium">{{ status }}</span>
         </button>
     </Footer>
 </template>

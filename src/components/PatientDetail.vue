@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseDialog from '@/components/BaseDialog.vue'
 import { makeDateFormat } from '@/lib/shared/utils'
+import { BudgetStatus } from '@/models/hospitalization'
 
 import { ref } from 'vue'
 
@@ -30,7 +31,7 @@ defineExpose({ open })
 <template>
     <BaseDialog ref="dialogRef" :title="patient.name">
         <div class="border-b border-gray-200 mb-3">
-            <ul class="flex flex-wrap text-xs sm:text-sm font-medium text-center text-gray-500">
+            <ul class="flex flex-wrap font-medium text-center text-gray-500">
                 <li class="mr-2" @click="showPatientTab()">
                     <span
                         class="inline-flex p-2 border border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 group"
@@ -107,7 +108,7 @@ defineExpose({ open })
                 </li>
             </ul>
             <div class="space-y-2">
-                <h1 class="text-xs sm:text-sm">Orçamento</h1>
+                <h1>Orçamento</h1>
                 <ul class="patient-info">
                     <li class="patient-info-item">
                         <span>Iniciou em</span>
@@ -124,17 +125,26 @@ defineExpose({ open })
                     <li class="patient-info-item items-center">
                         <span>Estado</span>
 
-                        <div v-if="budget.status === 'PAGO'" class="badge badge-success">
+                        <div v-if="budget.status === BudgetStatus.PAID" class="badge badge-success">
                             <i class="bi bi-check-circle-fill mr-1"></i>
                             <span>{{ budget.status }}</span>
                         </div>
 
-                        <div v-if="budget.status === 'PENDENTE'" class="badge badge-warning">
+                        <div
+                            v-if="
+                                budget.status === BudgetStatus.PENDING ||
+                                budget.status === BudgetStatus.PENDING_WITH_BUDGET_SENT
+                            "
+                            class="badge badge-warning"
+                        >
                             <i class="bi bi-exclamation-triangle-fill mr-1"></i>
                             <span>{{ budget.status }}</span>
                         </div>
 
-                        <div v-if="budget.status === 'NÃO PAGO'" class="badge badge-danger">
+                        <div
+                            v-if="budget.status === BudgetStatus.UNPAID"
+                            class="badge badge-danger"
+                        >
                             <i class="bi bi-x-circle-fill mr-1"></i>
                             <span>{{ budget.status }}</span>
                         </div>

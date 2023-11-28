@@ -23,7 +23,7 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-    <div class="space-y-1 text-xs sm:text-base">
+    <div class="space-y-1">
         <label for="rate" class="block">Repetir a cada</label>
         <div class="flex items-center space-x-2">
             <div class="w-16">

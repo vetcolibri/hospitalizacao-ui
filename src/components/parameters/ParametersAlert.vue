@@ -88,7 +88,7 @@ defineExpose({ open, close })
 </script>
 <template>
     <BaseDialog ref="dialogRef" :title="title">
-        <section class="space-y-4 text-xs sm:text-sm">
+        <section class="space-y-4">
             <div class="flex items-center gap-4">
                 <p>Parâmetro:</p>
                 <span class="text-red-500">A cada {{ convert() }}</span>
@@ -109,7 +109,7 @@ defineExpose({ open, close })
                 </label>
             </p>
         </section>
-        <button class="w-full mt-8 text-xs sm:text-sm btn btn-success" @click="confirm()">
+        <button class="w-full mt-8 btn btn-success" @click="confirm()">
             <i class="bi bi-check2"></i>
             Confirmar
         </button>

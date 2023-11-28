@@ -101,7 +101,7 @@ function changeScheduleButton() {
                 <form class="space-y-3">
                     <ScheduleTime v-model="scheduleTime" />
                     <ScheduleRate v-model="repeatEvery" />
-                    <div class="overflow-y-auto text-xs sm:text-base border rounded space-y-2 p-3">
+                    <div class="overflow-y-auto border rounded space-y-2 p-3">
                         <div
                             v-for="parameter in parameters"
                             class="flex items-center"

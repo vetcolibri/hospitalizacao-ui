@@ -14,7 +14,7 @@ defineProps<Props>()
 
 <template>
     <section class="flex flex-col gap-2">
-        <p class="text-xs sm:text-base">{{ title }}</p>
+        <p>{{ title }}</p>
         <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex flex-col flex-1 gap-1">
                 <slot />
@@ -30,7 +30,7 @@ defineProps<Props>()
                 <span
                     v-if="measurement?.value"
                     v-format-date="measurement?.issuedAt"
-                    class="text-[8px] sm:text-sm text-gray-600"
+                    class="text-xs text-gray-600"
                 >
                 </span>
             </div>

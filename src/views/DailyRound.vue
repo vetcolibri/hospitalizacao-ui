@@ -151,7 +151,7 @@ onMounted(async () => {
                             v-model="alertCheckbox"
                         />
                         <label
-                            class="ml-2 text-xs sm:text-base block text-gray-900"
+                            class="ml-2 block text-gray-900"
                             @click="() => (alertCheckbox = !alertCheckbox)"
                         >
                             Criar alerta de monitorização

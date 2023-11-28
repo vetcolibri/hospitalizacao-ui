@@ -26,10 +26,7 @@ defineExpose({ open, close, add })
     <BaseDialog ref="dialogRef" title="Resumo">
         <ul class="space-y-2 mb-4">
             <li v-for="parameter in parameters">
-                <div
-                    v-if="parameter?.value"
-                    class="flex items-center justify-between w-full text-xs sm:text-base"
-                >
+                <div v-if="parameter?.value" class="flex items-center justify-between w-full">
                     <div class="flex items-center gap-2">
                         <i
                             class="bi bi-exclamation-triangle-fill text-sm md:text-lg text-yellow-600"
