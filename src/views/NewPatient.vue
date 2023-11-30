@@ -70,6 +70,27 @@ async function findOwner() {
     ownerData.value = ownerOrError.value
 }
 
+function findBreed() {
+    switch (patientData.value.specie) {
+        case 'CANINO':
+            return BREEDS.caes
+        case 'FELINO':
+            return BREEDS.gatos
+        case 'AVES':
+            return BREEDS.aves
+        case 'EXOTICO':
+            return BREEDS.mamiferos
+        case 'EXOTICO - MACACO':
+            return BREEDS.mamiferos
+        case 'EXOTICO - PAPAGAIO':
+            return BREEDS.aves
+        case 'EXOTICO - RÉPTIL':
+            return BREEDS.repteis
+        default:
+            return BREEDS.srd
+    }
+}
+
 function clearOwnerData() {
     ownerExists.value = false
     ownerData.value = {
@@ -77,6 +98,10 @@ function clearOwnerData() {
         name: '',
         phoneNumber: ''
     }
+}
+
+function clearSelectedBreed() {
+    patientData.value.breed = ''
 }
 
 async function hospitalize() {
@@ -126,7 +151,12 @@ async function hospitalize() {
                         :is-required="true"
                     />
                     <div class="flex-1">
-                        <select class="form-control" required v-model="patientData.specie">
+                        <select
+                            class="form-control"
+                            required
+                            v-model="patientData.specie"
+                            @change="clearSelectedBreed()"
+                        >
                             <option value="" selected>Escolher Espécie</option>
                             <option value="CANINO">CANINO</option>
                             <option value="FELINO">FELINO</option>
@@ -139,18 +169,16 @@ async function hospitalize() {
                 </div>
                 <div class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
                     <div class="flex-1">
-                        <select class="form-control" required v-model="patientData.breed">
+                        <select
+                            class="form-control"
+                            required
+                            v-model="patientData.breed"
+                            :disabled="patientData.specie ? false : true"
+                        >
                             <option value="" selected>Escolher Raça</option>
-                            <optgroup label="Cães">
-                                <option v-for="breed in BREEDS.caes" :value="breed">
-                                    {{ breed }}
-                                </option>
-                            </optgroup>
-                            <optgroup label="Gatos">
-                                <option v-for="breed in BREEDS.gatos" :value="breed">
-                                    {{ breed }}
-                                </option>
-                            </optgroup>
+                            <option v-for="breed in findBreed()" :value="breed">
+                                {{ breed }}
+                            </option>
                         </select>
                     </div>
                     <BaseInput
