@@ -11,6 +11,7 @@ interface Props {
     isSelect?: boolean
     min?: number
     max?: number
+    step?: number
     isRequired?: boolean
     pattern?: string
     helpText?: string
@@ -49,9 +50,10 @@ function emitValue() {
             :required="isRequired"
             :min="min ? min : ''"
             :max="max ? max : ''"
-            step="0.1"
+            :step="step ? step : ''"
             :pattern="pattern ? pattern : undefined"
             :title="helpText ? helpText : ''"
+            :autocomplete="type === 'password' ? 'current-password' : ''"
             v-model="inputValue"
             @input="emitValue()"
         />

@@ -9,6 +9,11 @@ const routes = [
         component: Dashboard
     },
     {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/views/Login.vue')
+    },
+    {
         path: '/exam-general-condition/',
         name: 'ExamGeneralCondition',
         component: () => import('@/views/ExamGeneralCondition.vue')
@@ -58,6 +63,11 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes
+})
+
+router.beforeEach((to, from) => {
+    const user = sessionStorage.getItem('user')
+    if (to.name !== 'Login' && !user) return { name: 'Login' }
 })
 
 export default router

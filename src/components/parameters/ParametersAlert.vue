@@ -9,6 +9,7 @@ import { AlertService } from '@/services/alert_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
 import { usePatientSelectedStore } from '@/store/patientStore'
+import { useAuth } from '@/composables/useAuth'
 
 const dialogRef = ref<typeof BaseDialog>()
 const title = ref<string>('')
@@ -23,6 +24,7 @@ const alertService = <AlertService>inject(Provided.ALERT_SERVICE)!
 const webSocket = <WebSocket>inject(Provided.WEBSOCKET)
 const parametersStore = useParametersStore()
 const patientStore = usePatientSelectedStore()
+const auth = useAuth()
 
 webSocket.onopen = () => {
     console.log('Websocket Connected.')
@@ -77,6 +79,7 @@ async function confirm() {
 }
 
 function open() {
+    if (!auth.isAuthenticated()) return
     dialogRef.value?.open()
 }
 
