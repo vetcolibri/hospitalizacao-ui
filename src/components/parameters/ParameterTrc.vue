@@ -37,8 +37,8 @@ defineProps(['latestMeasurement'])
             required
             type="number"
             v-model="trc"
-            @input="() => updateValue()"
-            @keyup="() => parameterState()"
+            @input="updateValue()"
+            @keyup="parameterState()"
         />
     </BaseParameter>
 </template>

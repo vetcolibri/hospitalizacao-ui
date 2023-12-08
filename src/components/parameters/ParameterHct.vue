@@ -28,7 +28,7 @@ defineProps(['latestMeasurement'])
             required
             type="number"
             v-model="hct"
-            @input="() => updateValue()"
+            @input="updateValue()"
         />
     </BaseParameter>
 </template>

@@ -39,8 +39,8 @@ defineProps(['latestMeasurement'])
             required
             type="number"
             v-model="temperature"
-            @input="() => updateValue()"
-            @keyup="() => parameterState()"
+            @input="updateValue()"
+            @keyup="parameterState()"
         />
     </BaseParameter>
 </template>

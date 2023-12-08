@@ -108,6 +108,10 @@ function isInvalid() {
     return !form.value?.checkValidity() || form.value?.elements.length === 0
 }
 
+function selectAlertCheckbox() {
+    alertCheckbox.value = !alertCheckbox.value
+}
+
 function confirm() {
     if (isInvalid()) {
         return form.value?.reportValidity()
@@ -127,6 +131,7 @@ async function save() {
     const voidOrError = await roundService.newRound(patientId, parameters)
     if (voidOrError.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
+        console.error(voidOrError.value)
         return
     }
 
@@ -140,6 +145,7 @@ async function save() {
         router.push({ name: 'ScheduleAlert' })
         return
     }
+
     router.push({ name: 'Dashboard' })
 }
 
@@ -277,10 +283,7 @@ onMounted(async () => {
                                 class="focus:ring-0 rounded"
                                 v-model="alertCheckbox"
                             />
-                            <label
-                                class="ml-2 block text-gray-900"
-                                @click="() => (alertCheckbox = !alertCheckbox)"
-                            >
+                            <label class="ml-2 block text-gray-900" @click="selectAlertCheckbox()">
                                 Criar alerta de monitorização
                             </label>
                         </div>

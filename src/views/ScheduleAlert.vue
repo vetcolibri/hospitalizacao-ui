@@ -99,8 +99,8 @@ function changeScheduleButton() {
         <main class="main-content">
             <section class="container my-8">
                 <form class="space-y-3">
-                    <ScheduleTime v-model="scheduleTime" />
-                    <ScheduleRate v-model="repeatEvery" />
+                    <ScheduleTime @update:model-value="scheduleTime = $event" />
+                    <ScheduleRate @update:model-value="repeatEvery = $event" />
                     <div class="overflow-y-auto border rounded space-y-2 p-3">
                         <div
                             v-for="parameter in parameters"

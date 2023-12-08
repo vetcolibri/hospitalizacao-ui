@@ -10,7 +10,7 @@ import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
 import type { IPatientService } from '@/services/patient_service'
-import type { PatientWithOwner } from '@/models/patient'
+import type { Patient, PatientWithOwner } from '@/models/patient'
 import type { Budget, Hospitalization } from '@/models/hospitalization'
 import { BudgetStatus } from '@/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
@@ -81,6 +81,10 @@ function searchPatient() {
     results.value = patientsFound
 }
 
+function selectPatient(selectedPatient: PatientWithOwner) {
+    patient.value = selectedPatient
+}
+
 function clearResults() {
     results.value = []
 }
@@ -135,7 +139,7 @@ onMounted(async () => {
             <div v-if="results.length">
                 <div
                     v-for="item in results"
-                    @click="() => (patient = item)"
+                    @click="selectPatient(item)"
                     class="flex items-center gap-4 border-b p-2 cursor-pointer hover:bg-gray-100"
                 >
                     <img :src="iconUrl" class="w-[20px] sm:w-[30px]" alt="patient-image" />

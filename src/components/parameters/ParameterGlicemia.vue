@@ -38,8 +38,8 @@ defineProps(['latestMeasurement'])
             required
             type="number"
             v-model="glicemia"
-            @input="() => updateValue()"
-            @keyup="() => parameterState()"
+            @input="updateValue()"
+            @keyup="parameterState()"
         />
     </BaseParameter>
 </template>

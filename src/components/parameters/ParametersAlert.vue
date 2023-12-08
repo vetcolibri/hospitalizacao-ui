@@ -105,7 +105,7 @@ defineExpose({ open, close })
                 </li>
             </ul>
             <p class="text-justify text-gray-500">{{ comments }}</p>
-            <p class="flex items-center" @click="() => (disabledAlert = !disabledAlert)">
+            <p class="flex items-center" @click="disabledAlert = !disabledAlert">
                 <input type="checkbox" class="rounded focus:ring-0" v-model="disabledAlert" />
                 <label for="notShowAgain" class="block ml-2 text-gray-900">
                     Não mostrar novamente

@@ -63,8 +63,8 @@ defineProps(['latestMeasurement'])
             type="text"
             v-model="bloodPressure"
             required
-            @input="() => updateValue()"
-            @keyup="() => parameterState()"
+            @input="updateValue()"
+            @keyup="parameterState()"
             pattern="^\d+\/\d+ \(\d+\)$"
             title="Formato: 110/70 (60)"
         />

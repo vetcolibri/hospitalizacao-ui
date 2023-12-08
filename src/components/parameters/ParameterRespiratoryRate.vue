@@ -43,8 +43,8 @@ defineProps(['latestMeasurement'])
             required
             type="number"
             v-model="respiratoryRate"
-            @input="() => updateValue()"
-            @keyup="() => parameterState()"
+            @input="updateValue()"
+            @keyup="parameterState()"
         />
     </BaseParameter>
 </template>

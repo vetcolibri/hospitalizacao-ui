@@ -42,6 +42,10 @@ function entries() {
     return Object.entries(parametersState.value)
 }
 
+function selectAlertCheckbox() {
+    alertCheckbox.value = !alertCheckbox.value
+}
+
 async function save() {
     const parameters = entries()
         .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
@@ -50,6 +54,7 @@ async function save() {
     const voidOrError = await roundService.newRound(patientId, parameters)
     if (voidOrError.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
+        console.error(voidOrError.value)
         return
     }
 
@@ -59,6 +64,7 @@ async function save() {
 
     if (alertCheckbox.value) {
         router.push({ name: 'ScheduleAlert' })
+        return
     }
 
     router.push({ name: 'Dashboard' })
@@ -150,10 +156,7 @@ onMounted(async () => {
                             class="focus:ring-0 rounded"
                             v-model="alertCheckbox"
                         />
-                        <label
-                            class="ml-2 block text-gray-900"
-                            @click="() => (alertCheckbox = !alertCheckbox)"
-                        >
+                        <label class="ml-2 block text-gray-900" @click="selectAlertCheckbox()">
                             Criar alerta de monitorização
                         </label>
                     </div>
