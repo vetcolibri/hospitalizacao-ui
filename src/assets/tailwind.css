@@ -96,7 +96,7 @@ input[type='checkbox'] {
 /* Menu */
 
 .menu-item {
-    @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-3 py-2 md:p-4;
+    @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-6 py-4 md:p-4;
 }
 
 .icon {

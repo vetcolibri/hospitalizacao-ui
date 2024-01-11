@@ -29,7 +29,7 @@ const checkUser = () => {
                         Introduza as suas credencias para entrar.
                     </p>
                 </div>
-                <form class="space-y-4">
+                <form class="space-y-4 w-full sm:max-w-sm mx-auto">
                     <BaseInput v-model="username" placeholder="Utilizador" />
                     <BaseInput v-model="password" placeholder="Palavra-passe" type="password" />
                     <button type="button" class="btn btn-success w-full" @click="checkUser()">
