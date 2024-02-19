@@ -168,7 +168,7 @@ async function hospitalize() {
                     </div>
                 </div>
                 <div class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
-                    <div class="flex-1">
+                    <!-- <div class="flex-1">
                         <select
                             class="form-control"
                             required
@@ -180,7 +180,13 @@ async function hospitalize() {
                                 {{ breed }}
                             </option>
                         </select>
-                    </div>
+                    </div> -->
+                    <BaseSelect
+                        title="Escolher Raça"
+                        :options="findBreed()"
+                        :limit="1"
+                        v-model="patientData.breed"
+                    />
                     <BaseInput
                         class="flex-1"
                         placeholder="ID Próprietário"
@@ -249,6 +255,7 @@ async function hospitalize() {
                         :is-required="true"
                         :max="100"
                         :min="1"
+                        :step="0.01"
                     />
                 </div>
                 <BaseSelect

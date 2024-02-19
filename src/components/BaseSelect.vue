@@ -5,7 +5,7 @@ interface Props {
     title: string
     options: string[]
     limit: number
-    modelValue: string[]
+    modelValue: string[] | string
 }
 
 interface Emits {

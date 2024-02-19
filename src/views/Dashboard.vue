@@ -11,7 +11,7 @@ import Footer from '@/components/Footer.vue'
                 <router-link :to="{ name: 'Hospitalization' }">
                     <li class="menu-item">
                         <i class="bi bi-hospital-fill icon"></i>
-                        <span>Hospitalização</span>
+                        <span>Nova Hospitalização</span>
                     </li>
                 </router-link>
                 <router-link :to="{ name: 'ExamGeneralCondition' }">
