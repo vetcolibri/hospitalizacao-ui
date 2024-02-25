@@ -112,8 +112,6 @@ async function hospitalize() {
     </Header>
     <main ref="mainRef" class="main-content text-gray-500">
         <form ref="form">
-            {{  patientData.breed  }}
-
             <Message ref="messageRef" />
             <section class="container rounded my-4">
                 <h1 class="font-medium">Paciente</h1>
