@@ -138,3 +138,8 @@ input[type='checkbox'] {
 .badge-danger {
     @apply text-white bg-red-600;
 }
+
+
+.dropdown {
+    @apply w-full border rounded shadow-sm absolute mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-gray-500;
+}

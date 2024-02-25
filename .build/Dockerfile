@@ -2,11 +2,11 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*.json /app
+COPY package*.json /app/
 
 RUN npm ci
 
-COPY . /app
+COPY . /app/
 
 ARG VITE_SERVER_URL
 ARG VITE_WS_URL

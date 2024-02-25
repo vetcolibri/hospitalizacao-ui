@@ -5,6 +5,7 @@ import GoBack from '@/components/GoBack.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
 import Message from '@/components/Message.vue'
+import ChooseBreed from '@/components/ChooseBreed.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -70,27 +71,6 @@ async function findOwner() {
     ownerData.value = ownerOrError.value
 }
 
-function findBreed() {
-    switch (patientData.value.specie) {
-        case 'CANINO':
-            return BREEDS.caes
-        case 'FELINO':
-            return BREEDS.gatos
-        case 'AVES':
-            return BREEDS.aves
-        case 'EXOTICO':
-            return BREEDS.mamiferos
-        case 'EXOTICO - MACACO':
-            return BREEDS.mamiferos
-        case 'EXOTICO - PAPAGAIO':
-            return BREEDS.aves
-        case 'EXOTICO - RÉPTIL':
-            return BREEDS.repteis
-        default:
-            return BREEDS.srd
-    }
-}
-
 function clearOwnerData() {
     ownerExists.value = false
     ownerData.value = {
@@ -132,6 +112,8 @@ async function hospitalize() {
     </Header>
     <main ref="mainRef" class="main-content text-gray-500">
         <form ref="form">
+            {{  patientData.breed  }}
+
             <Message ref="messageRef" />
             <section class="container rounded my-4">
                 <h1 class="font-medium">Paciente</h1>
@@ -168,24 +150,13 @@ async function hospitalize() {
                     </div>
                 </div>
                 <div class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
-                    <!-- <div class="flex-1">
-                        <select
-                            class="form-control"
-                            required
-                            v-model="patientData.breed"
-                            :disabled="patientData.specie ? false : true"
-                        >
-                            <option value="" selected>Escolher Raça</option>
-                            <option v-for="breed in findBreed()" :value="breed">
-                                {{ breed }}
-                            </option>
-                        </select>
-                    </div> -->
-                    <BaseSelect
+                    <ChooseBreed
+                        class="flex-1"
                         title="Escolher Raça"
-                        :options="findBreed()"
+                        :specie="patientData.specie"
                         :limit="1"
-                        v-model="patientData.breed"
+                        :disabled="!patientData.specie"
+                        @update:model-value="patientData.breed = $event"
                     />
                     <BaseInput
                         class="flex-1"

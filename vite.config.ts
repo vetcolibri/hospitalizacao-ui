@@ -40,7 +40,7 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ],
-                display: 'standalone'
+                display: 'fullscreen'
             },
             workbox: {
                 globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}']

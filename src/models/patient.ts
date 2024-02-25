@@ -4,7 +4,7 @@ export interface Patient {
     patientId: string
     name: string
     specie: string
-    breed: string
+    breed: string | string[]
     birthDate: string
 }
 
