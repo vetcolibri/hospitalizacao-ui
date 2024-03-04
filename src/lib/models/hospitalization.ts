@@ -13,8 +13,8 @@ export interface Budget {
 }
 
 export const BudgetStatus = {
-    PAID: 'PAGO',
-    UNPAID: 'NÃO PAGO',
-    PENDING: 'PENDENTE',
-    PENDING_WITH_BUDGET_SENT: 'PENDENTE (ORÇAMENTO ENVIADO)'
+    Paid: 'PAGO',
+    Unpaid: 'NÃO PAGO',
+    Pending: 'PENDENTE',
+    PendingWithBudgetSent: 'PENDENTE (ORÇAMENTO ENVIADO)'
 }

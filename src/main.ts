@@ -6,10 +6,10 @@ import router from './router'
 import { createPinia } from 'pinia'
 
 import { AxiosAdapter } from './lib/adapters/axios_adapter'
-import { RoundService } from './services/round_service'
-import { AlertService } from './services/alert_service'
 import { Provided } from './lib/provided'
-import { PatientService } from './services/patient_service'
+import { AlertService } from './lib/services/alert_service'
+import { PatientService } from './lib/services/patient_service'
+import { RoundService } from './lib/services/round_service'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -23,10 +23,10 @@ const roundService = new RoundService(axiosAdapter, SERVER_URL)
 const alertService = new AlertService(axiosAdapter, SERVER_URL)
 const webSocket = new WebSocket(`${WS_URL}/alerts/notifications`)
 
-app.provide(Provided.PATIENT_SERVICE, patientService)
-app.provide(Provided.ROUND_SERVICE, roundService)
-app.provide(Provided.ALERT_SERVICE, alertService)
-app.provide(Provided.WEBSOCKET, webSocket)
+app.provide(Provided.PatientService, patientService)
+app.provide(Provided.RoundService, roundService)
+app.provide(Provided.AlertService, alertService)
+app.provide(Provided.Websocket, webSocket)
 
 app.use(router)
 app.use(pinia)

@@ -1,4 +1,4 @@
-import type { Measurement } from '@/models/measurement'
+import type { Measurement } from '@/lib/models/measurement'
 import type { APIClient as APIClient, APIError } from '@/lib/api_client'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'

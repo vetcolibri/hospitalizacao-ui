@@ -53,3 +53,4 @@ defineExpose({ open, close, add })
         </div>
     </BaseDialog>
 </template>
+@/lib/models/parameter

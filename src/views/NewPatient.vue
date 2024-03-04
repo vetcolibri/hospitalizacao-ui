@@ -12,91 +12,82 @@ import { useRouter } from 'vue-router'
 import { Provided } from '@/lib/provided'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
-import { BREEDS } from '@/lib/data/breeds'
-import { BudgetStatus } from '@/models/hospitalization'
-import type { Hospitalization, Budget } from '@/models/hospitalization'
-import type { IPatientService } from '@/services/patient_service'
-import type { Owner, Patient } from '@/models/patient'
+import { BudgetStatus } from '@/lib/models/hospitalization'
+import type { IPatientService, NewPatientData } from '@/lib/services/patient_service'
 
 const form = ref<HTMLFormElement>()
-const status = ref<string>('Hospitalizar')
+const buttonLabel = ref<string>('Hospitalizar')
 const mainRef = ref<HTMLElement>()
 const messageRef = ref<typeof Message>()
 const router = useRouter()
-const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
+const patientService = <IPatientService>inject(Provided.PatientService)!
 const ownerExists = ref<boolean>(false)
 
-const patientData = ref<Patient>({
-    name: '',
-    patientId: '',
-    specie: '',
-    breed: '',
-    birthDate: ''
-})
-
-const ownerData = ref<Owner>({
-    ownerId: '',
-    name: '',
-    phoneNumber: ''
-})
-
-const hospitalizationData = ref<Hospitalization>({
-    weight: 0,
-    complaints: [],
-    diagnostics: [],
-    entryDate: '',
-    dischargeDate: ''
-})
-
-const budgetData = ref<Budget>({
-    startOn: '',
-    endOn: '',
-    status: ''
+const newPatientData = ref<NewPatientData>({
+    patientData: {
+        patientId: '',
+        name: '',
+        specie: '',
+        breed: '',
+        birthDate: ''
+    },
+    ownerData: {
+        ownerId: '',
+        name: '',
+        phoneNumber: ''
+    },
+    hospitalizationData: {
+        weight: 0,
+        complaints: [],
+        diagnostics: [],
+        entryDate: '',
+        dischargeDate: ''
+    },
+    budgetData: {
+        startOn: '',
+        endOn: '',
+        status: ''
+    }
 })
 
 async function findOwner() {
-    if (!ownerData.value.ownerId) {
+    const ownerId = newPatientData.value.ownerData.ownerId
+    if (!ownerId) {
         clearOwnerData()
         return
     }
 
-    const ownerOrError = await patientService.findOwner(ownerData.value.ownerId)
-
-    if (ownerOrError.isLeft()) {
+    const ownerOrErr = await patientService.findOwner(ownerId)
+    if (ownerOrErr.isLeft()) {
         clearOwnerData()
         return
     }
 
     ownerExists.value = true
-    ownerData.value = ownerOrError.value
+    newPatientData.value.ownerData = ownerOrErr.value
 }
 
 function clearOwnerData() {
     ownerExists.value = false
-    ownerData.value = {
-        ownerId: ownerData.value.ownerId,
+    newPatientData.value.ownerData = {
+        ...newPatientData.value.ownerData,
         name: '',
         phoneNumber: ''
     }
 }
 
 function clearSelectedBreed() {
-    patientData.value.breed = ''
+    newPatientData.value.patientData.breed = ''
 }
 
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
-    status.value = 'A hospitalizar...'
-    const voidOrError = await patientService.newPatient(
-        patientData.value,
-        ownerData.value,
-        hospitalizationData.value,
-        budgetData.value
-    )
-    if (voidOrError.isLeft()) {
-        status.value = 'Hospitalizar'
-        messageRef.value?.add(voidOrError.value.message)
+    buttonLabel.value = 'A hospitalizar...'
+    const voidOrErr = await patientService.newPatient(newPatientData.value)
+    if (voidOrErr.isLeft()) {
+        buttonLabel.value = 'Hospitalizar'
+        messageRef.value?.add(voidOrErr.value.message)
         mainRef.value?.scrollTo({ top: 0 })
         return
     }
@@ -120,21 +111,21 @@ async function hospitalize() {
                 </p>
                 <BaseInput
                     placeholder="Nome do Paciente"
-                    v-model="patientData.name"
+                    v-model="newPatientData.patientData.name"
                     :is-required="true"
                 />
                 <div class="flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
                     <BaseInput
                         class="flex-1"
                         placeholder="ID do Paciente"
-                        v-model="patientData.patientId"
+                        v-model="newPatientData.patientData.patientId"
                         :is-required="true"
                     />
                     <div class="flex-1">
                         <select
                             class="form-control"
                             required
-                            v-model="patientData.specie"
+                            v-model="newPatientData.patientData.specie"
                             @change="clearSelectedBreed()"
                         >
                             <option value="" selected>Escolher Espécie</option>
@@ -151,15 +142,15 @@ async function hospitalize() {
                     <ChooseBreed
                         class="flex-1"
                         title="Escolher Raça"
-                        :specie="patientData.specie"
+                        :specie="newPatientData!.patientData.specie"
                         :limit="1"
-                        :disabled="!patientData.specie"
-                        @update:model-value="patientData.breed = $event"
+                        :disabled="!newPatientData.patientData.specie"
+                        @update:model-value="newPatientData!.patientData.breed = $event"
                     />
                     <BaseInput
                         class="flex-1"
                         placeholder="ID Próprietário"
-                        v-model="ownerData.ownerId"
+                        v-model="newPatientData.ownerData.ownerId"
                         :is-required="true"
                         @keyup="findOwner()"
                     />
@@ -171,13 +162,13 @@ async function hospitalize() {
                     <BaseInput
                         class="flex-1"
                         placeholder="Nome do Proprietário"
-                        v-model="ownerData.name"
+                        v-model="newPatientData.ownerData.name"
                         :is-required="true"
                     />
                     <BaseInput
                         class="flex-1"
                         placeholder="Telemóvel"
-                        v-model="ownerData.phoneNumber"
+                        v-model="newPatientData.ownerData.phoneNumber"
                         :is-required="true"
                         pattern="^9[1-5]\d{7}$"
                         help-text="Por favor, insira um número de telefone válido para Angola."
@@ -189,13 +180,13 @@ async function hospitalize() {
                 >
                     <BaseInput
                         class="flex-1"
-                        :placeholder="ownerData.name"
+                        :placeholder="newPatientData.ownerData.name"
                         :disabled="true"
                         :readonly="true"
                     />
                     <BaseInput
                         class="flex-1"
-                        :placeholder="ownerData.phoneNumber"
+                        :placeholder="newPatientData.ownerData.phoneNumber"
                         :disabled="true"
                         :readonly="true"
                     />
@@ -212,7 +203,7 @@ async function hospitalize() {
                         type="date"
                         class="flex-1"
                         placeholder="Data de nascimento"
-                        v-model="patientData.birthDate"
+                        v-model="newPatientData.patientData.birthDate"
                         :is-required="true"
                     />
                     <BaseInput
@@ -220,7 +211,7 @@ async function hospitalize() {
                         type="number"
                         class="flex-1"
                         placeholder="Peso Kg"
-                        v-model="hospitalizationData.weight"
+                        v-model="newPatientData.hospitalizationData.weight"
                         :is-required="true"
                         :max="100"
                         :min="1"
@@ -231,27 +222,27 @@ async function hospitalize() {
                     title="Escolher Queixas"
                     :options="COMPLAINTS"
                     :limit="10"
-                    v-model="hospitalizationData.complaints"
+                    v-model="newPatientData.hospitalizationData.complaints"
                 />
                 <BaseSelect
                     title="Escolher Diagnosticos"
                     :options="DIAGNOSTICS"
                     :limit="5"
-                    v-model="hospitalizationData.diagnostics"
+                    v-model="newPatientData.hospitalizationData.diagnostics"
                 />
                 <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0">
                     <BaseInput
                         title="Data de entrada"
                         type="date"
                         class="flex-1"
-                        v-model="hospitalizationData.entryDate"
+                        v-model="newPatientData.hospitalizationData.entryDate"
                         :is-required="true"
                     />
                     <BaseInput
                         title="Previsão de Alta Médica"
                         type="date"
                         class="flex-1"
-                        v-model="hospitalizationData.dischargeDate"
+                        v-model="newPatientData.hospitalizationData.dischargeDate"
                         :is-required="true"
                     />
                 </div>
@@ -266,27 +257,31 @@ async function hospitalize() {
                         title="Inicia em"
                         type="date"
                         class="flex-1"
-                        v-model="budgetData.startOn"
+                        v-model="newPatientData.budgetData.startOn"
                         :is-required="true"
                     />
                     <BaseInput
                         title="Termina em"
                         type="date"
                         class="flex-1"
-                        v-model="budgetData.endOn"
+                        v-model="newPatientData.budgetData.endOn"
                         :is-required="true"
                     />
                 </div>
                 <div class="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0">
                     <div class="flex-1 mt-2">
-                        <select class="form-control" required v-model="budgetData.status">
+                        <select
+                            class="form-control"
+                            required
+                            v-model="newPatientData.budgetData.status"
+                        >
                             <option value="" selected>Escolher Estado</option>
-                            <option :value="BudgetStatus.UNPAID">Não Pago</option>
-                            <option :value="BudgetStatus.PENDING">Pendente</option>
-                            <option :value="BudgetStatus.PENDING_WITH_BUDGET_SENT">
+                            <option :value="BudgetStatus.Unpaid">Não Pago</option>
+                            <option :value="BudgetStatus.Pending">Pendente</option>
+                            <option :value="BudgetStatus.PendingWithBudgetSent">
                                 Pendente (Orçamento enviado)
                             </option>
-                            <option :value="BudgetStatus.PAID">Pago</option>
+                            <option :value="BudgetStatus.Paid">Pago</option>
                         </select>
                     </div>
                     <div class="flex-1"></div>
@@ -297,7 +292,7 @@ async function hospitalize() {
     <Footer>
         <button class="btn btn-success space-x-2" @click="hospitalize()">
             <i class="bi bi-floppy2"></i>
-            <span class="font-medium">{{ status }}</span>
+            <span class="font-medium">{{ buttonLabel }}</span>
         </button>
     </Footer>
 </template>

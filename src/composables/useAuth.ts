@@ -4,7 +4,7 @@ export function useAuth() {
     const isAuthenticated = () => !!sessionStorage.getItem('user')
 
     const login = (username: string, password: string) => {
-        if (users['username'] !== username && users['password'] !== password) return false
+        if (users['username'] !== username || users['password'] !== password) return false
         sessionStorage.setItem('user', username)
         return true
     }

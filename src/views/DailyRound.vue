@@ -17,9 +17,9 @@ import BloodPressure from '@/components/parameters/ParameterBloodPressure.vue'
 import { inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import type { Measurement } from '@/models/measurement'
-import { usePatientSelectedStore } from '@/store/patientStore'
-import { RoundService } from '@/services/round_service'
+import type { Measurement } from '@/lib/models/measurement'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
+import { RoundService } from '@/lib/services/round_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
 import { getLatestMeasurement } from '@/lib/shared/utils'
@@ -30,9 +30,8 @@ const alertCheckbox = ref<boolean>(false)
 const parametersSummaryRef = ref<typeof Summary>()
 const latestMeasurements = ref<Measurement[]>([])
 const router = useRouter()
-const roundService = inject<RoundService>(Provided.ROUND_SERVICE)!
+const roundService = inject<RoundService>(Provided.RoundService)!
 const patientStore = usePatientSelectedStore()
-const patientId = patientStore.patient
 
 function records() {
     return Object.values(parametersState.value)
@@ -51,7 +50,7 @@ async function save() {
         .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
         .reduce((acc, curr) => ({ ...acc, ...curr }), {})
 
-    const voidOrError = await roundService.newRound(patientId, parameters)
+    const voidOrError = await roundService.newRound(patientStore.patient, parameters)
     if (voidOrError.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
         console.error(voidOrError.value)
@@ -74,14 +73,15 @@ function confirm() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
     const parameters = records()
+
     parametersSummaryRef.value?.add(parameters)
     parametersSummaryRef.value?.open()
 }
 
 onMounted(async () => {
-    if (!patientId) return router.back()
+    if (!patientStore.patient) return router.back()
 
-    const measurementsOrError = await roundService.latestMeasurements(patientId)
+    const measurementsOrError = await roundService.latestMeasurements(patientStore.patient)
 
     if (measurementsOrError.isLeft()) return
 

@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import PatientDetail from './PatientDetail.vue'
+import PatientDetails from './PatientDetails.vue'
 
 import { ref } from 'vue'
 import { iconUrl } from '@/lib/data/patients'
 import { makeDateFormat } from '@/lib/shared/utils'
-import { usePatientSelectedStore } from '@/store/patientStore'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
 import { useRoute, useRouter } from 'vue-router'
 
-const date = ref()
 const props = defineProps(['patient'])
-const patientDetailRef = ref<typeof PatientDetail>()
+const patientDetailsRef = ref<typeof PatientDetails>()
 const patientStore = usePatientSelectedStore()
+const entryDate = new Date(props.patient.hospitalization.entryDate)
 const router = useRouter()
 const route = useRoute()
 
 function openDetails() {
-    patientDetailRef.value?.open()
+    patientDetailsRef.value?.open()
 }
 
 function nextPage() {
-    patientStore.$patch({ patientId: props.patient.patientId })
+    patientStore.$patch({ patientId: props.patient.systemId })
     router.push(`/${route.params.page}`)
 }
-
-date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
 </script>
 <template>
     <section
@@ -52,7 +50,7 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
                 </li>
                 <li class="patient-info-item">
                     <span>Data de entrada </span>
-                    <span class="patient-info-text">{{ date }}</span>
+                    <span class="patient-info-text">{{ makeDateFormat(new Date(entryDate)) }}</span>
                 </li>
             </ul>
             <i
@@ -62,5 +60,5 @@ date.value = makeDateFormat(new Date(props.patient.hospitalization.entryDate))
             </i>
         </div>
     </section>
-    <PatientDetail ref="patientDetailRef" :patient="patient" />
+    <PatientDetails ref="patientDetailsRef" :patient="patient" />
 </template>

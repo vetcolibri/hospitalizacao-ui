@@ -1,6 +1,7 @@
-import type { Budget, Hospitalization } from '@/models/hospitalization'
+import type { Budget, Hospitalization } from '@/lib/models/hospitalization'
 import type { APIClient, APIError } from '@/lib/api_client'
-import type { Owner, Patient } from '@/models/patient'
+import type { Patient } from '@/lib/models/patient'
+import type { Owner } from '../models/owner'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
 
@@ -12,12 +13,7 @@ export interface IPatientService {
         budgetData: Budget
     ): Promise<Either<APIError, void>>
     nonHospitalized(): Promise<Either<APIError, Patient[]>>
-    newPatient(
-        patientData: Patient,
-        ownData: Owner,
-        hospitalizationData: Hospitalization,
-        budgetData: Budget
-    ): Promise<Either<APIError, void>>
+    newPatient(newPatientData: NewPatientData): Promise<Either<APIError, void>>
     findOwner(ownerId: string): Promise<Either<APIError, Owner>>
 }
 
@@ -71,17 +67,13 @@ export class PatientService implements IPatientService {
         return right(patientsOrError.value.data)
     }
 
-    async newPatient(
-        patientData: Patient,
-        ownerData: Owner,
-        hospitalizationData: Hospitalization,
-        budgetData: Budget
-    ): Promise<Either<APIError, void>> {
+    async newPatient(newPatientData: NewPatientData): Promise<Either<APIError, void>> {
+        const { patientData, hospitalizationData, budgetData, ownerData } = newPatientData
         const body = {
             patientData,
             hospitalizationData: {
                 ...hospitalizationData,
-                budgetData: budgetData
+                budgetData
             },
             ownerData
         }
@@ -102,4 +94,19 @@ export class PatientService implements IPatientService {
 
         return right(responsOrError.value.data)
     }
+}
+
+type PatientData = {
+    patientId: string
+    name: string
+    specie: string
+    breed: string
+    birthDate: string
+}
+
+export type NewPatientData = {
+    patientData: PatientData
+    ownerData: Owner
+    hospitalizationData: Hospitalization
+    budgetData: Budget
 }

@@ -4,11 +4,11 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useParametersStore } from '@/store/parametersStore'
-import { AlertService } from '@/services/alert_service'
+import { useParametersStore } from '@/lib/store/parametersStore'
+import { AlertService } from '@/lib/services/alert_service'
 import { Provided } from '@/lib/provided'
 import { states } from '@/lib/data/parameters_state'
-import { usePatientSelectedStore } from '@/store/patientStore'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
 import { useAuth } from '@/composables/useAuth'
 
 const dialogRef = ref<typeof BaseDialog>()
@@ -20,8 +20,8 @@ const comments = ref<string>('')
 const repeatEvery = ref<number>()
 const disabledAlert = ref<boolean>(false)
 const router = useRouter()
-const alertService = <AlertService>inject(Provided.ALERT_SERVICE)!
-const webSocket = <WebSocket>inject(Provided.WEBSOCKET)
+const alertService = <AlertService>inject(Provided.AlertService)!
+const webSocket = <WebSocket>inject(Provided.Websocket)
 const parametersStore = useParametersStore()
 const patientStore = usePatientSelectedStore()
 const auth = useAuth()
@@ -118,3 +118,4 @@ defineExpose({ open, close })
         </button>
     </BaseDialog>
 </template>
+@/lib/store/patientStore@/lib/store/parametersStore@/lib/store/patientStore

@@ -1,4 +1,4 @@
-import type { Measurement } from '@/models/measurement'
+import type { Measurement } from '@/lib/models/measurement'
 import { PARAMETERS_NAME, PARAMETERS_UNITY } from '../data/parameters'
 
 export function lastMeasurement(parameter: string, measurements: Measurement[]) {

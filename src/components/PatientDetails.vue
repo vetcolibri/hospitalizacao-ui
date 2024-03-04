@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseDialog from '@/components/BaseDialog.vue'
 import { makeDateFormat } from '@/lib/shared/utils'
-import { BudgetStatus } from '@/models/hospitalization'
+import { BudgetStatus } from '@/lib/models/hospitalization'
 
 import { ref } from 'vue'
 
@@ -57,15 +57,15 @@ defineExpose({ open })
             </li>
             <li class="patient-info-item">
                 <span>ID Proprietário </span>
-                <span class="patient-info-text">{{ patient.ownerId }}</span>
+                <span class="patient-info-text">{{ patient.owner.ownerId }}</span>
             </li>
             <li class="patient-info-item">
                 <span>Proprietário </span>
-                <span class="patient-info-text">{{ patient.ownerName }}</span>
+                <span class="patient-info-text">{{ patient.owner.name }}</span>
             </li>
             <li class="patient-info-item">
                 <span>Telemóvel </span>
-                <span class="patient-info-text">{{ patient.ownerPhoneNumber }}</span>
+                <span class="patient-info-text">{{ patient.owner.phoneNumber }}</span>
             </li>
         </ul>
         <div v-show="hospitalizationTab" class="space-y-3">
@@ -125,15 +125,15 @@ defineExpose({ open })
                     <li class="patient-info-item items-center">
                         <span>Estado</span>
 
-                        <div v-if="budget.status === BudgetStatus.PAID" class="badge badge-success">
+                        <div v-if="budget.status === BudgetStatus.Paid" class="badge badge-success">
                             <i class="bi bi-check-circle-fill mr-1"></i>
                             <span>{{ budget.status }}</span>
                         </div>
 
                         <div
                             v-if="
-                                budget.status === BudgetStatus.PENDING ||
-                                budget.status === BudgetStatus.PENDING_WITH_BUDGET_SENT
+                                budget.status === BudgetStatus.Pending ||
+                                budget.status === BudgetStatus.PendingWithBudgetSent
                             "
                             class="badge badge-warning"
                         >
@@ -142,7 +142,7 @@ defineExpose({ open })
                         </div>
 
                         <div
-                            v-if="budget.status === BudgetStatus.UNPAID"
+                            v-if="budget.status === BudgetStatus.Unpaid"
                             class="badge badge-danger"
                         >
                             <i class="bi bi-x-circle-fill mr-1"></i>

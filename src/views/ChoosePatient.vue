@@ -5,12 +5,13 @@ import GoBack from '@/components/GoBack.vue'
 import PatientHospitalized from '@/components/Patient.vue'
 
 import { inject, onMounted, ref } from 'vue'
+
+import type { IPatientService } from '@/lib/services/patient_service'
+import type { Patient } from '@/lib/models/patient'
 import { Provided } from '@/lib/provided'
-import type { Patient } from '@/models/patient'
-import type { IPatientService } from '@/services/patient_service'
 
 const patients = ref<Patient[]>([])
-const patientService = inject<IPatientService>(Provided.PATIENT_SERVICE)!
+const patientService = inject<IPatientService>(Provided.PatientService)!
 
 onMounted(async () => {
     const patientsOrError = await patientService.getAllHospitalized()
@@ -28,9 +29,7 @@ onMounted(async () => {
             <GoBack />
         </Header>
         <main class="main-content">
-            <section
-                class="my-8 grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl"
-            >
+            <section class="container-patients">
                 <PatientHospitalized v-for="patient in patients" :patient="patient" />
             </section>
         </main>

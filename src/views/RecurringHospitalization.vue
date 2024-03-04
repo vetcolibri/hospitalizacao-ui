@@ -9,25 +9,25 @@ import Message from '@/components/Message.vue'
 import { iconUrl } from '@/lib/data/patients'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
-import type { IPatientService } from '@/services/patient_service'
-import type { Patient, PatientWithOwner } from '@/models/patient'
-import type { Budget, Hospitalization } from '@/models/hospitalization'
-import { BudgetStatus } from '@/models/hospitalization'
+import type { IPatientService } from '@/lib/services/patient_service'
+import type { Patient } from '@/lib/models/patient'
+import type { Budget, Hospitalization } from '@/lib/models/hospitalization'
+import { BudgetStatus } from '@/lib/models/hospitalization'
 import { COMPLAINTS } from '@/lib/data/complaints'
 import { DIAGNOSTICS } from '@/lib/data/diagnostics'
 import { useRouter } from 'vue-router'
 
-const patient = ref<PatientWithOwner>()
+const patient = ref<Patient>()
 const query = ref<string>('')
 const messageRef = ref<typeof Message>()
 const mainRef = ref<HTMLElement>()
-const status = ref<string>('Hospitalizar')
-const patients = ref<PatientWithOwner[]>([])
-const results = ref<PatientWithOwner[]>([])
+const buttonLabel = ref<string>('Hospitalizar')
+const patients = ref<Patient[]>([])
+const results = ref<Patient[]>([])
 const searchMessage = ref<string>('')
 const form = ref<HTMLFormElement>()
 const router = useRouter()
-const patientService = <IPatientService>inject(Provided.PATIENT_SERVICE)!
+const patientService = <IPatientService>inject(Provided.PatientService)!
 
 const hospitalization = ref<Hospitalization>({
     weight: 0,
@@ -68,7 +68,7 @@ function searchPatient() {
         (patient) =>
             patient.name.toLowerCase().includes(query.value.toLowerCase()) ||
             patient.patientId.toLowerCase().includes(query.value.toLowerCase()) ||
-            patient.ownerName!.toLowerCase().includes(query.value.toLowerCase())
+            patient.owner.name!.toLowerCase().includes(query.value.toLowerCase())
     )
 
     if (patientsFound.length === 0) {
@@ -81,7 +81,7 @@ function searchPatient() {
     results.value = patientsFound
 }
 
-function selectPatient(selectedPatient: PatientWithOwner) {
+function selectPatient(selectedPatient: Patient) {
     patient.value = selectedPatient
 }
 
@@ -92,16 +92,16 @@ function clearResults() {
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
-    status.value = 'A hospitalizar...'
-    const voidOrError = await patientService.newHospitalization(
+    buttonLabel.value = 'A hospitalizar...'
+    const voidOrErr = await patientService.newHospitalization(
         patient.value!.patientId,
         hospitalization.value,
         budget.value
     )
 
-    if (voidOrError.isLeft()) {
-        status.value = 'Hospitalizar'
-        messageRef.value?.add(voidOrError.value.message)
+    if (voidOrErr.isLeft()) {
+        buttonLabel.value = 'Hospitalizar'
+        messageRef.value?.add(voidOrErr.value.message)
         mainRef.value?.scrollTo({ top: 0 })
         return
     }
@@ -112,7 +112,7 @@ async function hospitalize() {
 
 onMounted(async () => {
     const patientsOrError = await patientService.nonHospitalized()
-    patients.value = <PatientWithOwner[]>patientsOrError.value
+    patients.value = <Patient[]>patientsOrError.value
 })
 </script>
 <template>
@@ -192,7 +192,7 @@ onMounted(async () => {
                     <BaseInput
                         title="ID Proprietário"
                         class="flex-1 text-gray-500"
-                        :placeholder="patient?.ownerId"
+                        :placeholder="patient?.owner.ownerId"
                         :disabled="true"
                         :readonly="true"
                     />
@@ -208,7 +208,7 @@ onMounted(async () => {
                     <BaseInput
                         title="Telemóvel"
                         class="flex-1 text-gray-500"
-                        :placeholder="patient?.ownerPhoneNumber"
+                        :placeholder="patient?.owner.phoneNumber"
                         :disabled="true"
                         :readonly="true"
                     />
@@ -284,12 +284,12 @@ onMounted(async () => {
                     <div class="flex-1 mt-2">
                         <select class="form-control" required v-model="budget.status">
                             <option value="" selected>Escolher Estado</option>
-                            <option :value="BudgetStatus.UNPAID">Não Pago</option>
-                            <option :value="BudgetStatus.PENDING">Pendente</option>
-                            <option :value="BudgetStatus.PENDING_WITH_BUDGET_SENT">
+                            <option :value="BudgetStatus.Unpaid">Não Pago</option>
+                            <option :value="BudgetStatus.Pending">Pendente</option>
+                            <option :value="BudgetStatus.PendingWithBudgetSent">
                                 Pendente (Orçamento enviado)
                             </option>
-                            <option :value="BudgetStatus.PAID">Pago</option>
+                            <option :value="BudgetStatus.Paid">Pago</option>
                         </select>
                     </div>
                     <div class="flex-1"></div>
@@ -304,7 +304,7 @@ onMounted(async () => {
             @click="hospitalize()"
         >
             <i class="bi bi-floppy2"></i>
-            <span class="font-medium">{{ status }}</span>
+            <span class="font-medium">{{ buttonLabel }}</span>
         </button>
     </Footer>
 </template>

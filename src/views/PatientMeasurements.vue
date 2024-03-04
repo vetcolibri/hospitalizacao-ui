@@ -12,17 +12,17 @@ import {
     findParameterName,
     findParameterUnity
 } from '@/lib/shared/utils'
-import type { Measurement } from '@/models/measurement'
-import type { IRoundService } from '@/services/round_service'
+import type { Measurement } from '@/lib/models/measurement'
+import type { IRoundService } from '@/lib/services/round_service'
 import { Provided } from '@/lib/provided'
-import { usePatientSelectedStore } from '@/store/patientStore'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const measurements = ref<Measurement[]>([])
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
-const roundService = inject<IRoundService>(Provided.ROUND_SERVICE)!
+const roundService = inject<IRoundService>(Provided.RoundService)!
 
 const currentPage = ref<number>(1)
 const perPage = 20

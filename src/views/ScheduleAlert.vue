@@ -9,10 +9,11 @@ import { useRouter } from 'vue-router'
 
 import { parameters } from '@/lib/data/parameters'
 import { timeFromString } from '@/lib/shared/utils'
-import { AlertService } from '@/services/alert_service'
+import { AlertService } from '@/lib/services/alert_service'
 import { Provided } from '@/lib/provided'
-import type { RepeatEvery } from '@/models/repeat_every'
-import { usePatientSelectedStore } from '@/store/patientStore'
+import type { RepeatEvery } from '@/lib/models/repeat_every'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
+import { convertToSeconds } from '@/lib/utils'
 
 const selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
@@ -23,7 +24,7 @@ const scheduleButton = ref<boolean>(false)
 const router = useRouter()
 const patientStore = usePatientSelectedStore()
 const patientId = patientStore.patient
-const alertService = inject<AlertService>(Provided.ALERT_SERVICE)!
+const alertService = inject<AlertService>(Provided.AlertService)!
 
 function wasSelected(name: string) {
     const selected = selectedParameters.value.find((element) => element === name)
@@ -42,21 +43,9 @@ function selectParameter(name: string) {
     return selectedParameters.value
 }
 
-function convertToSeconds() {
-    const { rate, unity } = repeatEvery.value
-    switch (unity) {
-        case 'minutes':
-            return rate * 60
-        case 'hours':
-            return rate * 3600
-        default:
-            return rate
-    }
-}
-
 async function schedule() {
     const date = timeFromString(scheduleTime.value)
-    const rate = convertToSeconds()
+    const rate = convertToSeconds(repeatEvery.value)
     if (rate < 0) {
         alert('O intervalo de tempo não pode ser negativo')
         return
@@ -68,9 +57,9 @@ async function schedule() {
         comments: comments.value
     }
 
-    const voidOrError = await alertService.schedule(patientId, alertData)
-    if (voidOrError.isLeft()) {
-        alert(voidOrError.value.message)
+    const voidOrErr = await alertService.schedule(patientId, alertData)
+    if (voidOrErr.isLeft()) {
+        alert(voidOrErr.value.message)
         return
     }
 

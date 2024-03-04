@@ -20,10 +20,10 @@ import { useRouter } from 'vue-router'
 import { states } from '@/lib/data/parameters_state'
 import { Provided } from '@/lib/provided'
 import { getLatestMeasurement } from '@/lib/shared/utils'
-import { useParametersStore } from '@/store/parametersStore'
-import { usePatientSelectedStore } from '@/store/patientStore'
-import type { IRoundService } from '@/services/round_service'
-import type { Measurement } from '@/models/measurement'
+import { useParametersStore } from '@/lib/store/parametersStore'
+import { usePatientSelectedStore } from '@/lib/store/patientStore'
+import type { IRoundService } from '@/lib/services/round_service'
+import type { Measurement } from '@/lib/models/measurement'
 
 const form = ref<HTMLFormElement>()
 const showParameters = ref(false)
@@ -34,10 +34,9 @@ const alertCheckbox = ref<boolean>(false)
 const router = useRouter()
 const parametersSummaryRef = ref<typeof Summary>()
 const parametersStore = useParametersStore()
-const roundService = inject<IRoundService>(Provided.ROUND_SERVICE)!
+const roundService = inject<IRoundService>(Provided.RoundService)!
 const latestMeasurements = ref<Measurement[]>([])
 const patientStore = usePatientSelectedStore()
-const patientId = patientStore.patient
 
 function toogleParameterList() {
     showParameters.value = !showParameters.value
@@ -128,7 +127,7 @@ async function save() {
         .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
         .reduce((acc, cur) => ({ ...acc, ...cur }), {})
 
-    const voidOrError = await roundService.newRound(patientId, parameters)
+    const voidOrError = await roundService.newRound(patientStore.patient, parameters)
     if (voidOrError.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
         console.error(voidOrError.value)
@@ -150,13 +149,13 @@ async function save() {
 }
 
 onMounted(async () => {
-    if (!patientId) return router.back()
+    if (!patientStore.patient) return router.back()
 
     clearVisibility()
 
     document.addEventListener('click', closeParametersMenu)
 
-    const measurementsOrError = await roundService.latestMeasurements(patientId)
+    const measurementsOrError = await roundService.latestMeasurements(patientStore.patient)
 
     if (measurementsOrError.isLeft()) return
 

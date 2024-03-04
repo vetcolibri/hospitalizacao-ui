@@ -1,6 +1,6 @@
 import type { APIClient, APIError } from '../lib/api_client'
 import type { Either } from '@/lib/shared/either'
-import type { Alert } from '@/models/alert'
+import type { Alert } from '@/lib/models/alert'
 import { left, right } from '@/lib/shared/either'
 
 export interface IAlertService {
