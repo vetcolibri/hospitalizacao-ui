@@ -1,15 +1,21 @@
 <script lang="ts">
 import BaseParameter from './BaseParameter.vue'
-import { ref } from 'vue'
+import { Parameter } from '@/lib/domain/parameter'
+import { reactive, ref } from 'vue'
 </script>
 
 <script setup lang="ts">
-const emit = defineEmits(['state', 'update:modelValue'])
-const bloodPressure = ref<string>('')
+interface Emits {
+    (e: 'state', message: string): void
+    (e: 'update:modelValue', value: string): void
+}
+
+const emits = defineEmits<Emits>()
+const bloodPressure = reactive(new Parameter())
 const message = ref<string>('')
 
 const updateValue = () => {
-    emit('update:modelValue', bloodPressure.value)
+    emits('update:modelValue', bloodPressure.value)
 }
 
 function convertToArray(): string[] {
@@ -46,27 +52,37 @@ function parameterState() {
             message.value = ''
         }
     }
-    emit('state', message.value)
+    emits('state', message.value)
 }
 defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter
-        title="Pressão Arterial - Sis/Dis (PAM)"
-        helpText="(110/70 - 130/80) mm/Hg - (60)"
-        :measurement="latestMeasurement"
-    >
-        <input
-            class="form-control"
-            placeholder="Valor"
-            type="text"
-            v-model="bloodPressure"
-            required
-            @input="updateValue()"
-            @keyup="parameterState()"
-            pattern="^\d+\/\d+ \(\d+\)$"
-            title="Formato: 110/70 (60)"
-        />
-    </BaseParameter>
+    <div class="group-parameter">
+        <BaseParameter
+            title="Pressão Arterial - Sis/Dis (PAM)"
+            helpText="(110/70 - 130/80) mm/Hg - (60)"
+            class="flex-1"
+            :measurement="latestMeasurement"
+        >
+            <input
+                title="Formato: 110/70 (60)"
+                class="form-control"
+                placeholder="Valor"
+                type="text"
+                pattern="^\d+\/\d+ \(\d+\)$"
+                v-model="bloodPressure.value"
+                :required="bloodPressure.required"
+                :class="{ disabled: !bloodPressure.required }"
+                @input="updateValue()"
+                @keyup="parameterState()"
+            />
+        </BaseParameter>
+        <i
+            class="bi cursor-pointer text-xl mt-3"
+            @click="bloodPressure.toogleEnable()"
+            :class="bloodPressure.required ? 'bi-unlock' : 'bi-lock'"
+        ></i>
+    </div>
 </template>
+@/lib/parameter

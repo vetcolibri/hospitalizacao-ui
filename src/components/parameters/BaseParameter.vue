@@ -9,6 +9,7 @@ interface Props {
         issuedAt: string
     }
 }
+
 defineProps<Props>()
 </script>
 

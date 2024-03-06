@@ -1,50 +1,46 @@
 <script lang="ts">
+import { HeartRate } from '@/lib/domain/heart_rate'
 import BaseParameter from './BaseParameter.vue'
-import { onMounted, ref } from 'vue'
+import { reactive } from 'vue'
 </script>
 
 <script setup lang="ts">
-const emit = defineEmits(['state', 'update:modelValue'])
-const heartRate = ref<string>('')
-const message = ref<string>('')
-
-const updateValue = () => {
-    emit('update:modelValue', heartRate.value)
+interface Emits {
+    (e: 'state', message: string): void
+    (e: 'update:modelValue', value: number): void
 }
 
-function parameterState() {
-    const value = parseInt(heartRate.value)
-    if (heartRate.value === '') {
-        message.value = ''
-    } else if (value >= 0 && value <= 69) {
-        message.value = 'Bradicardia'
-    } else if (value >= 70 && value <= 120) {
-        message.value = ''
-    } else if (value > 120) {
-        message.value = 'Taquicardia'
-    }
-    emit('state', message.value)
-}
+const heartRate = reactive(new HeartRate())
 
+defineEmits<Emits>()
 defineProps(['latestMeasurement'])
 </script>
 
 <template>
-    <BaseParameter
-        title="Frequência Cardiaca"
-        helpText="(70 - 120) BPM"
-        :measurement="latestMeasurement"
-    >
-        <input
-            class="form-control"
-            placeholder="Valor"
-            min="0"
-            max="300"
-            required
-            type="number"
-            v-model="heartRate"
-            @input="updateValue()"
-            @keyup="parameterState()"
-        />
-    </BaseParameter>
+    <div class="group-parameter">
+        <BaseParameter
+            class="flex-1"
+            :title="heartRate.name"
+            :helpText="heartRate.helpText"
+            :measurement="latestMeasurement"
+        >
+            <input
+                class="form-control"
+                placeholder="Valor"
+                type="number"
+                :min="heartRate.min"
+                :max="heartRate.max"
+                :class="{ disabled: !heartRate.required }"
+                :required="heartRate.required"
+                v-model="heartRate.value"
+                @input="$emit('update:modelValue', heartRate.numberValue)"
+                @keyup="$emit('state', heartRate.verifyStatus())"
+            />
+        </BaseParameter>
+        <i
+            class="bi cursor-pointer text-xl mt-3"
+            :class="heartRate.required ? 'bi-unlock' : 'bi-lock'"
+            @click="heartRate.toogleEnable()"
+        ></i>
+    </div>
 </template>

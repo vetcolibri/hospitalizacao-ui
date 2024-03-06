@@ -243,7 +243,6 @@ async function hospitalize() {
                         type="date"
                         class="flex-1"
                         v-model="newPatientData.hospitalizationData.dischargeDate"
-                        :is-required="true"
                     />
                 </div>
             </section>

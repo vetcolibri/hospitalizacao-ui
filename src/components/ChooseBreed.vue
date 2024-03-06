@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BREEDS } from '@/lib/data/breeds';
+import { BREEDS } from '@/lib/data/breeds'
 import { computed, onMounted, ref } from 'vue'
 
 interface Props {
@@ -14,20 +14,18 @@ interface Emits {
 const selectedOption = ref<string>('')
 const showOptions = ref<boolean>(false)
 const query = ref<string>('')
-const divOptionsRef = ref()
+const breedOptionsRef = ref()
 
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
 const searchOptions = computed(() => {
     const breeds = findBreed(props.specie)
-    return breeds.filter((option) =>
-        option.toLowerCase().startsWith(query.value.toLowerCase()) 
-    )
+    return breeds.filter((option) => option.toLowerCase().startsWith(query.value.toLowerCase()))
 })
 
 function toggleOptions() {
-    if (!props.specie) return 
+    if (!props.specie) return
     showOptions.value = !showOptions.value
 }
 
@@ -37,11 +35,11 @@ function select(idx: number) {
     emits('update:modelValue', selectedOption.value)
 }
 
-
 function hidden(event: Event) {
-    const hasNotEvent = divOptionsRef.value.contains(event.target)
-    if (divOptionsRef.value && hasNotEvent) return
-    showOptions.value = false
+    if (breedOptionsRef.value && !breedOptionsRef.value.contains(event.target)) {
+        showOptions.value = false
+        return
+    }
 }
 
 function findBreed(specie: string) {
@@ -70,22 +68,22 @@ onMounted(async () => {
 })
 </script>
 <template>
-    <div ref="divOptionsRef" class="relative">
-        <input 
-            type="text" 
-            class="form-control form-select z-10" 
-            required 
+    <div ref="breedOptionsRef" class="relative">
+        <input
+            type="text"
+            class="form-control form-select z-10"
+            required
             v-model="selectedOption"
-            :class="{'disabled': !specie}"
-            :placeholder="title" 
+            :class="{ disabled: !specie }"
+            :placeholder="title"
         />
-        
-        <div class="w-full h-full absolute top-0 left-0 p-2 z-20 bg-transparent cursor-pointer"
+
+        <div
+            class="w-full h-full absolute top-0 left-0 p-2 z-20 bg-transparent cursor-pointer"
             @click="toggleOptions()"
-        >            
-        </div>
+        ></div>
         <div v-if="showOptions" class="dropdown h-48 space-y-2">
-            <input type="text" class="form-control" v-model="query"  placeholder="Pesquisar" />
+            <input type="text" class="form-control" v-model="query" placeholder="Pesquisar" />
             <ul>
                 <li
                     v-for="(option, idx) in searchOptions"
@@ -95,7 +93,9 @@ onMounted(async () => {
                 >
                     <span>{{ option }}</span>
                 </li>
-                <li v-if="searchOptions.length === 0" class="p-2.5">Nenhum resultado encontrado.</li>
+                <li v-if="searchOptions.length === 0" class="p-2.5">
+                    Nenhum resultado encontrado.
+                </li>
             </ul>
         </div>
     </div>

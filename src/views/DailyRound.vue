@@ -47,18 +47,18 @@ function selectAlertCheckbox() {
 
 async function save() {
     const parameters = entries()
+        .filter(([_, parameter]) => parameter.value !== '')
         .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
         .reduce((acc, curr) => ({ ...acc, ...curr }), {})
 
-    const voidOrError = await roundService.newRound(patientStore.patient, parameters)
-    if (voidOrError.isLeft()) {
+    const voidOrErr = await roundService.newRound(patientStore.patient, parameters)
+    if (voidOrErr.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
-        console.error(voidOrError.value)
+        console.error(voidOrErr.value)
         return
     }
 
     alert('Parâmetros salvos com sucesso')
-
     parametersSummaryRef.value?.close()
 
     if (alertCheckbox.value) {
@@ -92,6 +92,7 @@ onMounted(async () => {
     <Header title="Ronda diária">
         <GoBack />
     </Header>
+
     <main class="main-content">
         <section class="container my-8">
             <RoundTime />
@@ -170,6 +171,7 @@ onMounted(async () => {
             <span class="font-semibold">Salvar</span>
         </button>
     </Summary>
+
     <Footer>
         <button type="button" class="btn btn-secondary" @click="confirm">Confirmar</button>
     </Footer>

@@ -3,7 +3,7 @@ export interface Hospitalization {
     complaints: string[]
     diagnostics: string[]
     entryDate: string
-    dischargeDate: string
+    dischargeDate?: string
 }
 
 export interface Budget {

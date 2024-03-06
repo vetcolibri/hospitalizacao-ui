@@ -107,7 +107,6 @@ const caes = [
     'Dandie Dinmont Terrier',
     'Dachshund',
     'Dachshund Teckel',
-    'Dobermann',
     'Doberman Pinscher',
     'Dogue Americano',
     'Dogue Argentino',

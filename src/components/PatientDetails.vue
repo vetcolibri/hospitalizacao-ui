@@ -102,9 +102,10 @@ defineExpose({ open })
                 </li>
                 <li class="patient-info-item">
                     <span>Alta prevista</span>
-                    <span class="patient-info-text">{{
-                        makeDateFormat(new Date(hospitalization.dischargeDate))
-                    }}</span>
+                    <span class="patient-info-text" v-if="hospitalization.dischargeDate">
+                        {{ makeDateFormat(new Date(hospitalization.dischargeDate)) }}
+                    </span>
+                    <span v-else>N/D</span>
                 </li>
             </ul>
             <div class="space-y-2">

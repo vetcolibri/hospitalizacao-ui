@@ -2,7 +2,7 @@
 import BaseDialog from '../BaseDialog.vue'
 
 import { ref } from 'vue'
-import type { Parameter } from '@/models/parameter'
+import type { Parameter } from '@/lib/models/parameter'
 
 const dialogRef = ref<typeof BaseDialog>()
 const parameters = ref<Partial<Parameter[]>>([])
@@ -53,4 +53,3 @@ defineExpose({ open, close, add })
         </div>
     </BaseDialog>
 </template>
-@/lib/models/parameter
