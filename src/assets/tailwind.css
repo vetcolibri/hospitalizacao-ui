@@ -41,11 +41,11 @@ input[type='checkbox'] {
 }
 
 .btn {
-    @apply px-4 py-2 rounded sm:px-6;
+    @apply px-4 py-2 sm:px-6;
 }
 
 .btn-success {
-    @apply text-white bg-green-600 hover:bg-green-800;
+    @apply text-white rounded bg-green-600 hover:bg-green-800;
 }
 
 .btn-secondary {
@@ -96,11 +96,11 @@ input[type='checkbox'] {
 /* Menu */
 
 .menu-item {
-    @apply flex items-center gap-3 mx-auto w-full md:w-[450px] lg:w-full border rounded shadow bg-white px-6 py-4 md:p-4;
+    @apply flex gap-3 items-center bg-white p-2.5 justify-start rounded border shadow;
 }
 
 .icon {
-    @apply text-lg md:text-xl text-yellow-500;
+    @apply text-yellow-500;
 }
 
 /* Patient Info */

@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import DashboardMenu from '@/components/DashboardMenu.vue'
+import ChoosePatient from '@/components/ChoosePatient.vue'
 import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import ChoosePatient from './ChoosePatient.vue'
 
 import type { IPatientService } from '@/lib/services/patient_service'
 import type { Patient } from '@/lib/models/patient'
 import { inject, onMounted, ref } from 'vue'
 import { Provided } from '@/lib/provided'
+import { makeDateFormat } from '@/lib/shared/utils'
 
 const patients = ref<Patient[]>([])
 const patientService = inject<IPatientService>(Provided.PatientService)!
+const today = new Date()
 
 onMounted(async () => {
     const patientsOrErr = await patientService.getAllHospitalized()
@@ -26,27 +28,11 @@ onMounted(async () => {
     <Header title="Dashboard" />
 
     <main class="main-content">
+        <div class="my-8 text-right text-sm sm:text-base">
+            <span class="btn btn-secondary rounded-md shadow-sm">{{ makeDateFormat(today) }}</span>
+        </div>
         <ChoosePatient :patients="patients" />
     </main>
 
-    <Footer />
+    <DashboardMenu />
 </template>
-
-<!-- <main class="main-content">
-        <nav class="flex items-center justify-center h-full">
-            <ul class="flex flex-col gap-4 w-full lg:max-w-lg xl:max-w-xl">
-                <router-link :to="{ name: 'Hospitalization' }">
-                    <li class="menu-item">
-                        <i class="bi bi-hospital-fill icon"></i>
-                        <span>Nova Hospitalização</span>
-                    </li>
-                </router-link>
-                <router-link :to="{ name: 'ExamGeneralCondition' }">
-                    <li class="menu-item">
-                        <i class="bi bi-clipboard2-data-fill icon"></i>
-                        <span>Exame Estado Geral</span>
-                    </li>
-                </router-link>
-            </ul>
-        </nav>
-    </main> -->

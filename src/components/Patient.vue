@@ -20,13 +20,13 @@ function openDetails() {
 
 function nextPage() {
     patientStore.$patch({ patientId: props.patient.systemId })
-    router.push(`/${route.params.page}`)
+    router.push({ name: 'Measurements' })
 }
 </script>
 <template>
     <section
         class="bg-white p-3.5 rounded shadow-sm border space-y-4"
-        :class="patient.hasAlert ? 'border-yellow-500' : 'border-gray-100'"
+        :class="patient.hasAlert ? 'border-yellow-500' : 'border-gray-300'"
     >
         <div class="flex gap-2 border-b pb-1">
             <div class="flex flex-1 gap-2 items-center">

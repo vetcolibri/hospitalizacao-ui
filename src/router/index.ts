@@ -14,16 +14,6 @@ const routes = [
         component: () => import('@/views/Login.vue')
     },
     {
-        path: '/exam-general-condition/',
-        name: 'ExamGeneralCondition',
-        component: () => import('@/views/ExamGeneralCondition.vue')
-    },
-    {
-        path: '/choose-patient/:page',
-        name: 'ChoosePatient',
-        component: () => import('@/views/ChoosePatient.vue')
-    },
-    {
         path: '/daily-round/',
         name: 'DailyRound',
         component: () => import('@/views/DailyRound.vue')
@@ -42,11 +32,6 @@ const routes = [
         path: '/measurements/',
         name: 'Measurements',
         component: () => import('@/views/PatientMeasurements.vue')
-    },
-    {
-        path: '/hospitalization/',
-        name: 'Hospitalization',
-        component: () => import('@/views/Hospitalization.vue')
     },
     {
         path: '/recurring-patient/',

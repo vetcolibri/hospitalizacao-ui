@@ -54,12 +54,12 @@ onMounted(async () => {
             <GoBack />
         </Header>
         <main class="main-content">
-            <section class="container rounded mt-8 mb-4">
-                <ul class="flex space-x-3 text-sm">
+            <section class="my-4 lg:max-w-3xl lg:mx-auto">
+                <ul class="flex md:flex-row space-x-3 text-sm">
                     <li>
                         <router-link
                             :to="{ name: 'DailyRound' }"
-                            class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
+                            class="flex items-center p-3 border rounded bg-white space-x-1"
                         >
                             <i class="bi bi-clipboard2-data-fill icon"></i>
                             <span>Ronda diária</span>
@@ -67,7 +67,7 @@ onMounted(async () => {
                     </li>
                     <li>
                         <router-link
-                            class="flex items-center p-2.5 border rounded bg-gray-100 space-x-1"
+                            class="flex items-center p-3 border rounded bg-white space-x-1"
                             :to="{ name: 'ChooseParameters' }"
                         >
                             <i class="bi bi-clipboard2-data-fill icon"></i>

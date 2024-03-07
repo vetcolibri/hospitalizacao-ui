@@ -36,4 +36,3 @@ defineProps(['latestMeasurement'])
         ></i>
     </div>
 </template>
-@/lib/parameter

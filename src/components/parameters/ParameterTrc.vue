@@ -6,23 +6,35 @@ import { reactive, ref } from 'vue'
 
 <script setup lang="ts">
 interface Emits {
+    (e: 'update:modelValue', value: string): void
     (e: 'state', message: string): void
-    (e: 'update:modelValue', value: number): void
 }
 
 const emits = defineEmits<Emits>()
 const trc = reactive(new Parameter())
 const message = ref<string>('')
 
-function parameterState() {
-    const value = parseInt(trc.value)
-    if (trc.value === '') {
+enum TrcOptions {
+    MaiorQue2Segundos = "> 2'",
+    MenorQue2Segundos = "< 2'"
+}
+
+function verifyStatus() {
+    if (trc.value === '' || trc.value === TrcOptions.MenorQue2Segundos) {
         message.value = ''
-    } else if (value >= 0 && value <= 2) {
-        message.value = ''
-    } else if (value > 10) {
-        message.value = 'Vasoconstrição'
+        return
     }
+
+    message.value = 'Vasoconstrição'
+}
+
+const updateValue = (event: InputEvent) => {
+    const value = (event.target as HTMLSelectElement).value
+    trc.value = value
+
+    verifyStatus()
+
+    emits('update:modelValue', trc.value)
     emits('state', message.value)
 }
 
@@ -37,19 +49,16 @@ defineProps(['latestMeasurement'])
             class="flex-1"
             :measurement="latestMeasurement"
         >
-            <input
-                class="form-control"
-                placeholder="Valor"
-                min="0"
-                max="10"
-                type="number"
-                step="0.01"
+            <select
+                class="form-control text-gray-500"
                 :required="trc.required"
                 :class="{ disabled: !trc.required }"
-                v-model="trc.value"
-                @input="$emit('update:modelValue', Number(trc.value))"
-                @keyup="parameterState()"
-            />
+                @input="(e) => updateValue(e as InputEvent)"
+            >
+                <option value>Escolha um valor</option>
+                <option :value="TrcOptions.MenorQue2Segundos">Menor que 2'</option>
+                <option :value="TrcOptions.MaiorQue2Segundos">Maior que 2'</option>
+            </select>
         </BaseParameter>
         <i
             class="bi cursor-pointer text-xl mt-3"
@@ -58,4 +67,3 @@ defineProps(['latestMeasurement'])
         ></i>
     </div>
 </template>
-@/lib/parameter
