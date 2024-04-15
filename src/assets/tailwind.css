@@ -172,7 +172,7 @@ input[type='checkbox'] {
 }
 
 .tab {
-    @apply inline-flex p-2 border border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300;
+    @apply cursor-pointer inline-flex p-2 border border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300;
 }
 
 .group-parameter {

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import BaseDialog from '@/components/BaseDialog.vue'
-import { ref } from 'vue'
 
 import { BudgetStatus, type BudgetModel } from '@/lib/models/budget'
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
 import type { OwnerModel } from '@/lib/models/owner'
 import type { PatientModel } from '@/lib/models/patient'
 import { formatDate } from '@/lib/shared/format_date'
+import { reactive, ref } from 'vue'
 
 interface Props {
     patient: PatientModel
@@ -14,12 +14,22 @@ interface Props {
     hospitalization?: HospitalizationModel
     budget?: BudgetModel
 }
-
-const patientTab = ref<boolean>(true)
-const hospitalizationTab = ref<boolean>(false)
 const dialogRef = ref<typeof BaseDialog>()
+const tabs = reactive([
+    { id: '1', name: 'Paciente', active: true },
+    { id: '2', name: 'Hospitalização', active: false },
+    { id: '3', name: 'Orçamento', active: false }
+])
 
-function chooseColor(value?: string) {
+function showTab(id: string) {
+    tabs.forEach((tab) => (tab.active = tab.id === id))
+}
+
+function getTab(id: string) {
+    return tabs.find((tab) => tab.id === id)
+}
+
+function budgetStatusColor(value?: string) {
     if (!value) return
 
     if (BudgetStatus.Paid === value) {
@@ -37,16 +47,6 @@ function chooseColor(value?: string) {
     return
 }
 
-function showPatientTab() {
-    patientTab.value = true
-    hospitalizationTab.value = false
-}
-
-function showHospitalizationTab() {
-    patientTab.value = false
-    hospitalizationTab.value = true
-}
-
 function open() {
     dialogRef.value?.open()
 }
@@ -55,23 +55,39 @@ defineProps<Props>()
 defineExpose({ open })
 </script>
 <template>
-    <BaseDialog ref="dialogRef" :title="patient.name">
+    <BaseDialog ref="dialogRef" title="Resumo">
         <div class="border-b border-gray-200 mb-3">
-            <ul class="flex flex-wrap font-medium text-center text-gray-500">
-                <li class="mr-2" @click="showPatientTab()">
-                    <span class="tab" :class="{ 'text-blue-500': patientTab }"> Paciente </span>
-                </li>
-                <li class="mr-2" @click="showHospitalizationTab()">
-                    <span class="tab" :class="{ 'text-blue-500': hospitalizationTab }">
-                        Hospitalização
-                    </span>
+            <ul class="flex flex-wrap gap-2 font-medium text-center text-gray-500">
+                <li
+                    class="tab"
+                    v-for="tab in tabs"
+                    :class="{ 'text-blue-500': tab.active }"
+                    @click="showTab(tab.id)"
+                >
+                    {{ tab.name }}
                 </li>
             </ul>
         </div>
-        <ul v-show="patientTab" class="patient-info">
+        <ul v-show="getTab('1')?.active" class="patient-info">
+            <li class="patient-info-item">
+                <span>ID Paciente</span>
+                <span class="patient-info-text">{{ patient.patientId }}</span>
+            </li>
+            <li class="patient-info-item">
+                <span>Nome</span>
+                <span class="patient-info-text">{{ patient.name }}</span>
+            </li>
             <li class="patient-info-item">
                 <span>Idade</span>
                 <span class="patient-info-text">{{ patient.birthDate }}</span>
+            </li>
+            <li class="patient-info-item">
+                <span>Peso (Kg)</span>
+                <span class="patient-info-text">{{ hospitalization?.weight }}</span>
+            </li>
+            <li class="patient-info-item">
+                <span>Espécie</span>
+                <span class="patient-info-text">{{ patient.specie }}</span>
             </li>
             <li class="patient-info-item">
                 <span>Raça</span>
@@ -90,18 +106,15 @@ defineExpose({ open })
                 <span class="patient-info-text">{{ owner?.phoneNumber }}</span>
             </li>
         </ul>
-        <div v-show="hospitalizationTab" class="space-y-3">
+
+        <div v-show="getTab('2')?.active" class="space-y-3">
             <ul class="patient-info">
-                <li class="patient-info-item">
-                    <span>Peso (Kg)</span>
-                    <span class="patient-info-text">{{ hospitalization?.weight }}</span>
-                </li>
                 <li class="patient-info-item flex-col">
                     <span>Queixas</span>
                     <div class="mt-1 space-x-2 space-y-2">
                         <span
-                            class="badge badge-dark"
                             v-for="complaint in hospitalization?.complaints"
+                            class="badge badge-dark"
                         >
                             {{ complaint }}
                         </span>
@@ -111,12 +124,18 @@ defineExpose({ open })
                     <span>Diagnosticos</span>
                     <div class="mt-1 space-x-2 space-y-2">
                         <span
-                            class="badge badge-dark"
                             v-for="diagnostic in hospitalization?.diagnostics"
+                            class="badge badge-dark"
                         >
                             {{ diagnostic }}
                         </span>
                     </div>
+                </li>
+                <li class="patient-info-item">
+                    <span>Data de entrada</span>
+                    <span class="patient-info-text">
+                        {{ formatDate(hospitalization?.entryDate) }}
+                    </span>
                 </li>
                 <li class="patient-info-item">
                     <span>Alta prevista</span>
@@ -125,27 +144,27 @@ defineExpose({ open })
                     </span>
                 </li>
             </ul>
-            <div class="space-y-2">
-                <h1>Orçamento</h1>
-                <ul class="patient-info">
-                    <li class="patient-info-item">
-                        <span>Iniciou em</span>
-                        <span class="patient-info-text">
-                            <span class="patient-info-text">{{ formatDate(budget?.startOn) }}</span>
-                        </span>
-                    </li>
-                    <li class="patient-info-item">
-                        <span>Termina em</span>
-                        <span class="patient-info-text">{{ formatDate(budget?.endOn) }}</span>
-                    </li>
-                    <li class="patient-info-item items-center">
-                        <span>Estado</span>
-                        <span class="badge" :class="chooseColor(budget?.status)">
-                            {{ budget?.status }}
-                        </span>
-                    </li>
-                </ul>
-            </div>
+        </div>
+
+        <div v-show="getTab('3')?.active" class="space-y-3">
+            <ul class="patient-info">
+                <li class="patient-info-item">
+                    <span>Iniciou em</span>
+                    <span class="patient-info-text">
+                        <span class="patient-info-text">{{ formatDate(budget?.startOn) }}</span>
+                    </span>
+                </li>
+                <li class="patient-info-item">
+                    <span>Termina em</span>
+                    <span class="patient-info-text">{{ formatDate(budget?.endOn) }}</span>
+                </li>
+                <li class="patient-info-item items-center">
+                    <span>Estado</span>
+                    <span :class="budgetStatusColor(budget?.status)">
+                        {{ budget?.status }}
+                    </span>
+                </li>
+            </ul>
         </div>
     </BaseDialog>
 </template>

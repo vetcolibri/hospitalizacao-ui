@@ -79,7 +79,6 @@ function openDetails(patientId: string, ownerId: string) {
                     <span>Espécie</span>
                     <span class="patient-info-text">{{ patient.specie }}</span>
                 </li>
-
                 <li class="patient-info-item">
                     <span>Data de entrada</span>
                     <span class="patient-info-text">
@@ -98,4 +97,3 @@ function openDetails(patientId: string, ownerId: string) {
         :budget="budget"
     />
 </template>
-@/lib/data/icon
