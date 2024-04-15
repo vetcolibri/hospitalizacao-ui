@@ -18,7 +18,7 @@ export class Trc extends Parameter {
 
     constructor() {
         super()
-        this.title = 'Trc'
+        this.title = 'TRC'
         this.name = 'trc'
         this.helpText = "(> 2')"
         this.status = Status.Normal
