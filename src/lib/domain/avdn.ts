@@ -12,7 +12,7 @@ export class Avdn extends Parameter {
 
     constructor() {
         super()
-        this.title = 'Avdn'
+        this.title = 'AVDN'
         this.name = 'avdn'
         this.options = Object.values(Option)
     }
