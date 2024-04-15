@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { makeHourFormat } from '@/lib/shared/utils'
 import { onBeforeMount, ref } from 'vue'
 
 const message = ref<string>('')
-const hour = ref<string>('')
+const hour = ref<string>(
+    new Intl.DateTimeFormat('pt-PT', { timeStyle: 'short' }).format(new Date())
+)
 const emits = defineEmits(['update:modelValue'])
-hour.value = makeHourFormat(new Date())
 
 const updateValue = () => {
     emits('update:modelValue', hour.value)

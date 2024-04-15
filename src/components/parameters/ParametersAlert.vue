@@ -5,10 +5,9 @@ import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useParametersStore } from '@/lib/store/parametersStore'
-import { AlertService } from '@/lib/services/alert_service'
+import { AlertServiceImpl } from '@/lib/services/alert_service'
 import { Provided } from '@/lib/provided'
-import { states } from '@/lib/data/parameters_state'
-import { usePatientSelectedStore } from '@/lib/store/patientStore'
+import { useCurrentPatient } from '@/lib/store/patientStore'
 import { useAuth } from '@/composables/useAuth'
 
 const dialogRef = ref<typeof BaseDialog>()
@@ -20,10 +19,10 @@ const comments = ref<string>('')
 const repeatEvery = ref<number>()
 const disabledAlert = ref<boolean>(false)
 const router = useRouter()
-const alertService = <AlertService>inject(Provided.AlertService)!
+const alertService = <AlertServiceImpl>inject(Provided.AlertService)!
 const webSocket = <WebSocket>inject(Provided.Websocket)
 const parametersStore = useParametersStore()
-const patientStore = usePatientSelectedStore()
+const patientStore = useCurrentPatient()
 const auth = useAuth()
 
 webSocket.onopen = () => {
@@ -54,12 +53,12 @@ function convert() {
 }
 
 function getParameterByName(name: string) {
-    const parameters = Object.entries(states)
-    for (let parameter of parameters) {
-        if (parameter[0] === name) {
-            return parameter[1].name
-        }
-    }
+    // const parameters = Object.entries(states)
+    // for (let parameter of parameters) {
+    //     if (parameter[0] === name) {
+    //         return parameter[1].name
+    //     }
+    // }
 }
 
 async function confirm() {
@@ -118,4 +117,3 @@ defineExpose({ open, close })
         </button>
     </BaseDialog>
 </template>
-@/lib/store/patientStore@/lib/store/parametersStore@/lib/store/patientStore

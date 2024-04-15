@@ -36,8 +36,16 @@ input[type='checkbox'] {
     @apply px-4 py-6 border shadow space-y-3 bg-white sm:px-8 lg:max-w-3xl lg:mx-auto;
 }
 
+.form-container {
+    @apply flex flex-col space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0;
+}
+
 .form-control {
     @apply w-full p-2.5 block  border border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-0;
+}
+
+.form-disabled {
+    @apply form-control bg-gray-50 text-gray-500 pointer-events-none disabled;
 }
 
 .btn {
@@ -48,8 +56,12 @@ input[type='checkbox'] {
     @apply text-white rounded bg-green-600 hover:bg-green-800;
 }
 
+.btn-dashboard {
+    @apply text-6xl rounded-full text-white bg-yellow-500 fixed bottom-8 right-1/2 translate-x-1/2 translate-y-1/2 sm:right-20 sm:bottom-32;
+}
+
 .btn-secondary {
-    @apply bg-gray-600 text-white hover:bg-gray-800;
+    @apply bg-gray-600 text-white hover:bg-gray-800 rounded;
 }
 
 .btn-light {
@@ -120,33 +132,61 @@ input[type='checkbox'] {
 /* Badge */
 
 .badge {
-    @apply inline-flex items-center px-2 py-1 font-medium rounded;
-}
-
-.badge-dark {
-    @apply text-gray-800 bg-gray-100;
-}
-
-.badge-success {
-    @apply text-white bg-green-600;
-}
-
-.badge-warning {
-    @apply text-white bg-yellow-600;
+    @apply text-xs font-medium py-1.5 px-4 rounded-full;
 }
 
 .badge-danger {
-    @apply text-white bg-red-600;
+    @apply badge text-red-800 bg-red-200;
+}
+
+.badge-success {
+    @apply badge text-green-800 bg-green-200;
+}
+
+.badge-dark {
+    @apply badge text-gray-100 bg-gray-500;
+}
+
+.badge-warning {
+    @apply badge text-yellow-800 bg-yellow-200;
 }
 
 .dropdown {
     @apply w-full border rounded shadow-sm absolute mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-gray-500;
 }
 
-.container-patients {
-    @apply my-8 grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3 mx-auto xl:max-w-7xl;
+.patients-container {
+    @apply grid grid-cols-1 gap-4 mt-6 mx-auto md:grid-cols-2 xl:grid-cols-3 xl:max-w-7xl;
+}
+
+.tab {
+    @apply inline-flex p-2 border border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300;
 }
 
 .group-parameter {
     @apply flex items-center gap-3;
+}
+
+.yellow {
+    @apply badge bg-yellow-200 text-black;
+}
+
+.pink {
+    @apply badge bg-pink-200 text-black;
+}
+
+.blue {
+    @apply badge bg-blue-200 text-black;
+}
+
+.red {
+    @apply badge bg-red-200 text-black;
+}
+
+.green {
+    @apply badge bg-green-200 text-black;
+}
+
+.Toastify__toast-container {
+    @apply w-fit;
 }

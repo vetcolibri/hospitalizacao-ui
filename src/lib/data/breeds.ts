@@ -346,7 +346,6 @@ const gatos = [
     'X Bosques Da Noruega',
     'X Persa',
     'X Sagrado Da Birmânia',
-    'X Siamês',
     'X Bosques',
     'Xinxila',
     'Xpersa',

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import BaseDialog from '../BaseDialog.vue'
+import ParameterStatus from './ParameterStatus.vue'
 
+import type { Parameter } from '@/lib/domain/parameter'
 import { ref } from 'vue'
-import type { Parameter } from '@/lib/models/parameter'
 
 const dialogRef = ref<typeof BaseDialog>()
-const parameters = ref<Partial<Parameter[]>>([])
+const parameters = ref()
 
 function open() {
     dialogRef.value?.open()
@@ -17,39 +18,47 @@ function close() {
 
 function add(params: Parameter[]) {
     parameters.value = []
-    parameters.value.push(...params)
+    parameters.value = params.filter((p) => p.value)
 }
 
 defineExpose({ open, close, add })
+defineEmits<{ (e: 'save'): void }>()
 </script>
 <template>
     <BaseDialog ref="dialogRef" title="Resumo">
-        <ul class="space-y-2 mb-4">
-            <li v-for="parameter in parameters">
-                <div v-if="parameter?.value" class="flex items-center justify-between w-full">
-                    <div class="flex items-center gap-2">
-                        <i
-                            class="bi bi-exclamation-triangle-fill text-sm md:text-lg text-yellow-600"
-                            v-show="parameter?.state"
-                        ></i>
-                        <i
-                            class="bi bi-check-circle-fill text-base md:text-lg text-green-600"
-                            v-show="!parameter?.state"
-                        >
-                        </i>
-                        <span>{{ parameter?.name }}</span>
-                    </div>
+        <ul class="space-y-4 mb-8">
+            <li
+                v-for="parameter in parameters"
+                :key="parameter.name"
+                class="flex items-center justify-between w-full"
+            >
+                <div v-if="parameter.value" class="space-x-3">
                     <span
-                        class="font-semibold"
-                        :class="parameter?.state ? 'text-red-500' : 'text-gray-500'"
+                        v-if="parameter.status === 'Normal'"
+                        class="bi bi-check-circle-fill text-green-500 md:text-lg"
                     >
-                        {{ parameter?.state ? parameter?.state : 'Normal' }}
                     </span>
+
+                    <span
+                        v-if="parameter.status !== 'Normal'"
+                        class="bi bi-exclamation-triangle-fill text-yellow-500"
+                    >
+                    </span>
+
+                    <span>{{ parameter.title }}</span>
                 </div>
+                <ParameterStatus
+                    :value="parameter.value"
+                    :status="parameter.status"
+                    :colors="parameter?.colors"
+                />
             </li>
         </ul>
         <div class="text-right space-x-3">
-            <slot></slot>
+            <button class="btn btn-success space-x-3" @click="$emit('save')">
+                <i class="bi bi-floppy2"></i>
+                <span class="font-semibold">Salvar</span>
+            </button>
         </div>
     </BaseDialog>
 </template>

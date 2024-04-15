@@ -1,146 +1,96 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
-import HeartRate from '@/components/parameters/ParameterHeartRate.vue'
-import RespiratoryRate from '@/components/parameters/ParameterRespiratoryRate.vue'
-import Trc from '@/components/parameters/ParameterTrc.vue'
-import Avdn from '@/components/parameters/ParameterAvdn.vue'
-import Mucosas from '@/components/parameters/ParameterMucosas.vue'
-import Temperature from '@/components/parameters/ParameterTemperature.vue'
-import Glicemia from '@/components/parameters/ParameterGlicemia.vue'
-import Hct from '@/components/parameters/ParameterHct.vue'
-import BloodPressure from '@/components/parameters/ParameterBloodPressure.vue'
+import Header from '@/components/Header.vue'
+import BaseParameter from '@/components/parameters/BaseParameter.vue'
 import Summary from '@/components/parameters/ParametersSummary.vue'
-import RoundTime from '@/components/RoundTime.vue'
+import Today from '@/components/Today.vue'
 
-import { ref, onMounted, inject } from 'vue'
+import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { states } from '@/lib/data/parameters_state'
+import dailyRound from '@/lib/domain/round'
+import type { MeasurementModel } from '@/lib/models/measurement'
 import { Provided } from '@/lib/provided'
-import { getLatestMeasurement } from '@/lib/shared/utils'
+import type { RoundService } from '@/lib/services/round_service'
 import { useParametersStore } from '@/lib/store/parametersStore'
-import { usePatientSelectedStore } from '@/lib/store/patientStore'
-import type { IRoundService } from '@/lib/services/round_service'
-import type { Measurement } from '@/lib/models/measurement'
+import { useCurrentPatient } from '@/lib/store/patientStore'
 
 const form = ref<HTMLFormElement>()
-const showParameters = ref(false)
-const showAlertCheckbox = ref<boolean>(false)
-const parametersState = ref(states)
-const parametersMenuEl = ref()
-const alertCheckbox = ref<boolean>(false)
+const visibleMenu = ref(false)
+const optionsRef = ref()
+const alertPage = ref<boolean>(false)
 const router = useRouter()
 const parametersSummaryRef = ref<typeof Summary>()
 const parametersStore = useParametersStore()
-const roundService = inject<IRoundService>(Provided.RoundService)!
-const latestMeasurements = ref<Measurement[]>([])
-const patientStore = usePatientSelectedStore()
+const service = inject<RoundService>(Provided.RoundService)!
+const measurements = ref<MeasurementModel[]>([])
+const patientStore = useCurrentPatient()
 
-function toogleParameterList() {
-    showParameters.value = !showParameters.value
+const hasSomeOneVisible = computed(() => dailyRound.parameters.some((p) => p.visibility === true))
+
+function toggleMenu() {
+    visibleMenu.value = !visibleMenu.value
 }
 
-function records() {
-    return Object.values(parametersState.value)
-}
-
-function entries() {
-    return Object.entries(parametersState.value)
-}
-
-function changeVisibility(id: string) {
-    const parameter = records().find((parameter) => parameter.id === id)
-    parameter!.visibility = !parameter!.visibility
-    changeAlertCheckboxVisibility()
-}
-
-function changeAlertCheckboxVisibility() {
-    const parameters = records()
-    const visibleParameter = parameters.some((parameter) => parameter.visibility)
-    if (visibleParameter && showAlertCheckbox.value === false) {
-        showAlertCheckbox.value = true
-        return
-    }
-    if (!visibleParameter && showAlertCheckbox.value === true) {
-        showAlertCheckbox.value = false
-        return
+function closeMenu(event: Event) {
+    if (optionsRef.value && !optionsRef.value.contains(event.target)) {
+        visibleMenu.value = false
     }
 }
 
-function clearVisibility() {
-    records()
-        .filter((parameter) => parameter.visibility === true)
-        .forEach((parameter) => {
-            parameter.visibility = false
-        })
-    showAlertCheckbox.value = false
-}
-
-function closeParametersMenu(event: Event) {
-    if (parametersMenuEl.value && !parametersMenuEl.value.contains(event.target)) {
-        showParameters.value = false
-    }
+function getMeasurement(parameter: string) {
+    return measurements.value.find((m) => m.name === parameter)
 }
 
 function showParameter(name: string) {
-    entries()
-        .filter(([key, _]) => key === name)
-        .forEach(([_, parameter]) => {
-            changeVisibility(parameter.id)
-        })
+    const parameter = dailyRound.parameters.find((p) => p.name === name)
+
+    if (!parameter) return
+
+    parameter.toggleVisibility()
 }
 
-function showParametersInStore() {
-    const parameters = parametersStore.getParameters
-    if (parameters.length === 0) return
+function showParameters() {
+    if (parametersStore.getParameters.length === 0) return
 
-    parameters.forEach((parameter) => {
-        showParameter(parameter)
-    })
+    parametersStore.getParameters.forEach(showParameter)
 
     parametersStore.clear()
 }
 
-function isInvalid() {
+function formIsInvalid() {
     return !form.value?.checkValidity() || form.value?.elements.length === 0
 }
 
-function selectAlertCheckbox() {
-    alertCheckbox.value = !alertCheckbox.value
+function toggleAlertPage() {
+    alertPage.value = !alertPage.value
 }
 
 function confirm() {
-    if (isInvalid()) {
-        return form.value?.reportValidity()
-    }
+    if (formIsInvalid()) return form.value?.reportValidity()
 
-    const parameters = records().filter((parameter) => parameter.visibility === true)
+    const parameters = dailyRound.parameters.filter((p) => p.visibility === true && p.value !== '')
+
     parametersSummaryRef.value?.add(parameters)
     parametersSummaryRef.value?.open()
 }
 
 async function save() {
-    const parameters = entries()
-        .filter(([_, parameter]) => parameter.visibility === true)
-        .map(([key, parameter]) => ({ [key]: { value: parameter.value } }))
-        .reduce((acc, cur) => ({ ...acc, ...cur }), {})
-
-    const voidOrError = await roundService.newRound(patientStore.patient, parameters)
-    if (voidOrError.isLeft()) {
+    const voidOrErr = await service.newRound(patientStore.patient, dailyRound.data)
+    if (voidOrErr.isLeft()) {
         alert('Não foi possível salvar os parâmetros')
-        console.error(voidOrError.value)
+        console.error(voidOrErr.value.message)
         return
     }
 
     parametersSummaryRef.value?.close()
 
-    clearVisibility()
+    dailyRound.reset()
 
     alert('Parâmetros salvos com sucesso')
 
-    if (alertCheckbox.value) {
+    if (alertPage.value) {
         router.push({ name: 'ScheduleAlert' })
         return
     }
@@ -151,17 +101,11 @@ async function save() {
 onMounted(async () => {
     if (!patientStore.patient) return router.back()
 
-    clearVisibility()
+    document.addEventListener('click', closeMenu)
 
-    document.addEventListener('click', closeParametersMenu)
+    measurements.value = await service.latestMeasurement(patientStore.patient)
 
-    const measurementsOrError = await roundService.latestMeasurements(patientStore.patient)
-
-    if (measurementsOrError.isLeft()) return
-
-    latestMeasurements.value = measurementsOrError.value
-
-    showParametersInStore()
+    showParameters()
 })
 </script>
 <template>
@@ -170,133 +114,65 @@ onMounted(async () => {
     </Header>
     <main class="main-content">
         <section class="container my-8">
-            <RoundTime />
+            <Today />
             <section class="relative space-y-2">
                 <div
-                    ref="parametersMenuEl"
+                    ref="optionsRef"
                     class="flex items-center border gap-3 px-2 rounded text-gray-500"
                 >
-                    <i class="bi bi-hand-index text-lg md:text-xl" @click="toogleParameterList"></i>
+                    <i class="bi bi-hand-index text-lg md:text-xl" @click="toggleMenu()"></i>
                     <div
                         class="flex-1 border-0 py-2 cursor-pointer focus:ring-0"
-                        @click="toogleParameterList"
+                        @click="toggleMenu()"
                     >
                         Escolher parâmetros
                     </div>
                     <i
                         class="bi bi-arrow-clockwise text-lg cursor-pointer md:text-xl"
-                        @click="clearVisibility"
+                        @click="dailyRound.reset()"
                     ></i>
                 </div>
                 <div
-                    v-if="showParameters"
+                    v-if="visibleMenu"
                     class="absolute w-full bg-white overflow-y-auto border rounded space-y-2 p-3"
                     @click.stop
                 >
                     <div
-                        v-for="parameter in parametersState"
-                        :key="parameter.id"
+                        v-for="parameter in dailyRound.parameters"
+                        :key="parameter.name"
                         class="flex items-center gap-2 text-gray-900"
-                        @click="changeVisibility(parameter.id)"
+                        @click="parameter.toggleVisibility()"
                     >
                         <input
                             type="checkbox"
                             class="rounded focus:ring-0"
                             :checked="parameter.visibility"
                         />
-                        <label>{{ parameter.name }}</label>
+                        <label>{{ parameter.title }}</label>
                     </div>
                 </div>
                 <hr />
-                <form ref="form">
-                    <div class="space-y-4">
-                        <HeartRate
-                            v-if="parametersState.heartRate.visibility"
-                            v-model="parametersState.heartRate.value"
-                            :latest-measurement="
-                                getLatestMeasurement('heartRate', latestMeasurements)
-                            "
-                            @state="parametersState.heartRate.state = $event"
-                        />
-                        <RespiratoryRate
-                            v-if="parametersState.respiratoryRate.visibility"
-                            v-model="parametersState.respiratoryRate.value"
-                            :latest-measurement="
-                                getLatestMeasurement('respiratoryRate', latestMeasurements)
-                            "
-                            @state="parametersState.respiratoryRate.state = $event"
-                        />
-                        <Trc
-                            v-if="parametersState.trc.visibility"
-                            v-model="parametersState.trc.value"
-                            :latest-measurement="getLatestMeasurement('trc', latestMeasurements)"
-                            @state="parametersState.trc.state = $event"
-                        />
-                        <Avdn
-                            v-if="parametersState.avdn.visibility"
-                            v-model="parametersState.avdn.value"
-                            :latest-measurement="getLatestMeasurement('avdn', latestMeasurements)"
-                            @state="parametersState.avdn.state = $event"
-                        />
-                        <Mucosas
-                            v-if="parametersState.mucosas.visibility"
-                            v-model="parametersState.mucosas.value"
-                            :latest-measurement="
-                                getLatestMeasurement('mucosas', latestMeasurements)
-                            "
-                            @state="parametersState.mucosas.state = $event"
-                        />
-                        <Temperature
-                            v-if="parametersState.temperature.visibility"
-                            v-model="parametersState.temperature.value"
-                            :latest-measurement="
-                                getLatestMeasurement('temperature', latestMeasurements)
-                            "
-                            @state="parametersState.temperature.state = $event"
-                        />
-                        <Glicemia
-                            v-if="parametersState.bloodGlucose.visibility"
-                            v-model="parametersState.bloodGlucose.value"
-                            :latest-measurement="
-                                getLatestMeasurement('bloodGlucose', latestMeasurements)
-                            "
-                            @state="parametersState.bloodGlucose.state = $event"
-                        />
-                        <Hct
-                            v-if="parametersState.hct.visibility"
-                            v-model="parametersState.hct.value"
-                            :latest-measurement="getLatestMeasurement('hct', latestMeasurements)"
-                            @state="parametersState.hct.state = $event"
-                        />
-                        <BloodPressure
-                            v-if="parametersState.bloodPressure.visibility"
-                            v-model="parametersState.bloodPressure.value"
-                            :latest-measurement="
-                                getLatestMeasurement('bloodPressure', latestMeasurements)
-                            "
-                            @state="parametersState.bloodPressure.state = $event"
-                        />
-                        <div v-if="showAlertCheckbox" class="flex items-center">
-                            <input
-                                type="checkbox"
-                                class="focus:ring-0 rounded"
-                                v-model="alertCheckbox"
-                            />
-                            <label class="ml-2 block text-gray-900" @click="selectAlertCheckbox()">
-                                Criar alerta de monitorização
-                            </label>
-                        </div>
+                <form ref="form" class="space-y-4">
+                    <BaseParameter
+                        v-for="parameter in dailyRound.parameters"
+                        :key="parameter.name"
+                        :parameter="parameter"
+                        :measurement="getMeasurement(parameter.name)"
+                        :visibility="parameter.visibility"
+                        :view-lock-icon="false"
+                    />
+
+                    <div v-if="hasSomeOneVisible" class="flex items-center">
+                        <input type="checkbox" class="focus:ring-0" v-model="alertPage" />
+                        <label class="ml-2 block text-gray-900" @click="toggleAlertPage()">
+                            Criar alerta de monitorização
+                        </label>
                     </div>
                 </form>
             </section>
         </section>
     </main>
-    <Summary ref="parametersSummaryRef">
-        <button class="btn btn-success space-x-2" @click="save()">
-            <i class="bi bi-floppy2"></i>
-            <span class="font-semibold">Salvar</span>
-        </button>
-    </Summary>
+    <Summary ref="parametersSummaryRef" @save="save()"></Summary>
     <Footer>
         <button class="btn btn-secondary" @click="confirm()">Confirmar</button>
     </Footer>

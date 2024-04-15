@@ -1,98 +1,90 @@
-import type { Budget, Hospitalization } from '@/lib/models/hospitalization'
-import type { APIClient, APIError } from '@/lib/api_client'
-import type { Patient } from '@/lib/models/patient'
-import type { Owner } from '../models/owner'
+import type { HospitalizationModel } from '@/lib/models/hospitalization'
+import type { BudgetModel } from '../models/budget'
+import type { ApiClient } from '@/lib/apiClient/api_client'
+import type { ApiError } from '../apiClient/api_error'
+import type { PatientModel } from '@/lib/models/patient'
+import type { OwnerModel } from '../models/owner'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
 
-export interface IPatientService {
-    getAllHospitalized(): Promise<Either<APIError, Patient[]>>
+export interface PatientService {
+    listHospitalized(): Promise<PatientModel[]>
     newHospitalization(
         patientId: string,
-        hospitalizationData: Hospitalization,
-        budgetData: Budget
-    ): Promise<Either<APIError, void>>
-    nonHospitalized(): Promise<Either<APIError, Patient[]>>
-    newPatient(newPatientData: NewPatientData): Promise<Either<APIError, void>>
-    findOwner(ownerId: string): Promise<Either<APIError, Owner>>
+        hospitalizationData: HospitalizationModel,
+        budgetData: BudgetModel
+    ): Promise<Either<ApiError, void>>
+    listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>>
+    newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>>
 }
 
-export class PatientService implements IPatientService {
-    readonly apiClient: APIClient
+export class PatientServiceImpl implements PatientService {
+    readonly apiClient: ApiClient
     readonly baseUrl: string
     readonly resource: string
 
-    constructor(apiClient: APIClient, baseUrl: string) {
+    constructor(apiClient: ApiClient, baseUrl: string) {
         this.apiClient = apiClient
         this.baseUrl = baseUrl
         this.resource = 'patients'
     }
 
-    async getAllHospitalized(): Promise<Either<APIError, Patient[]>> {
+    async listHospitalized(): Promise<PatientModel[]> {
         const url = `${this.baseUrl}/${this.resource}/hospitalized`
 
-        const patientsOrErr = await this.apiClient.get(url)
-        if (patientsOrErr.isLeft()) return left(patientsOrErr.value)
+        const resOrErr = await this.apiClient.get(url)
+        if (resOrErr.isLeft()) {
+            console.error(resOrErr.value)
+            alert('Não foi possível carregar os pacientes')
+            return []
+        }
 
-        return right(patientsOrErr.value.data)
+        return resOrErr.value.data
     }
 
     async newHospitalization(
         patientId: string,
-        hospitalizationData: Hospitalization,
-        budgetData: Budget
-    ): Promise<Either<APIError, void>> {
+        hospitalizationData: HospitalizationModel,
+        budgetData: BudgetModel
+    ): Promise<Either<ApiError, void>> {
         const body = {
             patientId,
-            hospitalizationData: {
-                ...hospitalizationData,
-                budgetData: budgetData
-            }
+            hospitalizationData,
+            budgetData
         }
 
         const url = `${this.baseUrl}/${this.resource}/hospitalize`
 
-        const responseOrErr = await this.apiClient.post(url, body)
-        if (responseOrErr.isLeft()) return left(responseOrErr.value)
+        const resOrErr = await this.apiClient.post(url, body)
+        if (resOrErr.isLeft()) return left(resOrErr.value)
 
         return right(undefined)
     }
 
-    async nonHospitalized(): Promise<Either<APIError, Patient[]>> {
+    async listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>> {
         const url = `${this.baseUrl}/${this.resource}/`
 
-        const patientsOrError = await this.apiClient.get(url)
-        if (patientsOrError.isLeft()) return left(patientsOrError.value)
+        const resOrErr = await this.apiClient.get(url)
+        if (resOrErr.isLeft()) return left(resOrErr.value)
 
-        return right(patientsOrError.value.data)
+        return right(resOrErr.value.data)
     }
 
-    async newPatient(newPatientData: NewPatientData): Promise<Either<APIError, void>> {
+    async newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>> {
         const { patientData, hospitalizationData, budgetData, ownerData } = newPatientData
         const body = {
             patientData,
-            hospitalizationData: {
-                ...hospitalizationData,
-                budgetData
-            },
+            hospitalizationData,
+            budgetData,
             ownerData
         }
 
         const url = `${this.baseUrl}/${this.resource}/new-patient`
 
-        const responseOrErr = await this.apiClient.post(url, body)
-        if (responseOrErr.isLeft()) return left(responseOrErr.value)
+        const resOrErr = await this.apiClient.post(url, body)
+        if (resOrErr.isLeft()) return left(resOrErr.value)
 
         return right(undefined)
-    }
-
-    async findOwner(ownerId: string): Promise<Either<APIError, Owner>> {
-        const url = `${this.baseUrl}/${this.resource}/owner/${ownerId}`
-
-        const responsOrError = await this.apiClient.get(url)
-        if (responsOrError.isLeft()) return left(responsOrError.value)
-
-        return right(responsOrError.value.data)
     }
 }
 
@@ -106,7 +98,7 @@ type PatientData = {
 
 export type NewPatientData = {
     patientData: PatientData
-    ownerData: Owner
-    hospitalizationData: Hospitalization
-    budgetData: Budget
+    ownerData: OwnerModel
+    hospitalizationData: HospitalizationModel
+    budgetData: BudgetModel
 }

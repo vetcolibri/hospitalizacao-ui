@@ -1,4 +1,4 @@
-import users from '@/users.json' assert { type: 'json' }
+import users from '@/lib/data/users.json' assert { type: 'json' }
 
 export function useAuth() {
     const isAuthenticated = () => !!sessionStorage.getItem('user')

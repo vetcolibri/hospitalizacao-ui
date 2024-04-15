@@ -2,6 +2,7 @@
 import BaseInput from '@/components/BaseInput.vue'
 
 import { ref } from 'vue'
+import { toast } from 'vue3-toastify'
 import { useAuth } from '@/composables/useAuth'
 import { useRouter } from 'vue-router'
 
@@ -11,18 +12,17 @@ const router = useRouter()
 const auth = useAuth()
 
 const checkUser = () => {
-    const loggedIn = auth.login(username.value, password.value)
-    if (!loggedIn) {
-        alert('Credenciais inválidas')
+    if (!auth.login(username.value, password.value)) {
+        toast.error('Credencias inválidas')
         return
     }
     router.push({ name: 'Dashboard' })
 }
 </script>
 <template>
-    <section class="bg-white h-screen">
+    <section class="bg-gray-200 h-screen">
         <div class="flex flex-col justify-center h-full mx-auto md:max-w-sm">
-            <div class="md:shadow-lg p-6 rounded">
+            <div class="md:shadow-lg bg-white p-6 rounded-md">
                 <div class="flex flex-col items-center space-y-4 mb-6">
                     <img src="/img/cvl-192x192.png" width="100" height="100" />
                     <p class="text-gray-500 text-sm text-center">
@@ -30,9 +30,23 @@ const checkUser = () => {
                     </p>
                 </div>
                 <form class="space-y-4 w-full sm:max-w-sm mx-auto">
-                    <BaseInput v-model="username" placeholder="Utilizador" />
-                    <BaseInput v-model="password" placeholder="Palavra-passe" type="password" />
-                    <button type="button" class="btn btn-success w-full" @click="checkUser()">
+                    <BaseInput
+                        v-model="username"
+                        placeholder="Utilizador"
+                        @keyup.enter="checkUser()"
+                    />
+                    <BaseInput
+                        v-model="password"
+                        placeholder="Palavra-passe"
+                        type="password"
+                        @keyup.enter="checkUser()"
+                    />
+                    <button
+                        type="button"
+                        class="btn btn-success w-full"
+                        @click="checkUser()"
+                        @keyup.enter="checkUser()"
+                    >
                         Entrar
                     </button>
                 </form>

@@ -12,17 +12,19 @@ interface Props {
     min?: number
     max?: number
     step?: number
-    isRequired?: boolean
+    required?: boolean
     pattern?: string
     helpText?: string
 }
-const props = defineProps<Props>()
-const emit = defineEmits(['update:modelValue'])
+const props = withDefaults(defineProps<Props>(), {
+    required: false
+})
+const emits = defineEmits(['update:modelValue'])
 const inputValue = ref<string | number | Date>()
 
 function emitValue() {
     if (props.disabled && props.readonly) return
-    emit('update:modelValue', inputValue.value)
+    emits('update:modelValue', inputValue.value)
 }
 </script>
 
@@ -37,7 +39,7 @@ function emitValue() {
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"
             :readonly="readonly ? true : false"
-            :required="isRequired"
+            :required="required"
         />
         <input
             v-else
@@ -47,7 +49,7 @@ function emitValue() {
             :class="disabled ? 'disabled' : ''"
             :disabled="disabled ? true : false"
             :readonly="readonly ? true : false"
-            :required="isRequired"
+            :required="required"
             :min="min ? min : ''"
             :max="max ? max : ''"
             :step="step ? step : ''"

@@ -1,4 +1,5 @@
 import { Parameter } from './parameter'
+import { ParameterUnit } from './parameter_unit'
 
 enum Status {
     Normal = 'Normal',
@@ -8,43 +9,39 @@ enum Status {
 }
 
 export class HeartRate extends Parameter {
+    unit: string = ParameterUnit.HeartRate
     status: Status
-    max: number
-    min: number
+    type: string
 
     constructor(min: number = 0, max: number = 300) {
         super()
-        this.name = 'Frequência Cardiaca'
-        this.helpText = '(70 - 120) BPM'
+        this.title = 'Frequência Cardiaca'
+        this.name = 'heartRate'
+        this.type = 'number'
+        this.helpText = `(70 - 120) ${this.unit}`
         this.status = Status.Normal
         this.min = min
         this.max = max
     }
 
     verifyStatus() {
-        if (this.isInvalid()) {
-            this.status = Status.Invalid
+        if (!this.value) {
+            this.status = Status.Normal
+            return this.status
         }
 
         if (this.isBradycardia()) {
             this.status = Status.Bradycardia
+            return this.status
         }
 
         if (this.isNormal()) {
             this.status = Status.Normal
+            return this.status
         }
 
         this.status = Status.Tachycardia
-
         return this.status
-    }
-
-    get numberValue() {
-        return Number(this.value)
-    }
-
-    private isInvalid() {
-        return this.numberValue < 0
     }
 
     private isNormal() {

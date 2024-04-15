@@ -1,30 +1,40 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
-import ScheduleTime from '@/components/ScheduleTime.vue'
+import Header from '@/components/Header.vue'
 import ScheduleRate from '@/components/ScheduleRate.vue'
+import ScheduleTime from '@/components/ScheduleTime.vue'
 
 import { inject, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { parameters } from '@/lib/data/parameters'
-import { timeFromString } from '@/lib/shared/utils'
-import { AlertService } from '@/lib/services/alert_service'
-import { Provided } from '@/lib/provided'
 import type { RepeatEvery } from '@/lib/models/repeat_every'
-import { usePatientSelectedStore } from '@/lib/store/patientStore'
-import { convertToSeconds } from '@/lib/utils'
+import { Provided } from '@/lib/provided'
+import { AlertServiceImpl } from '@/lib/services/alert_service'
+import { convertInSeconds } from '@/lib/shared/convert_in_seconds'
+import { timeFromString } from '@/lib/shared/format_time'
+import { useCurrentPatient } from '@/lib/store/patientStore'
 
 const selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
-const repeatEvery = ref<RepeatEvery>({ rate: 0, unity: '' })
+const repeatEvery = ref<RepeatEvery>({ rate: 0, unit: '' })
 const comments = ref<string>('')
 const textareaElement = ref<HTMLTextAreaElement>()
 const scheduleButton = ref<boolean>(false)
 const router = useRouter()
-const patientStore = usePatientSelectedStore()
-const patientId = patientStore.patient
-const alertService = inject<AlertService>(Provided.AlertService)!
+const patientStore = useCurrentPatient()
+const alertService = inject<AlertServiceImpl>(Provided.AlertService)!
+
+const parameters = [
+    { name: 'heartRate', title: 'Frequência cardíaca' },
+    { name: 'respiratoryRate', title: 'Frequência respiratória' },
+    { name: 'trc', title: 'Trc' },
+    { name: 'avdn', title: 'Avdn' },
+    { name: 'mucosas', title: 'Mucosas' },
+    { name: 'temperature', title: 'Temperatura' },
+    { name: 'bloodGlucose', title: 'Glicemia' },
+    { name: 'hct', title: 'Hct' },
+    { name: 'bloodPressure', title: 'Pressão arterial' }
+]
 
 function wasSelected(name: string) {
     const selected = selectedParameters.value.find((element) => element === name)
@@ -44,20 +54,21 @@ function selectParameter(name: string) {
 }
 
 async function schedule() {
+    const { rate, unit } = repeatEvery.value
     const date = timeFromString(scheduleTime.value)
-    const rate = convertToSeconds(repeatEvery.value)
-    if (rate < 0) {
+    if (convertInSeconds(rate, unit) < 0) {
         alert('O intervalo de tempo não pode ser negativo')
         return
     }
-    const alertData = {
+
+    const voidOrErr = await alertService.schedule({
+        patientId: patientStore.patient,
         parameters: selectedParameters.value,
         time: date.toISOString(),
-        rate: rate,
+        rate: convertInSeconds(rate, unit),
         comments: comments.value
-    }
+    })
 
-    const voidOrErr = await alertService.schedule(patientId, alertData)
     if (voidOrErr.isLeft()) {
         alert(voidOrErr.value.message)
         return
