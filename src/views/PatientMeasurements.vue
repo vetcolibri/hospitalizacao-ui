@@ -12,7 +12,7 @@ import type { RoundService } from '@/lib/services/round_service'
 import { Provided } from '@/lib/provided'
 import { useCurrentPatient } from '@/lib/store/patientStore'
 import { useRouter } from 'vue-router'
-import { formatDate } from '@/lib/shared/format_date'
+import { formatDate, formatTime } from '@/lib/shared/format_date'
 import { Round } from '@/lib/domain/round'
 
 const router = useRouter()
@@ -79,7 +79,8 @@ onMounted(async () => {
                             <tr>
                                 <th class="px-3 py-1 text-left sm:px-6 sm:py-3">Parâmetro</th>
                                 <th class="px-3 py-1 sm:px-6 sm:py-3">Medição (Unid.)</th>
-                                <th class="px-3 py-1 sm:px-6 sm:py-3">Data de medição</th>
+                                <th class="px-3 py-1 sm:px-6 sm:py-3">Data</th>
+                                <th class="px-3 py-1 sm:px-6 sm:py-3">Hora</th>
                                 <th class="px-3 py-1 sm:px-6 sm:py-3">Estado</th>
                             </tr>
                         </thead>
@@ -96,6 +97,10 @@ onMounted(async () => {
                                 </td>
                                 <td class="px-3 py-1 sm:px-6 sm:py-3">
                                     {{ formatDate(parameter?.issuedAt) }}
+                                </td>
+
+                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                    {{ formatTime(parameter?.issuedAt) }}
                                 </td>
 
                                 <td>

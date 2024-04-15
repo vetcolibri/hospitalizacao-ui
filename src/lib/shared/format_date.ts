@@ -1,19 +1,19 @@
-export function formatDate(value?: string, timeStyle?: string) {
-    const dateStyle = 'long'
-    const timeZone = 'Africa/Luanda'
+const TIME_ZONE = 'Africa/Luanda'
 
+export function formatDate(value?: string) {
     if (!value) return 'N/D'
 
-    if (!timeStyle) {
-        return new Intl.DateTimeFormat('pt-PT', {
-            dateStyle,
-            timeZone
-        }).format(new Date(value))
-    }
+    return new Intl.DateTimeFormat('pt-PT', {
+        dateStyle: 'short',
+        timeZone: TIME_ZONE
+    }).format(new Date(value))
+}
+
+export function formatTime(value?: string) {
+    if (!value) return 'N/D'
 
     return new Intl.DateTimeFormat('pt-PT', {
-        dateStyle,
-        timeStyle: timeStyle as any,
-        timeZone
+        timeStyle: 'short',
+        timeZone: TIME_ZONE
     }).format(new Date(value))
 }
