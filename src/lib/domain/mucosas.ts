@@ -9,11 +9,11 @@ enum Option {
 }
 
 enum Color {
-    Yellow = 'yellow',
-    Red = 'red',
-    Green = 'green',
-    Blue = 'blue',
-    Pink = 'pink'
+    Blue = 'badge-blue',
+    Red = 'badge-danger',
+    Yellow = 'badge-warning',
+    Green = 'badge-gray',
+    Pink = 'badge-pink'
 }
 
 export class Mucosas extends Parameter {

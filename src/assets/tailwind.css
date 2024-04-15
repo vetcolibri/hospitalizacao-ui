@@ -151,6 +151,18 @@ input[type='checkbox'] {
     @apply badge text-yellow-800 bg-yellow-200;
 }
 
+.badge-pink {
+    @apply badge text-pink-800 bg-pink-200;
+}
+
+.badge-gray {
+    @apply badge text-gray-800 bg-gray-200;
+}
+
+.badge-blue {
+    @apply badge text-blue-800 bg-blue-200;
+}
+
 .dropdown {
     @apply w-full border rounded shadow-sm absolute mt-2 p-2.5 border-gray-300 bg-white overflow-y-auto z-50 text-gray-500;
 }
@@ -169,22 +181,6 @@ input[type='checkbox'] {
 
 .yellow {
     @apply badge bg-yellow-200 text-black;
-}
-
-.pink {
-    @apply badge bg-pink-200 text-black;
-}
-
-.blue {
-    @apply badge bg-blue-200 text-black;
-}
-
-.red {
-    @apply badge bg-red-200 text-black;
-}
-
-.green {
-    @apply badge bg-green-200 text-black;
 }
 
 .Toastify__toast-container {
