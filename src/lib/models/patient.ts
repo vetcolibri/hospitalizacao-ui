@@ -4,6 +4,7 @@ export interface PatientModel {
     name: string
     specie: string
     breed: string
+    status: string
     birthDate: string
     ownerId: string
 }

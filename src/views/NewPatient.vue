@@ -35,6 +35,8 @@ async function hospitalize() {
     }
 
     alert('Paciente hospitalizado com sucesso!')
+
+    form.value?.reset()
 }
 </script>
 

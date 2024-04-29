@@ -1,52 +1,24 @@
 <script setup lang="ts">
-import Patient from '@/components/patients/Patient.vue'
+import PatientHospitalized from '@/components/patients/PatientHospitalized.vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import Today from '@/components/Today.vue'
-import { inject, onMounted, ref } from 'vue'
+import { onMounted, toValue } from 'vue'
 
-import type { AlertModel } from '@/lib/models/alert'
-import type { BudgetModel } from '@/lib/models/budget'
-import type { HospitalizationModel } from '@/lib/models/hospitalization'
-import type { OwnerModel } from '@/lib/models/owner'
-import type { PatientModel } from '@/lib/models/patient'
-import { Provided } from '@/lib/provided'
-import type { AlertService } from '@/lib/services/alert_service'
-import type { BudgetService } from '@/lib/services/budget_service'
-import type { HospitalizationService } from '@/lib/services/hospitalization_service'
-import type { OwnerService } from '@/lib/services/owner_service'
-import type { PatientService } from '@/lib/services/patient_service'
 import { useCurrentPatient } from '@/lib/store/patientStore'
 import { useRouter } from 'vue-router'
-
-const patients = ref<PatientModel[]>([])
-const hospitalizations = ref<HospitalizationModel[]>([])
-const owners = ref<OwnerModel[]>([])
-const budgets = ref<BudgetModel[]>([])
-const alerts = ref<AlertModel[]>([])
+import { usePageData } from '@/composables/usePageData'
 
 const router = useRouter()
-
+const pageData = usePageData()
 const currentPatient = useCurrentPatient()
-
-const patientService = inject<PatientService>(Provided.PatientService)!
-const ownerService = inject<OwnerService>(Provided.OwnerService)!
-const hospitalizationService = inject<HospitalizationService>(Provided.HospitalizationService)!
-const budgetService = inject<BudgetService>(Provided.BudgetService)!
-const alertServie = inject<AlertService>(Provided.AlertService)!
 
 function nextPage(patientId: string) {
     currentPatient.$patch({ patientId })
     router.push({ name: 'Measurements' })
 }
 
-onMounted(async () => {
-    owners.value = await ownerService.getAll()
-    patients.value = await patientService.listHospitalized()
-    hospitalizations.value = await hospitalizationService.getAllOpened()
-    budgets.value = await budgetService.getAll()
-    alerts.value = await alertServie.activeAlerts()
-})
+onMounted(async () => await pageData.loadData())
 </script>
 
 <template>
@@ -55,14 +27,15 @@ onMounted(async () => {
     <main class="main-content pb-6">
         <Today class="mt-6" />
         <section class="patients-container">
-            <Patient
-                v-for="patient in patients"
+            <PatientHospitalized
+                v-for="patient in toValue(pageData.patients)"
                 :patient="patient"
-                :owners="owners"
-                :hospitalizations="hospitalizations"
-                :budgets="budgets"
-                :alerts="alerts"
+                :owners="toValue(pageData.owners)"
+                :hospitalizations="toValue(pageData.hospitalizations)"
+                :budgets="toValue(pageData.budgets)"
+                :alerts="toValue(pageData.alerts)"
                 @nextPage="nextPage"
+                @reloadPage="pageData.loadData()"
             />
         </section>
         <router-link :to="{ name: 'RegisterPatient' }" class="bi bi-plus btn-dashboard">

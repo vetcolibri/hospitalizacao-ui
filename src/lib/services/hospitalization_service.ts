@@ -2,7 +2,7 @@ import type { ApiClient } from '../apiClient/api_client'
 import type { HospitalizationModel } from '../models/hospitalization'
 
 export interface HospitalizationService {
-    getAllOpened(): Promise<HospitalizationModel[]>
+    getAll(): Promise<HospitalizationModel[]>
 }
 
 export class HospitalizationServiceImpl implements HospitalizationService {
@@ -16,8 +16,8 @@ export class HospitalizationServiceImpl implements HospitalizationService {
         this.resource = 'hospitalizations'
     }
 
-    async getAllOpened(): Promise<HospitalizationModel[]> {
-        const url = `${this.baseUrl}/${this.resource}/opened`
+    async getAll(): Promise<HospitalizationModel[]> {
+        const url = `${this.baseUrl}/${this.resource}/`
 
         const resOrErr = await this.apiClient.get(url)
         if (resOrErr.isLeft()) {
