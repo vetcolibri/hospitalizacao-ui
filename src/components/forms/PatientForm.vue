@@ -5,7 +5,7 @@ import { findBreed } from '@/lib/shared/find_breed'
 import { ref } from 'vue'
 
 const patient = ref({ patientId: '', name: '', specie: '', breed: '', birthDate: '' })
-const emits = defineEmits<{ (e: 'patient', value: any): void }>()
+const emits = defineEmits<{ (e: 'patient', value: object): void }>()
 const breeds = ref<string[]>([])
 
 function chooseSpecie(specie: string) {

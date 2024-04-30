@@ -1,10 +1,10 @@
-export const units = [
+export const UNITS = [
     {
-        name: "Minutos",
-        value: "minutes"
+        name: 'Minutos',
+        value: 'minutes'
     },
     {
-        name: "Horas",
-        value: "hours"
-    },
+        name: 'Horas',
+        value: 'hours'
+    }
 ]

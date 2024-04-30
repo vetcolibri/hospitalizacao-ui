@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
-import { units } from '@/lib/data/alerts'
+import { ref } from 'vue'
+import { UNITS } from '@/lib/data/alerts'
 
-const repeatEvery = ref({ rate: 30, unity: 'minutes' })
-const message = ref<string>('')
-const emit = defineEmits()
-const updateValue = () => {
-    emit('update:modelValue', repeatEvery.value)
+interface Emits {
+    (e: 'rate', value: number): void
+    (e: 'unit', value: string): void
 }
+
+const emits = defineEmits<Emits>()
+const repeatEvery = ref({ rate: 30, unit: 'minutes' })
+const message = ref<string>('')
 
 function isValid() {
     if (repeatEvery.value.rate < 1) {
@@ -17,10 +19,6 @@ function isValid() {
     message.value = ''
     return false
 }
-
-onBeforeMount(() => {
-    updateValue()
-})
 </script>
 <template>
     <div class="space-y-1">
@@ -31,15 +29,18 @@ onBeforeMount(() => {
                     class="form-control text-center"
                     type="number"
                     min="1"
-                    name="rate"
                     v-model="repeatEvery.rate"
-                    @input="updateValue()"
                     :class="isValid() ? 'form-invalid' : ''"
+                    @input="$emit('rate', repeatEvery.rate)"
                 />
             </div>
             <div class="w-24">
-                <select class="form-control" name="unity" v-model="repeatEvery.unity">
-                    <option v-for="unity in units" :value="unity.value">{{ unity.name }}</option>
+                <select
+                    class="form-control"
+                    v-model="repeatEvery.unit"
+                    @change="$emit('unit', repeatEvery.unit)"
+                >
+                    <option v-for="unit in UNITS" :value="unit.value">{{ unit.name }}</option>
                 </select>
             </div>
         </div>

@@ -22,7 +22,7 @@ export class AlertServiceImpl implements AlertService {
     }
 
     async schedule(data: AlertData): Promise<Either<ApiError, void>> {
-        const body = { ...data, patientId: data.patientId }
+        const body = { alertData: data }
         const url = `${this.baseUrl}/${this.resource}/schedule`
 
         const resOrErr = await this.apiClient.post(url, body)

@@ -1,23 +1,31 @@
 <script lang="ts" setup>
 import BaseDialog from '@/components/BaseDialog.vue'
 
-import { ref, inject } from 'vue'
+import { ref, inject, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useParametersStore } from '@/lib/store/parametersStore'
 import { AlertServiceImpl } from '@/lib/services/alert_service'
 import { Provided } from '@/lib/provided'
 import { useCurrentPatient } from '@/lib/store/patientStore'
+import { convert } from '@/lib/shared/convert_seconds'
 import { useAuth } from '@/composables/useAuth'
+import { parameterTitle } from '@/lib/shared/parameters'
+
+const alertPayload = reactive({
+    alertId: '',
+    parameters: [],
+    comments: '',
+    repeatEvery: 0,
+    patient: {
+        patientId: '',
+        name: ''
+    }
+})
 
 const dialogRef = ref<typeof BaseDialog>()
-const title = ref<string>('')
-const patient = ref({ patientId: '', name: '' })
-const alertId = ref<string>('')
-const parameters = ref<string[]>([])
-const comments = ref<string>('')
-const repeatEvery = ref<number>()
 const disabledAlert = ref<boolean>(false)
+const title = ref<string>('')
 const router = useRouter()
 const alertService = <AlertServiceImpl>inject(Provided.AlertService)!
 const webSocket = <WebSocket>inject(Provided.Websocket)
@@ -31,39 +39,22 @@ webSocket.onopen = () => {
 
 webSocket.onmessage = (event) => {
     const data = JSON.parse(event.data)
-    patient.value = { patientId: data.patient.patientId, name: data.patient.name }
-    alertId.value = data.alertId
-    parameters.value = data.parameters
-    comments.value = data.comments
-    repeatEvery.value = data.repeatEvery
-    title.value = `Alerta - ${patient.value.patientId} - ${patient.value.name}`
+    title.value = `Alerta - ${data.patient.name}`
+    makeAlertPayload(data)
     open()
 }
 
-function convert() {
-    if (repeatEvery.value! >= 3600) {
-        const hours = Math.floor(repeatEvery.value! / 3600)
-        return `${hours} hora${hours > 1 ? 's' : ''}`
-    } else if (repeatEvery.value! >= 60) {
-        const minutes = Math.floor(repeatEvery.value! / 60)
-        return `${minutes} minuto${minutes > 1 ? 's' : ''}`
-    } else {
-        return `${repeatEvery.value!} segundo${repeatEvery.value! !== 1 ? 's' : ''}`
-    }
-}
-
-function getParameterByName(name: string) {
-    // const parameters = Object.entries(states)
-    // for (let parameter of parameters) {
-    //     if (parameter[0] === name) {
-    //         return parameter[1].name
-    //     }
-    // }
+function makeAlertPayload(data: any) {
+    alertPayload.alertId = data.alertId
+    alertPayload.parameters = data.parameters
+    alertPayload.comments = data.comments
+    alertPayload.repeatEvery = data.repeatEvery
+    alertPayload.patient = data.patient
 }
 
 async function confirm() {
     if (disabledAlert.value) {
-        const voidOrError = await alertService.cancel(alertId.value)
+        const voidOrError = await alertService.cancel(alertPayload.alertId)
         if (voidOrError.isLeft()) {
             alert(voidOrError.value.message)
             return
@@ -71,8 +62,8 @@ async function confirm() {
         alert('Alerta foi cancelado com sucesso.')
     }
 
-    parametersStore.$patch({ parameters: parameters.value })
-    patientStore.$patch({ patientId: patient.value.patientId })
+    parametersStore.$patch({ parameters: alertPayload.parameters })
+    patientStore.$patch({ patientId: alertPayload.patient.patientId })
     dialogRef.value?.close()
     router.push({ name: 'ChooseParameters' })
 }
@@ -93,17 +84,17 @@ defineExpose({ open, close })
         <section class="space-y-4">
             <div class="flex items-center gap-4">
                 <p>Parâmetro:</p>
-                <span class="text-red-500">A cada {{ convert() }}</span>
+                <span class="text-red-500">A cada {{ convert(alertPayload.repeatEvery) }}</span>
             </div>
             <ul class="space-y-1">
-                <li v-for="name in parameters" class="w-full flex items-center gap-4">
+                <li v-for="name in alertPayload.parameters" class="w-full flex items-center gap-4">
                     <i class="bi bi-exclamation-triangle-fill text-yellow-600 md:text-lg"></i>
                     <span class="text-red-500 underline">
-                        {{ getParameterByName(name) }}
+                        {{ parameterTitle(name) }}
                     </span>
                 </li>
             </ul>
-            <p class="text-justify text-gray-500">{{ comments }}</p>
+            <p class="text-justify text-gray-500">{{ alertPayload.comments }}</p>
             <p class="flex items-center" @click="disabledAlert = !disabledAlert">
                 <input type="checkbox" class="rounded focus:ring-0" v-model="disabledAlert" />
                 <label for="notShowAgain" class="block ml-2 text-gray-900">

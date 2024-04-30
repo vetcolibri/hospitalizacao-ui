@@ -55,8 +55,7 @@ defineEmits<{ (e: 'save'): void }>()
             </li>
         </ul>
         <div class="text-right space-x-3">
-            <button class="btn btn-success space-x-3" @click="$emit('save')">
-                <i class="bi bi-floppy2"></i>
+            <button class="btn btn-success space-x-3 w-full" @click="$emit('save')">
                 <span class="font-semibold">Salvar</span>
             </button>
         </div>

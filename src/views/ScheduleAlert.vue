@@ -13,28 +13,17 @@ import { AlertServiceImpl } from '@/lib/services/alert_service'
 import { convertInSeconds } from '@/lib/shared/convert_in_seconds'
 import { timeFromString } from '@/lib/shared/format_time'
 import { useCurrentPatient } from '@/lib/store/patientStore'
+import { PARAMETERS } from '@/lib/shared/parameters'
 
 const selectedParameters = ref<string[]>([])
 const scheduleTime = ref<string>('')
-const repeatEvery = ref<RepeatEvery>({ rate: 0, unit: '' })
+const repeatEvery = ref<RepeatEvery>({ rate: 30, unit: 'minutes' })
 const comments = ref<string>('')
 const textareaElement = ref<HTMLTextAreaElement>()
 const scheduleButton = ref<boolean>(false)
 const router = useRouter()
 const patientStore = useCurrentPatient()
 const alertService = inject<AlertServiceImpl>(Provided.AlertService)!
-
-const parameters = [
-    { name: 'heartRate', title: 'Frequência cardíaca' },
-    { name: 'respiratoryRate', title: 'Frequência respiratória' },
-    { name: 'trc', title: 'Trc' },
-    { name: 'avdn', title: 'Avdn' },
-    { name: 'mucosas', title: 'Mucosas' },
-    { name: 'temperature', title: 'Temperatura' },
-    { name: 'bloodGlucose', title: 'Glicemia' },
-    { name: 'hct', title: 'Hct' },
-    { name: 'bloodPressure', title: 'Pressão arterial' }
-]
 
 function wasSelected(name: string) {
     const selected = selectedParameters.value.find((element) => element === name)
@@ -95,15 +84,19 @@ function changeScheduleButton() {
 </script>
 <template>
     <div>
-        <Header title="Alerta na monitorização"></Header>
+        <Header title="Alerta na monitorização" />
         <main class="main-content">
             <section class="container my-8">
                 <form class="space-y-3">
                     <ScheduleTime @update:model-value="scheduleTime = $event" />
-                    <ScheduleRate @update:model-value="repeatEvery = $event" />
+                    <ScheduleRate
+                        @rate="repeatEvery.rate = $event"
+                        @unit="repeatEvery.unit = $event"
+                    />
+
                     <div class="overflow-y-auto border rounded space-y-2 p-3">
                         <div
-                            v-for="parameter in parameters"
+                            v-for="parameter in PARAMETERS"
                             class="flex items-center"
                             @click="selectParameter(parameter.name)"
                         >
