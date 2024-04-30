@@ -17,6 +17,11 @@ export interface PatientService {
         budgetData: BudgetModel
     ): Promise<Either<ApiError, void>>
     endHospitalization(patientId: string): Promise<Either<ApiError, void>>
+    endBudget(
+        hospitalizationId: string,
+        patientId: string,
+        status: string
+    ): Promise<Either<ApiError, void>>
 }
 
 export class PatientServiceImpl implements PatientService {
@@ -99,6 +104,24 @@ export class PatientServiceImpl implements PatientService {
         }
 
         alert('Hospitalização encerrada com sucesso')
+        return right(undefined)
+    }
+
+    async endBudget(
+        hospitalizationId: string,
+        patientId: string,
+        status: string
+    ): Promise<Either<ApiError, void>> {
+        const url = `${this.baseUrl}/${this.resource}/end-budget`
+
+        const resOrErr = await this.apiClient.post(url, { hospitalizationId, patientId, status })
+        if (resOrErr.isLeft()) {
+            console.error(resOrErr.value)
+            alert('Não foi possível encerrar o orçamento')
+            return left(resOrErr.value)
+        }
+
+        alert('Orçamento salvo com sucesso')
         return right(undefined)
     }
 }

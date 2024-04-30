@@ -77,6 +77,11 @@ defineExpose({ open })
             :active="getTab('2')?.active"
             @close-dialog="close()"
         />
-        <BudgetDetails :budget="budget" :active="getTab('3')?.active" />
+        <BudgetDetails
+            :budget="budget"
+            :patient-id="patient.systemId"
+            :active="getTab('3')?.active"
+            @close-dialog="close()"
+        />
     </BaseDialog>
 </template>
