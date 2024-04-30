@@ -17,18 +17,19 @@ function chooseSpecie(specie: string) {
 <template>
     <div class="space-y-3">
         <BaseInput
+            placeholder="ID do Paciente"
+            v-model="patient.patientId"
+            :required="true"
+            @update:model-value="$emit('patient', patient)"
+        />
+
+        <BaseInput
             placeholder="Nome do Paciente"
             v-model="patient.name"
             :required="true"
             @update:model-value="$emit('patient', patient)"
         />
 
-        <BaseInput
-            placeholder="ID do Paciente"
-            v-model="patient.patientId"
-            :required="true"
-            @update:model-value="$emit('patient', patient)"
-        />
         <div class="form-container">
             <div class="flex-1">
                 <select
