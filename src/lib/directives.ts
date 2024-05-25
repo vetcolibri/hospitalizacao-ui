@@ -5,5 +5,5 @@ export const vLatestMeasurement = {
 }
 
 function latestMeasurement(el: HTMLSpanElement, binding: { value: string }) {
-    el.innerHTML = `Ultima medição: ${formatDate(binding.value, 'short')}`
+    el.innerHTML = `Ultima medição: ${formatDate(binding.value)}`
 }
