@@ -34,11 +34,6 @@ const routes = [
         component: () => import('@/views/PatientMeasurements.vue')
     },
     {
-        path: '/recurring-patient/',
-        name: 'RecurringPatient',
-        component: () => import('@/views/RecurringHospitalization.vue')
-    },
-    {
         path: '/register-patient/',
         name: 'RegisterPatient',
         component: () => import('@/views/NewPatient.vue')
