@@ -2,7 +2,6 @@
 import BaseInput from '@/components/BaseInput.vue'
 
 import { ref } from 'vue'
-import { toast } from 'vue3-toastify'
 import { useAuth } from '@/composables/useAuth'
 import { useRouter } from 'vue-router'
 
@@ -13,7 +12,7 @@ const auth = useAuth()
 
 const checkUser = () => {
     if (!auth.login(username.value, password.value)) {
-        toast.error('Credencias inválidas')
+        alert('Credencias inválidas')
         return
     }
     router.push({ name: 'Dashboard' })
