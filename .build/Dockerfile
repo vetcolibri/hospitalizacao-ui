@@ -17,4 +17,8 @@ RUN npm run build
 
 FROM nginx:alpine
 
+EXPOSE 8080
+
 COPY --from=builder /hospitalizacao-ui/dist /usr/share/nginx/html
+
+ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
