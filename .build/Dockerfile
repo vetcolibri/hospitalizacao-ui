@@ -13,11 +13,8 @@ ARG VITE_WS_URL
 
 RUN echo "VITE_SERVER_URL=$VITE_SERVER_URL" >> .env.production
 RUN echo "VITE_WS_URL=$VITE_WS_URL" >> .env.production
-
-# EXPOSE 8080
-
 RUN npm run build
 
 FROM nginx:alpine
 
-COPY --from=builder /dist /usr/share/nginx/html
+COPY --from=builder /hospitalizacao-ui/dist /usr/share/nginx/html
