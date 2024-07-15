@@ -20,10 +20,9 @@ const optionsRef = ref()
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
-
 const searchOptions = computed(() => {
     return props.options.filter((option) =>
-        option.toLowerCase().startsWith(breed.value.toLowerCase()) 
+        option.toLowerCase().startsWith(breed.value.toLowerCase())
     )
 })
 
@@ -35,9 +34,11 @@ function select(idx: number) {
     const option = searchOptions.value[idx]
 
     if (selectedOptions.value.includes(option)) {
-        selectedOptions.value = selectedOptions.value.filter((selectedOption) => selectedOption !== option)
+        selectedOptions.value = selectedOptions.value.filter(
+            (selectedOption) => selectedOption !== option
+        )
         emits('update:modelValue', selectedOptions.value)
-        clearView();
+        clearView()
         return
     }
 
@@ -49,13 +50,13 @@ function select(idx: number) {
     emits('update:modelValue', selectedOptions.value)
 }
 
-function reachedTheLimit() { 
-    return selectedOptions.value.length === props.limit;
+function reachedTheLimit() {
+    return selectedOptions.value.length === props.limit
 }
 
 function clearView() {
-    if (selectedOptions.value.length !== 0) return 
-    inputRef.value!.value = '';
+    if (selectedOptions.value.length !== 0) return
+    inputRef.value!.value = ''
 }
 
 function hasSelected(idx: number) {
@@ -65,9 +66,8 @@ function hasSelected(idx: number) {
 function clearSelectedOptions() {
     selectedOptions.value = []
     inputRef.value!.value = ''
-    emits('update:modelValue', selectedOptions.value);
+    emits('update:modelValue', selectedOptions.value)
 }
-
 
 function hidden(event: Event) {
     if (optionsRef.value && optionsRef.value.contains(event.target)) return
@@ -83,7 +83,7 @@ onMounted(async () => {
         <div
             class="w-full h-full absolute top-0 left-0 p-2 z-20 bg-transparent cursor-pointer"
             @click="toggleOptions()"
-        >            
+        >
             <span v-if="selectedOptions.length > 3">
                 {{ `(${selectedOptions.length})` }} opções escolhidas
             </span>
@@ -92,22 +92,27 @@ onMounted(async () => {
                     {{ option }}
                 </span>
             </div>
-
         </div>
 
-        <input ref="inputRef" type="text" class="form-control form-select z-10" required :placeholder="title"/>
+        <input
+            ref="inputRef"
+            type="text"
+            class="form-control form-select z-10 pointer-events-none"
+            required
+            :placeholder="title"
+        />
 
         <div v-if="showOptions" class="dropdown h-48 space-y-2">
-            <input type="text" class="form-control" v-model="breed"  placeholder="Pesquisar" />
-           
+            <input type="text" class="form-control" v-model="breed" placeholder="Pesquisar" />
+
             <div v-if="limit > 1" class="flex justify-between">
                 <span class="text-xs">São permitidas no máximo {{ limit }} opções</span>
                 <div class="space-x-1 cursor-pointer" @click="clearSelectedOptions()">
                     <i class="bi bi-trash"></i>
-                    <span>Limpar</span>
+                    <span class="text-xs">Limpar</span>
                 </div>
-            </div> 
-            
+            </div>
+
             <ul>
                 <li
                     v-for="(option, idx) in searchOptions"
@@ -118,7 +123,9 @@ onMounted(async () => {
                     <input type="checkbox" :checked="hasSelected(idx)" />
                     <span>{{ option }}</span>
                 </li>
-                <li v-if="searchOptions.length === 0" class="p-2.5">Nenhum resultado encontrado.</li>
+                <li v-if="searchOptions.length === 0" class="p-2.5">
+                    Nenhum resultado encontrado.
+                </li>
             </ul>
         </div>
     </div>

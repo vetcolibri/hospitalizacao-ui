@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
+import Comunication from '@/components/Comunication.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
+import Header from '@/components/Header.vue'
 import Pagination from '@/components/Pagination.vue'
 import ParameterStatus from '@/components/parameters/ParameterStatus.vue'
 
-import { computed, inject, onMounted, ref } from 'vue'
-
-import type { MeasurementModel } from '@/lib/models/measurement'
-import type { RoundService } from '@/lib/services/round_service'
-import { Provided } from '@/lib/provided'
-import { useCurrentPatient } from '@/lib/store/patientStore'
-import { useRouter } from 'vue-router'
-import { formatDate, formatTime } from '@/lib/shared/format_date'
 import { Round } from '@/lib/domain/round'
+import type { MeasurementModel } from '@/lib/models/measurement'
+import { Provided } from '@/lib/provided'
+import type { RoundService } from '@/lib/services/round_service'
+import { formatDate, formatTime } from '@/lib/shared/format_date'
+import { useCurrentPatient } from '@/lib/store/patientStore'
+import { computed, inject, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const ownerInfoDialogRef = ref<typeof Comunication>()
 const measurements = ref<MeasurementModel[]>([])
 const patientStore = useCurrentPatient()
 const patientId = patientStore.patient
@@ -38,6 +39,10 @@ function updatePage(page: number) {
     currentPage.value = page
 }
 
+function openCommunicatioDialog() {
+    ownerInfoDialogRef.value?.open()
+}
+
 onMounted(async () => {
     if (!patientId) return router.back()
     measurements.value = await service.getAllMeasurement(patientId)
@@ -50,14 +55,14 @@ onMounted(async () => {
             <GoBack />
         </Header>
         <main class="main-content">
-            <section class="my-4 lg:max-w-3xl lg:mx-auto">
-                <ul class="flex md:flex-row space-x-3 text-sm">
+            <section class="mx-auto my-4 lg:max-w-3xl">
+                <ul class="flex flex-col space-y-2 text-sm md:space-y-0 md:flex-row md:space-x-3">
                     <li>
                         <router-link
                             :to="{ name: 'DailyRound' }"
                             class="flex items-center p-3 border rounded bg-white space-x-1"
                         >
-                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <i class="bi bi-clipboard2-data-fill mr-2 icon"></i>
                             <span>Ronda diária</span>
                         </router-link>
                     </li>
@@ -66,40 +71,48 @@ onMounted(async () => {
                             class="flex items-center p-3 border rounded bg-white space-x-1"
                             :to="{ name: 'ChooseParameters' }"
                         >
-                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <i class="bi bi-clipboard2-data-fill mr-2 icon"></i>
                             <span>Monitorização continuada</span>
                         </router-link>
                     </li>
+                    <li>
+                        <button
+                            class="flex items-center p-3 border rounded bg-white space-x-1 w-full"
+                            @click="openCommunicatioDialog()"
+                        >
+                            <i class="bi bi-person-fill mr-2 icon"></i>
+                            <span>Informações para o Tutor</span>
+                        </button>
+                    </li>
                 </ul>
             </section>
+
             <section class="container flex flex-col justify-between mb-8">
-                <div class="relative overflow-auto">
-                    <table class="w-full text-sm text-center">
-                        <thead class="text-gray-700 uppercase">
+                <div class="relative overflow-x-auto">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+                        <thead class="text-gray-700 uppercase text-xs bg-gray-50">
                             <tr>
-                                <th class="px-3 py-1 text-left sm:px-6 sm:py-3">Parâmetro</th>
-                                <th class="px-3 py-1 sm:px-6 sm:py-3">Medição (Unid.)</th>
-                                <th class="px-3 py-1 sm:px-6 sm:py-3">Data</th>
-                                <th class="px-3 py-1 sm:px-6 sm:py-3">Hora</th>
-                                <th class="px-3 py-1 sm:px-6 sm:py-3">Estado</th>
+                                <th scope="col" class="px-6 py-3">Parâmetro</th>
+                                <th scope="col" class="px-6 py-3">Medição (Unid.)</th>
+                                <th scope="col" class="px-6 py-3">Data</th>
+                                <th scope="col" class="px-6 py-3">Hora</th>
+                                <th scope="col" class="px-6 py-3">Estado</th>
                             </tr>
                         </thead>
                         <tbody v-if="measurements.length > 0">
                             <tr v-for="parameter of results" class="border-t border-gray-200">
-                                <td
-                                    class="px-3 py-1 font-medium text-gray-900 text-left sm:px-6 sm:py-4"
-                                >
+                                <td class="px-6 py-4">
                                     {{ parameter.title }}
                                 </td>
-                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                <td class="px-6 py-4">
                                     {{ parameter.value }}
                                     {{ parameter.unit }}
                                 </td>
-                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                <td class="px-6 py-4">
                                     {{ formatDate(parameter?.issuedAt) }}
                                 </td>
 
-                                <td class="px-3 py-1 sm:px-6 sm:py-3">
+                                <td class="px-6 py-4">
                                     {{ formatTime(parameter?.issuedAt) }}
                                 </td>
 
@@ -128,6 +141,8 @@ onMounted(async () => {
                 />
             </section>
         </main>
+
+        <Comunication ref="ownerInfoDialogRef" />
         <Footer></Footer>
     </div>
 </template>

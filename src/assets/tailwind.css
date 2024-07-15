@@ -33,7 +33,7 @@ input[type='checkbox'] {
 }
 
 .container {
-    @apply px-4 py-6 border shadow space-y-3 bg-white sm:px-8 lg:max-w-3xl lg:mx-auto;
+    @apply px-4 py-6 border mx-auto shadow space-y-3 bg-white sm:px-8 lg:max-w-3xl;
 }
 
 .form-container {

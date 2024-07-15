@@ -14,11 +14,12 @@ defineProps<Props>()
             'badge-success': status === 'Normal',
             'badge-danger': status !== 'Normal'
         }"
+        class="text-center"
     >
         {{ status ? status : value }}
     </div>
 
-    <div v-if="colors" :class="colors[value]">
+    <div v-if="colors" :class="colors[value]" class="text-center">
         {{ value }}
     </div>
 </template>

@@ -20,7 +20,7 @@ const checkUser = () => {
 </script>
 <template>
     <section class="bg-gray-200 h-screen">
-        <div class="flex flex-col justify-center h-full mx-auto md:max-w-sm">
+        <div class="flex flex-col justify-center h-full mx-auto max-w-sm">
             <div class="md:shadow-lg bg-white p-6 rounded-md">
                 <div class="flex flex-col items-center space-y-4 mb-6">
                     <img src="/img/cvl-192x192.png" width="100" height="100" />
