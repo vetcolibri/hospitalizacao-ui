@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Comunication from '@/components/Comunication.vue'
 import Footer from '@/components/Footer.vue'
 import GoBack from '@/components/GoBack.vue'
 import Header from '@/components/Header.vue'
 import Pagination from '@/components/Pagination.vue'
 import ParameterStatus from '@/components/parameters/ParameterStatus.vue'
+import PatientCondition from '@/components/patients/PatientCondition.vue'
 
 import { Round } from '@/lib/domain/round'
 import type { MeasurementModel } from '@/lib/models/measurement'
@@ -16,7 +16,7 @@ import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const ownerInfoDialogRef = ref<typeof Comunication>()
+const ownerInfoDialogRef = ref<typeof PatientCondition>()
 const measurements = ref<MeasurementModel[]>([])
 const patientStore = useCurrentPatient()
 const patientId = patientStore.patient
@@ -142,7 +142,7 @@ onMounted(async () => {
             </section>
         </main>
 
-        <Comunication ref="ownerInfoDialogRef" />
+        <PatientCondition ref="ownerInfoDialogRef" :patientId="patientId" />
         <Footer></Footer>
     </div>
 </template>

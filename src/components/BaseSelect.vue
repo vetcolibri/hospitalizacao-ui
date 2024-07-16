@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, withDefaults } from 'vue'
 
 interface Props {
     title: string
     options: string[]
     limit: number
+    search: boolean
 }
 
 interface Emits {
@@ -17,7 +18,9 @@ const showOptions = ref<boolean>(false)
 const breed = ref<string>('')
 const optionsRef = ref()
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+    search: true
+})
 const emits = defineEmits<Emits>()
 
 const searchOptions = computed(() => {
@@ -74,6 +77,13 @@ function hidden(event: Event) {
     showOptions.value = false
 }
 
+function clear() {
+    selectedOptions.value = []
+    inputRef.value!.value = ''
+}
+
+defineExpose({ clear })
+
 onMounted(async () => {
     document.addEventListener('click', hidden)
 })
@@ -103,7 +113,13 @@ onMounted(async () => {
         />
 
         <div v-if="showOptions" class="dropdown h-48 space-y-2">
-            <input type="text" class="form-control" v-model="breed" placeholder="Pesquisar" />
+            <input
+                v-if="search"
+                type="text"
+                class="form-control"
+                v-model="breed"
+                placeholder="Pesquisar"
+            />
 
             <div v-if="limit > 1" class="flex justify-between">
                 <span class="text-xs">São permitidas no máximo {{ limit }} opções</span>

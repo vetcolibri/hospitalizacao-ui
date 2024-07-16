@@ -19,6 +19,8 @@ const budgetData = ref()
 
 const patientService = <PatientService>inject(Provided.PatientService)!
 
+const hospitalizationFormRef = ref<typeof HospitalizationForm>()
+
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
@@ -35,6 +37,8 @@ async function hospitalize() {
     }
 
     alert('Paciente hospitalizado com sucesso!')
+
+    hospitalizationFormRef.value?.clear()
 
     form.value?.reset()
 }
@@ -57,7 +61,10 @@ async function hospitalize() {
                 <OwnerForm @owner="ownerData = $event" />
             </section>
 
-            <HospitalizationForm @hospitalization="hospitalizationData = $event" />
+            <HospitalizationForm
+                ref="hospitalizationFormRef"
+                @hospitalization="hospitalizationData = $event"
+            />
 
             <BudgetForm @budget="budgetData = $event" />
         </form>

@@ -14,6 +14,9 @@ interface Hospitalization {
     dischargeDate: string
 }
 
+const complaintsRef = ref<typeof BaseSelect>()
+const diagnosticsRef = ref<typeof BaseSelect>()
+
 const hospitalization = ref<Hospitalization>({
     weight: 0,
     complaints: [],
@@ -22,7 +25,14 @@ const hospitalization = ref<Hospitalization>({
     dischargeDate: ''
 })
 
+function clear() {
+    complaintsRef.value?.clear()
+    diagnosticsRef.value?.clear()
+}
+
 defineEmits<{ (e: 'hospitalization', value: Hospitalization): void }>()
+
+defineExpose({ clear })
 </script>
 
 <template>
@@ -45,6 +55,7 @@ defineEmits<{ (e: 'hospitalization', value: Hospitalization): void }>()
         />
 
         <BaseSelect
+            ref="complaintsRef"
             title="Escolher Queixas"
             v-model="hospitalization.complaints"
             :options="COMPLAINTS"
@@ -53,6 +64,7 @@ defineEmits<{ (e: 'hospitalization', value: Hospitalization): void }>()
         />
 
         <BaseSelect
+            ref="diagnosticsRef"
             title="Escolher Diagnosticos"
             v-model="hospitalization.diagnostics"
             :options="DIAGNOSTICS"
