@@ -24,7 +24,7 @@ const foodTypesRef = ref<typeof BaseSelect>()
 const isDisabled = computed(() => {
     return (
         condition.stateOfConsciousness.length === 0 ||
-        condition.food.type.length === 0 ||
+        condition.food.types.length === 0 ||
         !condition.food.datetime ||
         !condition.food.level ||
         !condition.discharges.type ||
@@ -36,7 +36,7 @@ const isDisabled = computed(() => {
 const condition = reactive<PatientConditionModel>({
     stateOfConsciousness: [],
     food: {
-        type: [],
+        types: [],
         level: '',
         datetime: ''
     },
@@ -69,7 +69,7 @@ function open() {
 
 function clearCondition() {
     condition.stateOfConsciousness = []
-    condition.food.type = []
+    condition.food.types = []
     condition.food.level = ''
     condition.food.datetime = ''
     condition.discharges.type = ''
@@ -133,7 +133,7 @@ defineExpose({ open })
                     :options="FOOD.types"
                     :limit="FOOD.types.length"
                     :search="false"
-                    @update:model-value="condition.food.type = $event"
+                    @update:model-value="condition.food.types = $event"
                 />
 
                 <select class="form-control text-gray-500" @change="chooseFoodLevel" required>
@@ -144,7 +144,7 @@ defineExpose({ open })
                         :value="opt.level"
                         class="text-gray-500"
                     >
-                        {{ opt.level }} - {{ opt.description }}
+                        {{ opt.level }} - {{ opt.title }}
                     </option>
                 </select>
 

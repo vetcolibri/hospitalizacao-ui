@@ -1,7 +1,7 @@
 export type PatientConditionModel = {
     stateOfConsciousness: string[]
     food: {
-        type: string[]
+        types: string[]
         level: string
         datetime: string
     }

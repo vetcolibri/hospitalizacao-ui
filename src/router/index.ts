@@ -14,6 +14,11 @@ const routes = [
         component: () => import('@/views/Login.vue')
     },
     {
+        path: '/resume',
+        name: 'Resume',
+        component: () => import('@/views/Resume.vue')
+    },
+    {
         path: '/daily-round/',
         name: 'DailyRound',
         component: () => import('@/views/DailyRound.vue')
@@ -47,6 +52,15 @@ const router = createRouter({
 
 router.beforeEach((to, _from) => {
     const user = sessionStorage.getItem('user')
+
+    if (to.name === 'Resume' && !user) {
+        return
+    }
+
+    if (to.name === 'Resume' && user) {
+        return { name: 'Dashboard' }
+    }
+
     if (to.name !== 'Login' && !user) return { name: 'Login' }
 })
 
