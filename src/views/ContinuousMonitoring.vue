@@ -128,7 +128,7 @@ onMounted(async () => {
                         Escolher parâmetros
                     </div>
                     <i
-                        class="bi bi-arrow-clockwise text-lg cursor-pointer md:text-xl"
+                        class="bi bi-trash text-lg cursor-pointer md:text-xl"
                         @click="dailyRound.reset()"
                     ></i>
                 </div>
