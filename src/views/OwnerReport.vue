@@ -1,43 +1,40 @@
 <script setup lang="ts">
-import { findLevelDescription } from '@/lib/data/food'
-import { formatDate, formatTime } from '@/lib/shared/format_date'
+import { findLevelDescription, findLevelTitle } from '@/lib/data/food'
 import { type OwnerReportModel } from '@/lib/models/owner'
-import { onMounted, ref } from 'vue'
+import { Provided } from '@/lib/provided'
+import { type CrmService } from '@/lib/services/crm_service'
+import { formatDate, formatTime } from '@/lib/shared/format_date'
+import { inject, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-const viewPatientResume = ref<boolean>(true)
 const report = ref<OwnerReportModel>()
-
+const viewPatientResume = ref<boolean>(true)
 const route = useRoute()
 const hasRouteQuery = route.query && Object.keys(route.query).length > 0
+const service = inject<CrmService>(Provided.CrmService)!
 
 function verifyQuery() {
     if (hasRouteQuery) return
     viewPatientResume.value = false
 }
 
-function getReport(): OwnerReportModel {
-    return {
-        ownerName: 'Maria da Silva',
-        patientName: 'João da Silva',
-        stateOfConsciousness: ['Consciente'],
-        food: {
-            types: ['Sólida'],
-            level: '1',
-            datetime: '2022-01-01T12:00:00'
-        },
-        discharges: {
-            type: 'Urina',
-            aspect: 'Clara'
-        },
-        budgetStatus: 'Aguardando aprovação',
-        comments: 'Paciente está bem'
+async function lastReport() {
+    const dataOrErr = await service.lastReport(
+        route.query.patientId as string,
+        route.query.ownerId as string,
+        route.query.hospitalizationId as string
+    )
+
+    if (dataOrErr.isLeft()) {
+        return
     }
+
+    return dataOrErr.value
 }
 
-onMounted(() => {
+onMounted(async () => {
     verifyQuery()
-    report.value = getReport()
+    report.value = await lastReport()
 })
 </script>
 
@@ -96,7 +93,7 @@ onMounted(() => {
                     <ul class="patient-info">
                         <li class="patient-info-item">
                             <span>Nível</span>
-                            <span>{{ report?.food.level }}</span>
+                            <span>{{ findLevelTitle(report?.food.level) }}</span>
                         </li>
                         <li class="text-sm text-justify">
                             {{ findLevelDescription(report?.food.level) }}
@@ -110,11 +107,11 @@ onMounted(() => {
                     <ul class="patient-info">
                         <li class="patient-info-item">
                             <span>Tipo</span>
-                            <span>{{ report?.discharges.type }}</span>
+                            <span>{{ report?.discharge.type }}</span>
                         </li>
                         <li class="patient-info-item">
                             <span>Aspecto</span>
-                            <span>{{ report?.discharges.aspect }}</span>
+                            <span>{{ report?.discharge.aspect }}</span>
                         </li>
                     </ul>
 
@@ -133,7 +130,7 @@ onMounted(() => {
                         <h2>Observações</h2>
                     </div>
 
-                    <p class="text-gray-500 text-justify text-sm patient-info-item">
+                    <p class="text-gray-500 text-justify text-sm patient-info-item h-32">
                         {{ report?.comments }}
                     </p>
                 </div>

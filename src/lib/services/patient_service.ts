@@ -1,12 +1,11 @@
 import type { ApiClient } from '@/lib/apiClient/api_client'
+import type { ApiError } from '@/lib/apiClient/api_error'
+import type { BudgetModel } from '@/lib/models/budget'
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
+import type { OwnerModel } from '@/lib/models/owner'
 import type { PatientModel } from '@/lib/models/patient'
 import type { Either } from '@/lib/shared/either'
 import { left, right } from '@/lib/shared/either'
-import type { ApiError } from '../apiClient/api_error'
-import type { BudgetModel } from '../models/budget'
-import type { OwnerModel } from '../models/owner'
-import type { PatientConditionModel } from '../models/patient_condition'
 
 export interface PatientService {
     listHospitalized(): Promise<PatientModel[]>
@@ -23,7 +22,6 @@ export interface PatientService {
         patientId: string,
         status: string
     ): Promise<Either<ApiError, void>>
-    registerCondition(patientId: string, condition: PatientConditionModel): Promise<void>
 }
 
 export class PatientServiceImpl implements PatientService {
@@ -125,19 +123,6 @@ export class PatientServiceImpl implements PatientService {
 
         alert('Orçamento salvo com sucesso')
         return right(undefined)
-    }
-
-    async registerCondition(patientId: string, condition: PatientConditionModel): Promise<void> {
-        const url = `${this.baseUrl}/${this.resource}/register-condition`
-
-        const resOrErr = await this.apiClient.post(url, { patientId, condition })
-        if (resOrErr.isLeft()) {
-            console.error(resOrErr.value)
-            alert('Não foi possível registrar as informações para o Tutor')
-            return
-        }
-
-        alert('Informações para o Tutor registradas com sucesso')
     }
 }
 

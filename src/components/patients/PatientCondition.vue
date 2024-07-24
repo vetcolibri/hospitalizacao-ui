@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import BaseDialog from '@/components/BaseDialog.vue'
+import BaseInput from '@/components/BaseInput.vue'
+import BaseSelect from '@/components/BaseSelect.vue'
 import { DISCHARGES } from '@/lib/data/discharges'
 import { FOOD } from '@/lib/data/food'
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness'
-import { type PatientConditionModel } from '@/lib/models/patient_condition'
+import { type ReportModel } from '@/lib/models/report'
 import { Provided } from '@/lib/provided'
-import { type PatientService } from '@/lib/services/patient_service'
+import { type CrmService } from '@/lib/services/crm_service'
 import { computed, inject, reactive, ref } from 'vue'
-import BaseDialog from '../BaseDialog.vue'
-import BaseInput from '../BaseInput.vue'
-import BaseSelect from '../BaseSelect.vue'
 
 interface Props {
     patientId: string
@@ -16,31 +16,31 @@ interface Props {
 
 const props = defineProps<Props>()
 const formRef = ref<HTMLFormElement>()
-const service = <PatientService>inject(Provided.PatientService)
+const service = <CrmService>inject(Provided.CrmService)
 const dialogRef = ref<typeof BaseDialog>()
 const stateOfConsRef = ref<typeof BaseSelect>()
 const foodTypesRef = ref<typeof BaseSelect>()
 
 const isDisabled = computed(() => {
     return (
-        condition.stateOfConsciousness.length === 0 ||
-        condition.food.types.length === 0 ||
-        !condition.food.datetime ||
-        !condition.food.level ||
-        !condition.discharges.type ||
-        !condition.discharges.aspect ||
-        !condition.comments
+        report.stateOfConsciousness.length === 0 ||
+        report.food.types.length === 0 ||
+        !report.food.datetime ||
+        !report.food.level ||
+        !report.discharge.type ||
+        !report.discharge.aspect ||
+        !report.comments
     )
 })
 
-const condition = reactive<PatientConditionModel>({
+const report = reactive<ReportModel>({
     stateOfConsciousness: [],
     food: {
         types: [],
         level: '',
         datetime: ''
     },
-    discharges: {
+    discharge: {
         type: '',
         aspect: ''
     },
@@ -48,19 +48,19 @@ const condition = reactive<PatientConditionModel>({
 })
 
 function chooseFoodLevel(event: Event) {
-    condition.food.level = (event.target as HTMLSelectElement).value
+    report.food.level = (event.target as HTMLSelectElement).value
 }
 
 function chooseDischargeType(event: Event) {
-    condition.discharges.type = (event.target as HTMLSelectElement).value
+    report.discharge.type = (event.target as HTMLSelectElement).value
 }
 
 function chooseDischargeAspect(event: Event) {
-    condition.discharges.aspect = (event.target as HTMLSelectElement).value
+    report.discharge.aspect = (event.target as HTMLSelectElement).value
 }
 
 function updateComments(event: Event) {
-    condition.comments = (event.target as HTMLTextAreaElement).value
+    report.comments = (event.target as HTMLTextAreaElement).value
 }
 
 function open() {
@@ -68,13 +68,13 @@ function open() {
 }
 
 function clearCondition() {
-    condition.stateOfConsciousness = []
-    condition.food.types = []
-    condition.food.level = ''
-    condition.food.datetime = ''
-    condition.discharges.type = ''
-    condition.discharges.aspect = ''
-    condition.comments = ''
+    report.stateOfConsciousness = []
+    report.food.types = []
+    report.food.level = ''
+    report.food.datetime = ''
+    report.discharge.type = ''
+    report.discharge.aspect = ''
+    report.comments = ''
 }
 
 function close() {
@@ -94,7 +94,7 @@ function clear() {
 async function save() {
     if (isDisabled.value) return
 
-    await service.registerCondition(props.patientId, condition)
+    await service.registerReport(props.patientId, report)
 
     clear()
 
@@ -115,7 +115,7 @@ defineExpose({ open })
                     :options="STATE_OF_CONSCIOUSNESS"
                     :limit="STATE_OF_CONSCIOUSNESS.length"
                     :search="false"
-                    @update:model-value="condition.stateOfConsciousness = $event"
+                    @update:model-value="report.stateOfConsciousness = $event"
                 />
 
                 <h1>Alimentação</h1>
@@ -124,7 +124,7 @@ defineExpose({ open })
                     type="datetime-local"
                     class="text-gray-500"
                     :required="true"
-                    @update:model-value="condition.food.datetime = $event"
+                    @update:model-value="report.food.datetime = $event"
                 />
 
                 <BaseSelect
@@ -133,7 +133,7 @@ defineExpose({ open })
                     :options="FOOD.types"
                     :limit="FOOD.types.length"
                     :search="false"
-                    @update:model-value="condition.food.types = $event"
+                    @update:model-value="report.food.types = $event"
                 />
 
                 <select class="form-control text-gray-500" @change="chooseFoodLevel" required>

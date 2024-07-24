@@ -6,14 +6,14 @@ import type { PatientModel } from '@/lib/models/patient'
 import { Provided } from '@/lib/provided'
 import type { AlertService } from '@/lib/services/alert_service'
 import type { BudgetService } from '@/lib/services/budget_service'
+import type { CrmService } from '@/lib/services/crm_service'
 import type { HospitalizationService } from '@/lib/services/hospitalization_service'
-import type { OwnerService } from '@/lib/services/owner_service'
 import type { PatientService } from '@/lib/services/patient_service'
 import { inject, ref } from 'vue'
 
 export function usePageData() {
     const patientService = inject<PatientService>(Provided.PatientService)!
-    const ownerService = inject<OwnerService>(Provided.OwnerService)!
+    const ownerService = inject<CrmService>(Provided.CrmService)!
     const hospitalizationService = inject<HospitalizationService>(Provided.HospitalizationService)!
     const budgetService = inject<BudgetService>(Provided.BudgetService)!
     const alertServie = inject<AlertService>(Provided.AlertService)!
@@ -29,7 +29,7 @@ export function usePageData() {
         patients.value = await patientService.listHospitalized()
         hospitalizations.value = await hospitalizationService.getAll()
         budgets.value = await budgetService.getAll()
-        alerts.value = await alertServie.activeAlerts()
+        alerts.value = await alertServie.getActives()
     }
 
     return {

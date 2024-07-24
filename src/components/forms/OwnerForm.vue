@@ -2,15 +2,15 @@
 import BaseInput from '@/components/BaseInput.vue'
 import type { OwnerModel } from '@/lib/models/owner'
 import { Provided } from '@/lib/provided'
-import type { OwnerService } from '@/lib/services/owner_service'
-import { ref, onMounted, inject } from 'vue'
+import type { CrmService } from '@/lib/services/crm_service'
+import { inject, onMounted, ref } from 'vue'
 const owners = ref<OwnerModel[]>([])
 
 const owner = ref({ ownerId: '', name: '', phoneNumber: '' })
 const ownerExists = ref<boolean>(false)
 
 const emits = defineEmits<{ (e: 'owner', value: OwnerModel): void }>()
-const ownerService = <OwnerService>inject(Provided.OwnerService)!
+const ownerService = <CrmService>inject(Provided.CrmService)!
 
 function findOwner(ownerId: string) {
     if (!ownerId) {

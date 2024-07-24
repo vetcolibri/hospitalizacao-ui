@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ChooseBreed from '@/components/forms/ChooseBreed.vue'
 import BaseInput from '@/components/BaseInput.vue'
+import ChooseBreed from '@/components/forms/ChooseBreed.vue'
 import { findBreed } from '@/lib/shared/find_breed'
 import { ref } from 'vue'
 
