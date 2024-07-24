@@ -7,7 +7,7 @@ import { left, right } from '@/lib/shared/either'
 export interface AlertService {
     schedule(data: AlertData): Promise<Either<ApiError, void>>
     cancel(alertId: string): Promise<Either<ApiError, void>>
-    activeAlerts(): Promise<AlertModel[]>
+    getActives(): Promise<AlertModel[]>
 }
 
 export class AlertServiceImpl implements AlertService {
@@ -42,7 +42,7 @@ export class AlertServiceImpl implements AlertService {
         return right(undefined)
     }
 
-    async activeAlerts(): Promise<AlertModel[]> {
+    async getActives(): Promise<AlertModel[]> {
         const url = `${this.baseUrl}/${this.resource}/active`
 
         const resOrErr = await this.apiClient.get(url)
