@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, withDefaults } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 interface Props {
     title: string

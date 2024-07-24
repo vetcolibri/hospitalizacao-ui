@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { usePageData } from '@/composables/usePageData'
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
 import { Provided } from '@/lib/provided'
 import type { PatientService } from '@/lib/services/patient_service'
