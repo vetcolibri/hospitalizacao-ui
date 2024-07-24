@@ -16,7 +16,7 @@ const routes = [
     {
         path: '/resume',
         name: 'Resume',
-        component: () => import('@/views/Resume.vue')
+        component: () => import('@/views/OwnerReport.vue')
     },
     {
         path: '/daily-round/',

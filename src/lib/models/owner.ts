@@ -1,4 +1,4 @@
-import type { PatientConditionModel } from './patient_condition'
+import type { ReportModel } from './report'
 
 export interface OwnerModel {
     ownerId: string
@@ -6,7 +6,7 @@ export interface OwnerModel {
     phoneNumber: string
 }
 
-export interface OwnerReportModel extends PatientConditionModel {
+export interface OwnerReportModel extends ReportModel {
     ownerName: string
     patientName: string
     budgetStatus: string

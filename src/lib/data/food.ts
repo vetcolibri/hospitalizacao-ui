@@ -70,6 +70,16 @@ export const FOOD = {
     ]
 }
 
+export function findLevelTitle(level?: string) {
+    if (!level) return 'N/A'
+
+    const title = FOOD.levels.find((l) => l.level === level)?.title
+
+    if (!title) return 'N/A'
+
+    return title
+}
+
 export function findLevelDescription(level?: string) {
     if (!level) return 'N/A'
 

@@ -7,9 +7,9 @@ import type { Either } from '../shared/either'
 import { left, right } from '../shared/either'
 
 export class AxiosAdapter implements ApiClient {
-    async get(url: string): Promise<Either<ApiError, ApiResponse>> {
+    async get(url: string, params: any): Promise<Either<ApiError, ApiResponse>> {
         try {
-            const response = await axios.get(url)
+            const response = await axios.get(url, { params })
             return Promise.resolve(right({ status: response.status, data: response.data }))
         } catch (Error) {
             const error = <AxiosError>Error
