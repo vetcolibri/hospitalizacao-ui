@@ -1,5 +1,5 @@
-import type { ApiClient } from '../apiClient/api_client'
-import type { BudgetModel } from '../models/budget'
+import type { ApiClient } from '@/lib/apiClient/api_client'
+import type { BudgetModel } from '@/lib/models/budget'
 
 export interface BudgetService {
     getAll(): Promise<BudgetModel[]>
