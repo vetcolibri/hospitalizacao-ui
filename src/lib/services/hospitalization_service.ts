@@ -1,5 +1,5 @@
-import type { ApiClient } from '../apiClient/api_client'
-import type { HospitalizationModel } from '../models/hospitalization'
+import type { ApiClient } from '@/lib/apiClient/api_client'
+import type { HospitalizationModel } from '@/lib/models/hospitalization'
 
 export interface HospitalizationService {
     getAll(): Promise<HospitalizationModel[]>
