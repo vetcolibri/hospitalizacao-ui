@@ -12,6 +12,8 @@ import { computed, inject, reactive, ref } from 'vue'
 
 interface Props {
     patientId: string
+    ownerId: string
+    hospitalizationId: string
 }
 
 const props = defineProps<Props>()
@@ -89,6 +91,15 @@ function clear() {
     foodTypesRef.value?.clear()
 
     clearCondition()
+}
+
+function copy() {
+    navigator.clipboard.writeText(buildLink())
+    alert('Link para o tutor copiado')
+}
+
+function buildLink() {
+    return `${window.location.origin}/resume?patientId=${props.patientId}&ownerId=${props.ownerId}&hospitalizationId=${props.hospitalizationId}`
 }
 
 async function save() {
@@ -183,9 +194,13 @@ defineExpose({ open })
                     @input="updateComments"
                 />
 
-                <button type="reset" class="btn btn-secondary w-full uppercase" @click="clear()">
+                <!-- <button type="reset" class="btn btn-secondary w-full uppercase" @click="clear()">
                     <i class="bi bi-trash mr-2"></i>
                     Limpar
+                </button> -->
+                <button type="reset" class="btn btn-secondary w-full uppercase" @click="copy()">
+                    <i class="bi bi-share mr-2"></i>
+                    Partilhar
                 </button>
                 <button
                     type="button"

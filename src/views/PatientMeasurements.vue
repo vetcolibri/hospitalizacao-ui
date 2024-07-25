@@ -16,10 +16,10 @@ import { computed, inject, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const ownerInfoDialogRef = ref<typeof PatientCondition>()
+const patientConditionRef = ref<typeof PatientCondition>()
 const measurements = ref<MeasurementModel[]>([])
 const patientStore = useCurrentPatient()
-const patientId = patientStore.patient
+const { patientId } = patientStore.patient
 const service = inject<RoundService>(Provided.RoundService)!
 const round = ref()
 
@@ -39,8 +39,8 @@ function updatePage(page: number) {
     currentPage.value = page
 }
 
-function openCommunicatioDialog() {
-    ownerInfoDialogRef.value?.open()
+function openReportDialog() {
+    patientConditionRef.value?.open()
 }
 
 onMounted(async () => {
@@ -78,7 +78,7 @@ onMounted(async () => {
                     <li>
                         <button
                             class="flex items-center p-3 border rounded bg-white space-x-1 w-full"
-                            @click="openCommunicatioDialog()"
+                            @click="openReportDialog()"
                         >
                             <i class="bi bi-person-fill mr-2 icon"></i>
                             <span>Informações para o Tutor</span>
@@ -142,7 +142,12 @@ onMounted(async () => {
             </section>
         </main>
 
-        <PatientCondition ref="ownerInfoDialogRef" :patientId="patientId" />
+        <PatientCondition
+            ref="patientConditionRef"
+            :patientId="patientStore.patient.patientId"
+            :ownerId="patientStore.patient.ownerId"
+            :hospitalizationId="patientStore.patient.hospitalizationId"
+        />
         <Footer></Footer>
     </div>
 </template>

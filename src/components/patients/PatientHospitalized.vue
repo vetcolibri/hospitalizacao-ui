@@ -18,7 +18,7 @@ interface Props {
 }
 
 interface Emits {
-    (e: 'nextPage', patientId: string): void
+    (e: 'nextPage', patientId: string, owerId?: string, hospitalization?: string): void
     (e: 'reloadPage'): void
 }
 
@@ -89,7 +89,14 @@ function isPending(patient: PatientModel) {
         </div>
         <div
             class="flex flex-col justify-center cursor-pointer gap-1 mt-4"
-            @click="$emit('nextPage', patient.systemId)"
+            @click="
+                $emit(
+                    'nextPage',
+                    patient.systemId,
+                    patient.ownerId,
+                    findHospitalization(patient.systemId)?.hospitalizationId
+                )
+            "
         >
             <ul class="patient-info">
                 <li class="patient-info-item">

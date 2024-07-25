@@ -51,7 +51,7 @@ async function schedule() {
     }
 
     const voidOrErr = await alertService.schedule({
-        patientId: patientStore.patient,
+        patientId: patientStore.patient.patientId,
         parameters: selectedParameters.value,
         time: date.toISOString(),
         rate: convertInSeconds(rate, unit),
