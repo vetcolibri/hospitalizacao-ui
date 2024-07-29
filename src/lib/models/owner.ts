@@ -4,6 +4,7 @@ export interface OwnerModel {
     ownerId: string
     name: string
     phoneNumber: string
+    whatsapp: boolean
 }
 
 export interface OwnerReportModel extends ReportModel {

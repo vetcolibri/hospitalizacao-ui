@@ -6,11 +6,11 @@ import type { CrmService } from '@/lib/services/crm_service'
 import { inject, onMounted, ref } from 'vue'
 const owners = ref<OwnerModel[]>([])
 
-const owner = ref({ ownerId: '', name: '', phoneNumber: '' })
+const owner = ref({ ownerId: '', name: '', phoneNumber: '', whatsapp: false })
 const ownerExists = ref<boolean>(false)
 
 const emits = defineEmits<{ (e: 'owner', value: OwnerModel): void }>()
-const ownerService = <CrmService>inject(Provided.CrmService)!
+const crmService = <CrmService>inject(Provided.CrmService)!
 
 function findOwner(ownerId: string) {
     if (!ownerId) {
@@ -31,7 +31,8 @@ function findOwner(ownerId: string) {
     owner.value = {
         ownerId: voidOrOwner.ownerId,
         name: voidOrOwner.name,
-        phoneNumber: voidOrOwner.phoneNumber
+        phoneNumber: voidOrOwner.phoneNumber,
+        whatsapp: voidOrOwner.whatsapp
     }
     emits('owner', owner.value)
 }
@@ -40,22 +41,23 @@ function clearOwnerData() {
     if (!owner.value.name || !owner.value.phoneNumber) return
 
     ownerExists.value = false
-    owner.value = { ownerId: '', name: '', phoneNumber: '' }
+    owner.value = { ownerId: '', name: '', phoneNumber: '', whatsapp: false }
     emits('owner', owner.value)
 }
 
 onMounted(async () => {
-    owners.value = await ownerService.getAll()
+    owners.value = await crmService.getOwners()
 })
 </script>
 <template>
     <div class="space-y-3">
         <BaseInput
-            placeholder="ID Próprietário"
+            placeholder="ID Proprietário"
             v-model="owner.ownerId"
             :required="true"
             @update:model-value="findOwner($event)"
         />
+
         <div class="form-container">
             <BaseInput
                 class="flex-1"
@@ -75,6 +77,14 @@ onMounted(async () => {
                 :disabled="ownerExists"
                 @update:model-value="$emit('owner', owner)"
             />
+        </div>
+        <div v-if="!ownerExists" class="flex items-center space-x-2">
+            <input type="checkbox" v-model="owner.whatsapp" />
+            <label for="whatsapp">Marque caso o proprietário do paciente tem WhatsApp.</label>
+        </div>
+        <div v-else>
+            <p v-if="owner.whatsapp">Proprietário tem WhatsApp.</p>
+            <p v-else>Proprietário não tem WhatsApp.</p>
         </div>
     </div>
 </template>

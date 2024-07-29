@@ -25,7 +25,7 @@ export function usePageData() {
     const alerts = ref<AlertModel[]>([])
 
     const loadData = async () => {
-        owners.value = await ownerService.getAll()
+        owners.value = await ownerService.getOwners()
         patients.value = await patientService.listHospitalized()
         hospitalizations.value = await hospitalizationService.getAll()
         budgets.value = await budgetService.getAll()

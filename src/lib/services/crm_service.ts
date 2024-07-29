@@ -5,7 +5,7 @@ import type { ReportModel } from '@/lib/models/report'
 import { left, right, type Either } from '@/lib/shared/either'
 
 export interface CrmService {
-    getAll(): Promise<OwnerModel[]>
+    getOwners(): Promise<OwnerModel[]>
     findOwner(ownerId: string): Promise<Either<ApiError, OwnerModel>>
     registerReport(patientId: string, report: ReportModel): Promise<void>
     lastReport(
@@ -26,7 +26,7 @@ export class CrmServiceImpl implements CrmService {
         this.resource = 'owners'
     }
 
-    async getAll(): Promise<OwnerModel[]> {
+    async getOwners(): Promise<OwnerModel[]> {
         const url = `${this.baseUrl}/${this.resource}/`
 
         const resOrErr = await this.apiClient.get(url)

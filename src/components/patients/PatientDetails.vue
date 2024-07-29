@@ -39,16 +39,23 @@ withDefaults(defineProps<Props>(), { active: false })
             <span class="patient-info-text">{{ patient.breed }}</span>
         </li>
         <li class="patient-info-item">
-            <span>ID Proprietário </span>
+            <span>ID Proprietário</span>
             <span class="patient-info-text">{{ owner?.ownerId }}</span>
         </li>
         <li class="patient-info-item">
-            <span>Proprietário </span>
+            <span>Proprietário</span>
             <span class="patient-info-text">{{ owner?.name }}</span>
         </li>
         <li class="patient-info-item">
-            <span>Telemóvel </span>
+            <span>Telemóvel</span>
             <span class="patient-info-text">{{ owner?.phoneNumber }}</span>
+        </li>
+        <li class="patient-info-item">
+            <span>WhatsApp</span>
+            <span class="patient-info-text">
+                <i v-if="owner?.whatsapp" class="bi bi-check-circle-fill text-green-500"></i>
+                <i v-else class="bi bi-x-circle-fill text-red-500"></i>
+            </span>
         </li>
     </ul>
 </template>
