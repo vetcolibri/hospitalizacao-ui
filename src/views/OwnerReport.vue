@@ -42,9 +42,18 @@ onMounted(async () => {
     <section class="bg-gray-200 p-4 sm:h-screen">
         <div class="flex flex-col justify-center h-full mx-auto max-w-sm sm:max-w-xl">
             <div v-if="viewPatientResume" class="bg-white p-4 rounded sm:p-8">
-                <h1 class="text-2xl text-center font-medium mb-4">Resumo</h1>
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl text-center font-medium mb-4">Resumo</h1>
+                    <span class="text-xs text-gray-500">
+                        {{ formatDate(report?.createdAt) }} às {{ formatTime(report?.createdAt) }}
+                    </span>
+                </div>
                 <div class="space-y-3">
                     <ul class="patient-info">
+                        <li class="patient-info-item">
+                            <span>ID Paciente</span>
+                            <span>{{ report?.patientId }}</span>
+                        </li>
                         <li class="patient-info-item">
                             <span>Paciente</span>
                             <span>{{ report?.patientName }}</span>

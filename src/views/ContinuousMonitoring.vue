@@ -79,8 +79,7 @@ function confirm() {
 async function save() {
     const voidOrErr = await service.newRound(patientStore.patient.patientId, dailyRound.data)
     if (voidOrErr.isLeft()) {
-        alert('Não foi possível salvar os parâmetros')
-        console.error(voidOrErr.value.message)
+        alert(voidOrErr.value.message)
         return
     }
 

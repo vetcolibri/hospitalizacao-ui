@@ -34,8 +34,7 @@ function getMeasurement(parameter: string) {
 async function save() {
     const voidOrErr = await roundService.newRound(patientStore.patient.patientId, dailyRound.data)
     if (voidOrErr.isLeft()) {
-        alert('Não foi possível salvar os parâmetros')
-        console.error(voidOrErr.value)
+        alert(voidOrErr.value.message)
         return
     }
 

@@ -10,5 +10,7 @@ export interface OwnerModel {
 export interface OwnerReportModel extends ReportModel {
     ownerName: string
     patientName: string
+    patientId: string
     budgetStatus: string
+    createdAt: string
 }
