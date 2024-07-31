@@ -25,18 +25,6 @@ const dialogRef = ref<typeof BaseDialog>()
 const stateOfConsRef = ref<typeof BaseSelect>()
 const foodTypesRef = ref<typeof BaseSelect>()
 
-const isDisabled = computed(() => {
-    return (
-        report.stateOfConsciousness.length === 0 ||
-        report.food.types.length === 0 ||
-        !report.food.datetime ||
-        !report.food.level ||
-        !report.discharge.type ||
-        !report.discharge.aspect ||
-        !report.comments
-    )
-})
-
 const report = reactive<ReportModel>({
     stateOfConsciousness: [],
     food: {
@@ -45,23 +33,35 @@ const report = reactive<ReportModel>({
         datetime: ''
     },
     discharge: {
-        type: '',
-        aspect: ''
+        types: [],
+        aspects: []
     },
     comments: ''
+})
+
+const isDisabled = computed(() => {
+    return (
+        report.stateOfConsciousness.length === 0 ||
+        report.food.types.length === 0 ||
+        report.discharge.types.length === 0 ||
+        report.discharge.aspects.length === 0 ||
+        !report.food.datetime ||
+        !report.food.level ||
+        !report.comments
+    )
 })
 
 function chooseFoodLevel(event: Event) {
     report.food.level = (event.target as HTMLSelectElement).value
 }
 
-function chooseDischargeType(event: Event) {
-    report.discharge.type = (event.target as HTMLSelectElement).value
-}
+// function chooseDischargeType(event: Event) {
+//     report.discharge.types = (event.target as HTMLSelectElement).value
+// }
 
-function chooseDischargeAspect(event: Event) {
-    report.discharge.aspect = (event.target as HTMLSelectElement).value
-}
+// function chooseDischargeAspect(event: Event) {
+//     report.discharge.aspects = (event.target as HTMLSelectElement).value
+// }
 
 function updateComments(event: Event) {
     report.comments = (event.target as HTMLTextAreaElement).value
@@ -76,8 +76,8 @@ function clearCondition() {
     report.food.types = []
     report.food.level = ''
     report.food.datetime = ''
-    report.discharge.type = ''
-    report.discharge.aspect = ''
+    report.discharge.types = []
+    report.discharge.aspects = []
     report.comments = ''
 }
 
@@ -188,29 +188,21 @@ defineExpose({ open })
 
                 <h1>Descargas</h1>
 
-                <select class="form-control text-gray-500" @change="chooseDischargeType" required>
-                    <option value class="text-gray-500">Escolha um tipo</option>
-                    <option
-                        v-for="opt in DISCHARGES.types"
-                        :key="opt"
-                        :value="opt"
-                        class="text-gray-500"
-                    >
-                        {{ opt }}
-                    </option>
-                </select>
+                <BaseSelect
+                    title="Escolha os tipos"
+                    :options="DISCHARGES.types"
+                    :limit="DISCHARGES.types.length"
+                    :search="false"
+                    @update:model-value="report.discharge.types = $event"
+                />
 
-                <select class="form-control text-gray-500" @change="chooseDischargeAspect" required>
-                    <option value class="text-gray-500">Escolha um aspecto</option>
-                    <option
-                        v-for="opt in DISCHARGES.aspects"
-                        :key="opt"
-                        :value="opt"
-                        class="text-gray-500"
-                    >
-                        {{ opt }}
-                    </option>
-                </select>
+                <BaseSelect
+                    title="Escolha os aspectos"
+                    :options="DISCHARGES.aspects"
+                    :limit="DISCHARGES.aspects.length"
+                    :search="false"
+                    @update:model-value="report.discharge.aspects = $event"
+                />
 
                 <h1>Observações</h1>
                 <textarea

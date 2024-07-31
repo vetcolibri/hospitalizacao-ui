@@ -132,11 +132,25 @@ onMounted(async () => {
                     <ul class="patient-info">
                         <li class="patient-info-item">
                             <span>Tipo</span>
-                            <span>{{ currentReport?.discharge.type }}</span>
+                            <div class="flex flex-wrap">
+                                <span
+                                    v-for="opt in currentReport?.discharge.types"
+                                    class="badge badge-dark mr-2"
+                                >
+                                    {{ opt }}
+                                </span>
+                            </div>
                         </li>
                         <li class="patient-info-item">
                             <span>Aspecto</span>
-                            <span>{{ currentReport?.discharge.aspect }}</span>
+                            <div class="flex flex-wrap">
+                                <span
+                                    v-for="opt in currentReport?.discharge.aspects"
+                                    class="badge badge-dark mr-2"
+                                >
+                                    {{ opt }}
+                                </span>
+                            </div>
                         </li>
                     </ul>
                 </div>

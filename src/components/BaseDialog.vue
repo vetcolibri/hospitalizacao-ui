@@ -19,7 +19,7 @@ defineProps<Props>()
 defineExpose({ open, close })
 </script>
 <template>
-    <dialog ref="dialogRef" class="w-full md:max-w-xl rounded-lg">
+    <dialog ref="dialogRef" class="w-full md:max-w-lg rounded-lg">
         <div class="bg-white shadow">
             <div class="relative w-full max-h-full mx-auto">
                 <div class="px-6 py-4 border-b rounded-t">

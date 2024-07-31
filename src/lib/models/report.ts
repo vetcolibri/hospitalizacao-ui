@@ -6,8 +6,8 @@ export type ReportModel = {
         datetime: string
     }
     discharge: {
-        type: string
-        aspect: string
+        types: string[]
+        aspects: string[]
     }
     comments: string
 }
