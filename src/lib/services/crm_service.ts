@@ -8,11 +8,11 @@ export interface CrmService {
     getOwners(): Promise<OwnerModel[]>
     findOwner(ownerId: string): Promise<Either<ApiError, OwnerModel>>
     registerReport(patientId: string, report: ReportModel): Promise<void>
-    lastReport(
+    getReports(
         patientId: string,
         ownerId: string,
         hospitalizationId: string
-    ): Promise<Either<ApiError, OwnerReportModel>>
+    ): Promise<Either<ApiError, OwnerReportModel[]>>
 }
 
 export class CrmServiceImpl implements CrmService {
@@ -60,12 +60,12 @@ export class CrmServiceImpl implements CrmService {
         alert('Informações para o Tutor registradas com sucesso')
     }
 
-    async lastReport(
+    async getReports(
         patientId: string,
         ownerId: string,
         hospitalizationId: string
-    ): Promise<Either<ApiError, OwnerReportModel>> {
-        const url = `${this.baseUrl}/owners/last-report`
+    ): Promise<Either<ApiError, OwnerReportModel[]>> {
+        const url = `${this.baseUrl}/owners/reports`
 
         const resOrErr = await this.apiClient.get(url, { patientId, ownerId, hospitalizationId })
         if (resOrErr.isLeft()) {

@@ -8,6 +8,7 @@ export interface OwnerModel {
 }
 
 export interface OwnerReportModel extends ReportModel {
+    reportId: string
     ownerName: string
     patientName: string
     patientId: string
