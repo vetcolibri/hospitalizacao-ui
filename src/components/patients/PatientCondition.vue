@@ -5,6 +5,7 @@ import BaseSelect from '@/components/BaseSelect.vue'
 import { DISCHARGES } from '@/lib/data/discharges'
 import { FOOD } from '@/lib/data/food'
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness'
+import { type OwnerModel } from '@/lib/models/owner'
 import { type ReportModel } from '@/lib/models/report'
 import { Provided } from '@/lib/provided'
 import { type CrmService } from '@/lib/services/crm_service'
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const owner = ref<OwnerModel>()
 const formRef = ref<HTMLFormElement>()
 const service = <CrmService>inject(Provided.CrmService)
 const dialogRef = ref<typeof BaseDialog>()
@@ -91,6 +93,31 @@ function clear() {
     foodTypesRef.value?.clear()
 
     clearCondition()
+}
+
+async function shareOrCopy() {
+    const ownerOrErr = await service.findOwner(props.ownerId)
+
+    if (ownerOrErr.isLeft()) {
+        alert(ownerOrErr.value.message)
+        return
+    }
+
+    owner.value = ownerOrErr.value
+
+    if (owner.value!.whatsapp) {
+        share()
+        return
+    }
+
+    copy()
+}
+
+function share() {
+    window.open(
+        `https://api.whatsapp.com/send?phone=${owner.value!.phoneNumber}&text=${encodeURIComponent(buildLink())}`,
+        '_blank'
+    )
 }
 
 function copy() {
@@ -193,12 +220,11 @@ defineExpose({ open })
                     required
                     @input="updateComments"
                 />
-
-                <!-- <button type="reset" class="btn btn-secondary w-full uppercase" @click="clear()">
-                    <i class="bi bi-trash mr-2"></i>
-                    Limpar
-                </button> -->
-                <button type="reset" class="btn btn-secondary w-full uppercase" @click="copy()">
+                <button
+                    type="reset"
+                    class="btn btn-secondary w-full uppercase"
+                    @click="shareOrCopy()"
+                >
                     <i class="bi bi-share mr-2"></i>
                     Partilhar
                 </button>
