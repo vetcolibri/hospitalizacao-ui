@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import BaseDialog from '../BaseDialog.vue'
-import ParameterStatus from './ParameterStatus.vue'
-
 import type { Parameter } from '@/lib/domain/parameter'
 import { ref } from 'vue'
+import BaseDialog from '../BaseDialog.vue'
+import ParameterStatus from './ParameterStatus.vue'
 
 const dialogRef = ref<typeof BaseDialog>()
 const parameters = ref()
@@ -51,6 +50,7 @@ defineEmits<{ (e: 'save'): void }>()
                     :value="parameter.value"
                     :status="parameter.status"
                     :colors="parameter?.colors"
+                    :options="parameter?.options"
                 />
             </li>
         </ul>

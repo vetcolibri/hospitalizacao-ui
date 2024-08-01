@@ -93,7 +93,7 @@ onMounted(async () => {
                         <thead class="text-gray-700 uppercase text-xs bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3">Parâmetro</th>
-                                <th scope="col" class="px-6 py-3">Medição (Unid.)</th>
+                                <th scope="col" class="px-6 py-3">Medição</th>
                                 <th scope="col" class="px-6 py-3">Data</th>
                                 <th scope="col" class="px-6 py-3">Hora</th>
                                 <th scope="col" class="px-6 py-3">Estado</th>
@@ -121,6 +121,7 @@ onMounted(async () => {
                                         :value="parameter.value"
                                         :status="parameter.verifyStatus()"
                                         :colors="parameter?.colors"
+                                        :options="parameter?.options"
                                     />
                                 </td>
                             </tr>

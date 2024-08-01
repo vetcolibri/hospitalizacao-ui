@@ -9,6 +9,7 @@ enum Status {
 
 export class Temperature extends Parameter {
     unit: string = ParameterUnit.Temperature
+    colors: Record<string, string> = {}
     status: Status
     type: string
 
@@ -31,14 +32,17 @@ export class Temperature extends Parameter {
 
         if (this.isHipotermia()) {
             this.status = Status.Hipotermia
+            this.colors[this.value] = 'badge-blue'
             return this.status
         }
 
         if (this.isHipertermia()) {
             this.status = Status.Hipertermia
+            this.colors[this.value] = 'badge-danger'
             return this.status
         }
 
+        this.colors[this.value] = 'badge-success'
         this.status = Status.Normal
         return this.status
     }

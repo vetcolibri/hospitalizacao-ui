@@ -45,6 +45,12 @@ function clearOwnerData() {
     emits('owner', owner.value)
 }
 
+function clear() {
+    clearOwnerData()
+}
+
+defineExpose({ clear })
+
 onMounted(async () => {
     owners.value = await crmService.getOwners()
 })

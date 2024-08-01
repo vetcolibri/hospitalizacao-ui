@@ -60,6 +60,7 @@ defineExpose({ clear })
             v-model="hospitalization.complaints"
             :options="COMPLAINTS"
             :limit="10"
+            :search="true"
             @update:model-value="$emit('hospitalization', hospitalization)"
         />
 
@@ -69,6 +70,7 @@ defineExpose({ clear })
             v-model="hospitalization.diagnostics"
             :options="DIAGNOSTICS"
             :limit="5"
+            :search="true"
             @update:model-value="$emit('hospitalization', hospitalization)"
         />
 

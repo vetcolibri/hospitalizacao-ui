@@ -10,7 +10,7 @@ import { left, right } from '@/lib/shared/either'
 export interface PatientService {
     listHospitalized(): Promise<PatientModel[]>
     listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>>
-    newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>>
+    newPatient(newPatientData: NewPatientData): Promise<void>
     newHospitalization(
         patientId: string,
         hospitalizationData: HospitalizationModel,
@@ -76,7 +76,7 @@ export class PatientServiceImpl implements PatientService {
         return right(resOrErr.value.data)
     }
 
-    async newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>> {
+    async newPatient(newPatientData: NewPatientData): Promise<void> {
         const { patientData, hospitalizationData, budgetData, ownerData } = newPatientData
         const body = {
             patientData,
@@ -86,11 +86,14 @@ export class PatientServiceImpl implements PatientService {
         }
 
         const url = `${this.baseUrl}/${this.resource}/new-patient`
-
         const resOrErr = await this.apiClient.post(url, body)
-        if (resOrErr.isLeft()) return left(resOrErr.value)
+        if (resOrErr.isLeft()) {
+            console.error(resOrErr.value)
+            alert('Não foi possível hospitalizar o paciente')
+            return
+        }
 
-        return right(undefined)
+        alert('Paciente hospitalizado com sucesso!')
     }
 
     async endHospitalization(patientId: string): Promise<Either<ApiError, void>> {

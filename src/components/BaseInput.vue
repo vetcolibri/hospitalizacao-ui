@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
 interface Props {
     title?: string
     value?: string
@@ -15,16 +13,23 @@ interface Props {
     required?: boolean
     pattern?: string
     helpText?: string
+    modelValue?: string | number | Date
 }
+
 const props = withDefaults(defineProps<Props>(), {
     required: false
 })
 const emits = defineEmits(['update:modelValue'])
-const inputValue = ref<string | number | Date>()
 
-function emitValue() {
+function emitValue(e: Event) {
+    const value = (e.target as HTMLInputElement).value
     if (props.disabled && props.readonly) return
-    emits('update:modelValue', inputValue.value)
+
+    if (props.type === 'number') {
+        return emits('update:modelValue', Number(value))
+    }
+
+    emits('update:modelValue', value)
 }
 </script>
 
@@ -41,6 +46,7 @@ function emitValue() {
             :readonly="readonly ? true : false"
             :required="required"
         />
+
         <input
             v-else
             class="form-control"
@@ -56,8 +62,8 @@ function emitValue() {
             :pattern="pattern ? pattern : undefined"
             :title="helpText ? helpText : ''"
             :autocomplete="type === 'password' ? 'current-password' : ''"
-            v-model="inputValue"
-            @input="emitValue()"
+            :value="modelValue ? modelValue : undefined"
+            @input="emitValue"
         />
     </div>
 </template>

@@ -16,29 +16,23 @@ const patientData = ref()
 const ownerData = ref()
 const hospitalizationData = ref()
 const budgetData = ref()
+const hospitalizationFormRef = ref<typeof HospitalizationForm>()
+const ownerFormRef = ref<typeof OwnerForm>()
 
 const patientService = <PatientService>inject(Provided.PatientService)!
-
-const hospitalizationFormRef = ref<typeof HospitalizationForm>()
 
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity()
 
-    const voidOrErr = await patientService.newPatient({
+    await patientService.newPatient({
         patientData: patientData.value,
         ownerData: ownerData.value,
         hospitalizationData: hospitalizationData.value,
         budgetData: budgetData.value
     })
 
-    if (voidOrErr.isLeft()) {
-        alert(voidOrErr.value.message)
-        return
-    }
-
-    alert('Paciente hospitalizado com sucesso!')
-
     hospitalizationFormRef.value?.clear()
+    ownerFormRef.value?.clear()
 
     form.value?.reset()
 }
@@ -58,7 +52,7 @@ async function hospitalize() {
 
                 <PatientForm @patient="patientData = $event" />
 
-                <OwnerForm @owner="ownerData = $event" />
+                <OwnerForm ref="ownerFormRef" @owner="ownerData = $event" />
             </section>
 
             <HospitalizationForm

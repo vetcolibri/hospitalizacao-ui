@@ -3,6 +3,7 @@ interface Props {
     value: any
     status: string
     colors?: any
+    options?: string[]
 }
 
 defineProps<Props>()
@@ -19,7 +20,11 @@ defineProps<Props>()
         {{ status ? status : value }}
     </div>
 
-    <div v-if="colors" :class="colors[value]" class="text-center">
+    <div v-if="colors && !options" :class="colors[value]" class="text-center">
+        {{ status }}
+    </div>
+
+    <div v-if="colors && options" :class="colors[value]" class="text-center">
         {{ value }}
     </div>
 </template>
