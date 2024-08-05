@@ -68,6 +68,8 @@ export class CrmServiceImpl implements CrmService {
         const url = `${this.baseUrl}/owners/reports`
 
         const resOrErr = await this.apiClient.get(url, { patientId, ownerId, hospitalizationId })
+        console.log(resOrErr.value)
+
         if (resOrErr.isLeft()) {
             alert(resOrErr.value.message)
             return left(resOrErr.value)

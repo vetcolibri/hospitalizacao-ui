@@ -50,12 +50,12 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section class="bg-gray-200 sm:h-screen">
+    <section class="bg-gray-200 lg:h-screen">
         <div
             v-if="currentReport"
             class="flex flex-col justify-center p-4 items-center gap-2 sm:flex-row lg:gap-6"
         >
-            <div class="w-full md:w-[60%] lg:w-1/2 xl:w-1/3 rounded bg-white p-3 sm:p-6">
+            <div class="w-full md:w-[60%] lg:w-1/2 xl:w-1/3 rounded bg-white p-3">
                 <div
                     class="flex flex-col justify-center items-center sm:flex-row sm:justify-start gap-1 text-gray-500"
                 >
@@ -129,23 +129,16 @@ onMounted(async () => {
 
                 <div class="mt-6 border-t text-gray-500 space-y-4">
                     <h2>Descargas</h2>
-                    <ul class="patient-info">
+                    <ul class="patient-info" v-for="discharge of currentReport?.discharges">
                         <li class="patient-info-item">
                             <span>Tipo</span>
-                            <div class="flex flex-wrap">
-                                <span
-                                    v-for="opt in currentReport?.discharge.types"
-                                    class="badge badge-dark mr-2"
-                                >
-                                    {{ opt }}
-                                </span>
-                            </div>
+                            <span>{{ discharge.type }}</span>
                         </li>
                         <li class="patient-info-item">
-                            <span>Aspecto</span>
+                            <span>Aspectos</span>
                             <div class="flex flex-wrap">
                                 <span
-                                    v-for="opt in currentReport?.discharge.aspects"
+                                    v-for="opt in discharge.aspects"
                                     class="badge badge-dark mr-2"
                                 >
                                     {{ opt }}

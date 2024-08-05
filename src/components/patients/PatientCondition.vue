@@ -2,13 +2,15 @@
 import BaseDialog from '@/components/BaseDialog.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseSelect from '@/components/BaseSelect.vue'
-import { DISCHARGES } from '@/lib/data/discharges'
+import Discharge from '@/components/Discharge.vue'
+
 import { FOOD } from '@/lib/data/food'
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness'
 import { type OwnerModel } from '@/lib/models/owner'
-import { type ReportModel } from '@/lib/models/report'
+import { type DischargeModel, type ReportModel } from '@/lib/models/report'
 import { Provided } from '@/lib/provided'
 import { type CrmService } from '@/lib/services/crm_service'
+import { copy, share } from '@/lib/shared/share'
 import { computed, inject, reactive, ref } from 'vue'
 
 interface Props {
@@ -32,36 +34,33 @@ const report = reactive<ReportModel>({
         level: '',
         datetime: ''
     },
-    discharge: {
-        types: [],
-        aspects: []
-    },
+    discharges: [],
     comments: ''
 })
 
 const isDisabled = computed(() => {
+    for (const discharge of report.discharges) {
+        if (isInvalidDischarge(discharge)) {
+            return true
+        }
+    }
+
     return (
         report.stateOfConsciousness.length === 0 ||
         report.food.types.length === 0 ||
-        report.discharge.types.length === 0 ||
-        report.discharge.aspects.length === 0 ||
         !report.food.datetime ||
         !report.food.level ||
         !report.comments
     )
 })
 
+function isInvalidDischarge(discharge: DischargeModel) {
+    return discharge.type.length === 0 || discharge.aspects.length === 0
+}
+
 function chooseFoodLevel(event: Event) {
     report.food.level = (event.target as HTMLSelectElement).value
 }
-
-// function chooseDischargeType(event: Event) {
-//     report.discharge.types = (event.target as HTMLSelectElement).value
-// }
-
-// function chooseDischargeAspect(event: Event) {
-//     report.discharge.aspects = (event.target as HTMLSelectElement).value
-// }
 
 function updateComments(event: Event) {
     report.comments = (event.target as HTMLTextAreaElement).value
@@ -76,8 +75,7 @@ function clearCondition() {
     report.food.types = []
     report.food.level = ''
     report.food.datetime = ''
-    report.discharge.types = []
-    report.discharge.aspects = []
+    report.discharges = []
     report.comments = ''
 }
 
@@ -105,28 +103,20 @@ async function shareOrCopy() {
 
     owner.value = ownerOrErr.value
 
+    const opts = {
+        patientId: props.patientId,
+        hospitalizationId: props.hospitalizationId,
+        ownerId: props.ownerId,
+        phoneNumber: ''
+    }
+
     if (owner.value!.whatsapp) {
-        share()
+        opts.phoneNumber = owner.value!.phoneNumber
+        share(opts)
         return
     }
 
-    copy()
-}
-
-function share() {
-    window.open(
-        `https://api.whatsapp.com/send?phone=${owner.value!.phoneNumber}&text=${encodeURIComponent(buildLink())}`,
-        '_blank'
-    )
-}
-
-function copy() {
-    navigator.clipboard.writeText(buildLink())
-    alert('Link para o tutor copiado')
-}
-
-function buildLink() {
-    return `${window.location.origin}/resume?patientId=${props.patientId}&ownerId=${props.ownerId}&hospitalizationId=${props.hospitalizationId}`
+    copy(opts)
 }
 
 async function save() {
@@ -186,23 +176,7 @@ defineExpose({ open })
                     </option>
                 </select>
 
-                <h1>Descargas</h1>
-
-                <BaseSelect
-                    title="Escolha os tipos"
-                    :options="DISCHARGES.types"
-                    :limit="DISCHARGES.types.length"
-                    :search="false"
-                    @update:model-value="report.discharge.types = $event"
-                />
-
-                <BaseSelect
-                    title="Escolha os aspectos"
-                    :options="DISCHARGES.aspects"
-                    :limit="DISCHARGES.aspects.length"
-                    :search="false"
-                    @update:model-value="report.discharge.aspects = $event"
-                />
+                <Discharge @add="report.discharges = $event" />
 
                 <h1>Observações</h1>
                 <textarea

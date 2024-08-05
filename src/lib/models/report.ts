@@ -1,3 +1,8 @@
+export type DischargeModel = {
+    type: string
+    aspects: string[]
+}
+
 export type ReportModel = {
     stateOfConsciousness: string[]
     food: {
@@ -5,9 +10,6 @@ export type ReportModel = {
         level: string
         datetime: string
     }
-    discharge: {
-        types: string[]
-        aspects: string[]
-    }
+    discharges: DischargeModel[]
     comments: string
 }
