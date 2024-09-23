@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: hospitalizacao-ui
+    namespace: zafir
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: hospitalizacao-ui
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                app: hospitalizacao-ui
+        spec:
+            containers:
+                - name: hospitalizacao-ui
+                  image: <IMAGE>
+                  ports:
+                      - name: http
+                        containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: hospitalizacao-ui-svc
+    namespace: zafir
+spec:
+    ports:
+        - name: http
+          port: 80
+          targetPort: 8080
+    selector:
+        app: hospitalizacao-ui
