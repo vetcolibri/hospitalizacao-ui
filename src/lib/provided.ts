@@ -5,5 +5,6 @@ export enum Provided {
     CrmService = 'crmService',
     HospitalizationService = 'hospitalizationService',
     BudgetService = 'budgetService',
+    AuthService = 'authService',
     Websocket = 'webSocket'
 }

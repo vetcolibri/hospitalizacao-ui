@@ -13,6 +13,7 @@ import { CrmServiceImpl } from './lib/services/crm_service'
 import { HospitalizationServiceImpl } from './lib/services/hospitalization_service'
 import { PatientServiceImpl } from './lib/services/patient_service'
 import { RoundServiceImpl } from './lib/services/round_service'
+import { AuthServiceImpl } from './lib/services/auth_service'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -28,6 +29,7 @@ const ownerService = new CrmServiceImpl(axiosAdapter, SERVER_URL)
 const hospitalizationService = new HospitalizationServiceImpl(axiosAdapter, SERVER_URL)
 const budgetService = new BudgetServiceImpl(axiosAdapter, SERVER_URL)
 const webSocket = new WebSocket(`${WS_URL}/alerts/notifications`)
+const authService = new AuthServiceImpl(axiosAdapter, SERVER_URL)
 
 app.provide(Provided.PatientService, patientService)
 app.provide(Provided.RoundService, roundService)
@@ -36,6 +38,7 @@ app.provide(Provided.Websocket, webSocket)
 app.provide(Provided.CrmService, ownerService)
 app.provide(Provided.HospitalizationService, hospitalizationService)
 app.provide(Provided.BudgetService, budgetService)
+app.provide(Provided.AuthService, authService)
 
 app.use(router)
 app.use(pinia)

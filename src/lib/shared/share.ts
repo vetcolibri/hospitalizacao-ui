@@ -7,7 +7,7 @@ interface Options {
 
 export function share(options: Options) {
     window.open(
-        `https://api.whatsapp.com/send?phone=${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
+        `https://api.whatsapp.com/send?phone=+244${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
         '_blank'
     )
 }
