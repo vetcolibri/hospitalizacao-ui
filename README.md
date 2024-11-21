@@ -4,14 +4,14 @@ Gestão da hospitalização dos pacientes.
 
 ### Requisitos
 
-- [Node.js](https://nodejs.org)
-- [npmjs](https://npmjs.com/)
-- [Docker](https:www.docker.com)
+-   [Node.js](https://nodejs.org)
+-   [npmjs](https://npmjs.com/)
+-   [Docker](https:www.docker.com)
 
 ## Guia de Implementação
 
-- [Ambiente de produção](#docker---ambiente-de-produção)
-- [Ambiente de desenvolvimento](#ambiente-de-desenvolvimento)
+-   [Ambiente de produção](#docker---ambiente-de-produção)
+-   [Ambiente de desenvolvimento](#ambiente-de-desenvolvimento)
 
 ## Baixar repositório
 
@@ -40,6 +40,7 @@ docker build --build-arg VITE_SERVER_URL="server-url" --build-arg VITE_WS_URL="w
 ```
 
 > NOTA: Substitua `server-url` e `websocket-url` pelos valores reais do servidor de backoffice.
+> NOTA: Tanto do `server-url` e o `websocket-url` apontam para o ROOT na rota do servidor de backoffice.
 
 2. Execução do container
 
