@@ -100,7 +100,7 @@ onMounted(async () => {
                             </tr>
                         </thead>
                         <tbody v-if="measurements.length > 0">
-                            <tr v-for="parameter of results" class="border-t border-gray-200">
+                            <tr v-for="parameter of results" :key="parameter.title" class="border-t border-gray-200">
                                 <td class="px-6 py-4">
                                     {{ parameter.title }}
                                 </td>

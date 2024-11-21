@@ -29,6 +29,7 @@ onMounted(async () => await pageData.loadData())
         <section class="patients-container">
             <PatientHospitalized
                 v-for="patient in toValue(pageData.patients)"
+                :key="patient.patientId"
                 :patient="patient"
                 :owners="toValue(pageData.owners)"
                 :hospitalizations="toValue(pageData.hospitalizations)"
