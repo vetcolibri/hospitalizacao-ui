@@ -86,7 +86,7 @@ onMounted(async () => {
         </div>
         <div v-if="!ownerExists" class="flex items-center space-x-2">
             <input type="checkbox" v-model="owner.whatsapp" />
-            <label for="whatsapp">Marque caso o proprietário do paciente tem WhatsApp.</label>
+            <label for="whatsapp">Marque caso o proprietário do paciente tenha WhatsApp.</label>
         </div>
         <div v-else>
             <p v-if="owner.whatsapp">Proprietário tem WhatsApp.</p>
