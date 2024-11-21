@@ -1,4 +1,5 @@
 export const DIAGNOSTICS = [
+    'Por Definir',
     'Abcesso',
     'Abcesso 4º Pré Molar',
     'Ablação Escrotal',
