@@ -15,8 +15,8 @@ const routes = [
         component: () => import('@/views/Login.vue')
     },
     {
-        path: '/resume',
-        name: 'Resume',
+        path: '/owner-report',
+        name: 'OwnerReport',
         component: () => import('@/views/OwnerReport.vue')
     },
     {
@@ -54,9 +54,18 @@ const router = createRouter({
 router.beforeEach((to, _from) => {
     const auth = useAuth()
 
+    if (to.name === 'OwnerReport' && !auth.isAuthenticated()) {
+        return true
+    }
+
+    if (to.name === 'OwnerReport' && auth.isAuthenticated()) {
+        return { name: 'Dashboard' }
+    }
+
     if (to.name != 'Login' && !auth.isAuthenticated()) {
         return { name: 'Login' }
     }
+
 })
 
 export default router

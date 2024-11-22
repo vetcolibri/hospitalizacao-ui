@@ -18,5 +18,5 @@ export function copy(options: Options) {
 }
 
 function buildLink(options: Options) {
-    return `${window.location.origin}/resume?patientId=${options.patientId}&ownerId=${options.ownerId}&hospitalizationId=${options.hospitalizationId}`
+    return `${window.location.origin}/owner-report?patientId=${options.patientId}&ownerId=${options.ownerId}&hospitalizationId=${options.hospitalizationId}`
 }
