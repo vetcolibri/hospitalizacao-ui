@@ -1,19 +1,40 @@
-import users from '@/lib/data/users.json' assert { type: 'json' }
+import type { UserModel } from "@/lib/models/user";
+import { useRouter } from 'vue-router'
+
+const USERNAME_KEY = "vetcolibri::username";
+const TOKEN_KEY = "vetcolibri::token";
 
 export function useAuth() {
-    const isAuthenticated = () => !!sessionStorage.getItem('user')
+    const router = useRouter()
 
-    const login = (username: string, password: string) => {
-        if (users['username'] !== username || users['password'] !== password) return false
-        sessionStorage.setItem('user', username)
-        return true
+    const isAuthenticated = () =>  {
+        return !!localStorage.getItem(USERNAME_KEY) && !!localStorage.getItem(TOKEN_KEY)
     }
 
-    const logout = () => sessionStorage.removeItem('user')
+    const login = (user: UserModel) => {
+        localStorage.setItem(USERNAME_KEY, user.username)
+        localStorage.setItem(TOKEN_KEY, user.token)
+        router.push({ name: 'Dashboard' })
+    }
+
+    const logout = () => {
+        localStorage.removeItem(USERNAME_KEY)
+        localStorage.removeItem(TOKEN_KEY)
+        router.push({ name: 'Login' })
+    }
+
 
     return {
         login,
         logout,
         isAuthenticated
     }
+}
+
+export const getToken = () => {
+    const token = localStorage.getItem(TOKEN_KEY)
+
+    if (!token) return ""
+
+    return token
 }

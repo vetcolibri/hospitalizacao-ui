@@ -1,21 +1,32 @@
 <script setup lang="ts">
 import BaseInput from '@/components/BaseInput.vue'
 
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useAuth } from '@/composables/useAuth'
-import { useRouter } from 'vue-router'
+import type { AuthService } from '@/lib/services/auth_service'
+import { Provided } from '@/lib/provided'
 
 const username = ref<string>('')
 const password = ref<string>('')
-const router = useRouter()
+const errorMessage = ref<string>('')
 const auth = useAuth()
 
-const checkUser = () => {
-    if (!auth.login(username.value, password.value)) {
-        alert('Credencias inválidas')
+const authService = inject<AuthService>(Provided.AuthService)!
+
+const checkUser = async () => {
+    if (!username.value || !password.value) {
+        errorMessage.value = 'Informe as suas credências de acesso'
         return
     }
-    router.push({ name: 'Dashboard' })
+
+    const userOrErr = await authService.login(username.value, password.value)
+    if (userOrErr.isLeft()) {
+        errorMessage.value = 'Credências inválidas'
+        return
+    }
+
+    errorMessage.value = ''
+    auth.login(userOrErr.value)
 }
 </script>
 <template>
@@ -24,9 +35,10 @@ const checkUser = () => {
             <div class="md:shadow-lg bg-white p-6 rounded-md">
                 <div class="flex flex-col items-center space-y-4 mb-6">
                     <img src="/img/cvl-192x192.png" width="100" height="100" />
-                    <p class="text-gray-500 text-sm text-center">
+                    <p v-if="!errorMessage" class="text-gray-500 text-sm text-center">
                         Introduza as suas credencias para entrar.
                     </p>
+                    <p v-else class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
                 </div>
                 <form class="space-y-4 w-full sm:max-w-sm mx-auto">
                     <BaseInput

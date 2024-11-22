@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 const auth = useAuth()
 
 const logout = () => {
     auth.logout()
-    router.push({ name: 'Login' })
 }
 
 defineProps(['title'])

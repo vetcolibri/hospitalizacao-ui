@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Dashboard from '@/views/Dashboard.vue'
+import { useAuth } from '@/composables/useAuth'
 
 const routes = [
     {
@@ -51,17 +52,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from) => {
-    const user = sessionStorage.getItem('user')
+    const auth = useAuth()
 
-    if (to.name === 'Resume' && !user) {
-        return
+    if (to.name != 'Login' && !auth.isAuthenticated()) {
+        return { name: 'Login' }
     }
-
-    if (to.name === 'Resume' && user) {
-        return { name: 'Dashboard' }
-    }
-
-    if (to.name !== 'Login' && !user) return { name: 'Login' }
 })
 
 export default router
