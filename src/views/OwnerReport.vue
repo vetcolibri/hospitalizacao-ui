@@ -135,7 +135,7 @@ onMounted(async () => {
                             <span>{{ discharge.type }}</span>
                         </li>
                         <li class="patient-info-item">
-                            <span>Aspectos</span>
+                            <span>Aspecto</span>
                             <div class="flex flex-wrap">
                                 <span
                                     v-for="opt in discharge.aspects"
