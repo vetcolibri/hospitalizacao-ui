@@ -8,6 +8,7 @@ import { Provided } from '@/lib/provided'
 
 const username = ref<string>('')
 const password = ref<string>('')
+const type = ref<string>('password')
 const errorMessage = ref<string>('')
 const auth = useAuth()
 
@@ -19,7 +20,7 @@ const checkUser = async () => {
         return
     }
 
-    const userOrErr = await authService.login(username.value, password.value)
+    const userOrErr = await authService.login(username.value.trim(), password.value)
     if (userOrErr.isLeft()) {
         errorMessage.value = 'Credências inválidas'
         return
@@ -27,6 +28,15 @@ const checkUser = async () => {
 
     errorMessage.value = ''
     auth.login(userOrErr.value)
+}
+
+function toggleVisibility() {
+    if (type.value === 'password') {
+        type.value = 'text'
+        return
+    }
+
+    type.value = 'password'
 }
 </script>
 <template>
@@ -46,12 +56,19 @@ const checkUser = async () => {
                         placeholder="Utilizador"
                         @keyup.enter="checkUser()"
                     />
-                    <BaseInput
-                        v-model="password"
-                        placeholder="Palavra-passe"
-                        type="password"
-                        @keyup.enter="checkUser()"
-                    />
+                    <div class="relative">
+                        <BaseInput
+                            v-model="password"
+                            placeholder="Palavra-passe"
+                            :type="type"
+                            @keyup.enter="checkUser()"
+                        />
+                        <i
+                            class="absolute top-2.5 right-3 text-lg cursor-pointer"
+                            :class="type == 'password' ? 'bi bi-eye' : 'bi bi-eye-slash'"
+                            @click="toggleVisibility()"
+                        ></i>
+                    </div>
                     <button
                         type="button"
                         class="btn btn-success w-full"
