@@ -14,7 +14,7 @@ const hasRouteQuery = route.query && Object.keys(route.query).length > 0
 const service = inject<CrmService>(Provided.CrmService)!
 const currentReport = ref<OwnerReportModel>()
 
-function verifyQuery() {
+function verifyRouteQuery() {
     if (hasRouteQuery) return
     viewPatientResume.value = false
 }
@@ -42,7 +42,7 @@ async function getReports() {
 }
 
 onMounted(async () => {
-    verifyQuery()
+    verifyRouteQuery()
 
     reports.value = await getReports()
     currentReport.value = reports.value?.[0]
@@ -50,12 +50,14 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section class="bg-gray-200">
+    <section class="bg-gray-200 h-screen">
         <div
             v-if="currentReport"
             class="flex flex-col justify-center p-4 items-center gap-2 sm:flex-row lg:gap-6"
         >
-            <div class="w-full md:w-[60%] lg:w-1/2 xl:w-1/2 2xl:w-1/3 rounded bg-white p-3">
+            <div
+                class="w-full md:w-[60%] lg:w-1/2 xl:w-1/2 2xl:w-1/3 mt-8 rounded bg-white p-6 overflow-y-auto h-[1000px]"
+            >
                 <div
                     class="flex flex-col justify-center items-center sm:flex-row sm:justify-start gap-1 text-gray-500"
                 >
@@ -166,7 +168,7 @@ onMounted(async () => {
                 </div>
             </div>
             <div
-                class="w-full md:w-[40%] lg:w-1/3 xl:w-1/4 2xl:w-1/6 rounded place-self-start bg-white p-8 space-y-3 h-64 overflow-y-auto"
+                class="w-full mt-8 md:w-[40%] lg:w-1/3 xl:w-1/4 2xl:w-1/6 rounded place-self-start bg-white p-8 space-y-3 h-64 overflow-y-auto"
             >
                 <h4 class="text-lg font-medium">Histórico</h4>
                 <ul class="text-sm space-y-3 list-inside list-disc">
