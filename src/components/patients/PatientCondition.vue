@@ -127,13 +127,15 @@ async function save() {
     clear()
 
     close()
+
+    shareOrCopy()
 }
 
 defineExpose({ open })
 </script>
 
 <template>
-    <BaseDialog ref="dialogRef" title="Informações para o Tutor">
+    <BaseDialog ref="dialogRef" title="Comunicar ao Tutor">
         <form ref="formRef">
             <div class="space-y-3">
                 <h1>Estado de Consciencia</h1>
@@ -187,21 +189,13 @@ defineExpose({ open })
                     @input="updateComments"
                 />
                 <button
-                    type="reset"
-                    class="btn btn-secondary w-full uppercase"
-                    @click="shareOrCopy()"
-                >
-                    <i class="bi bi-share mr-2"></i>
-                    Partilhar
-                </button>
-                <button
                     type="button"
                     class="btn btn-success w-full uppercase"
                     :class="{ disabled: isDisabled }"
                     @click="save()"
                 >
-                    <i class="bi bi-floppy2 mr-2"></i>
-                    Salvar
+                    <i class="bi bi-send mr-2"></i>
+                    Comunicar
                 </button>
             </div>
         </form>

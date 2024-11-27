@@ -56,8 +56,6 @@ export class CrmServiceImpl implements CrmService {
             alert('Não foi possível registrar as informações para o Tutor')
             return
         }
-
-        alert('Informações para o Tutor registradas com sucesso')
     }
 
     async getReports(
