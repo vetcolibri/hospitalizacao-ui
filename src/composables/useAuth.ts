@@ -38,3 +38,11 @@ export const getToken = () => {
 
     return token
 }
+
+export const getUser = () => {
+    const username = localStorage.getItem(USERNAME_KEY)
+
+    if (!username) return ""
+
+    return username
+}
