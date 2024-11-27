@@ -57,6 +57,7 @@ defineExpose({ open })
                 <li
                     class="tab"
                     v-for="tab in tabs"
+                    :key="tab.id"
                     :class="{ 'text-blue-500': tab.active }"
                     @click="showTab(tab.id)"
                 >

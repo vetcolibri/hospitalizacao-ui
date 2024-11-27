@@ -6,11 +6,10 @@ import Discharge from '@/components/Discharge.vue'
 
 import { FOOD } from '@/lib/data/food'
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness'
-import { type OwnerModel } from '@/lib/models/owner'
 import { type DischargeModel, type ReportModel } from '@/lib/models/report'
 import { Provided } from '@/lib/provided'
 import { type CrmService } from '@/lib/services/crm_service'
-import { copy, share } from '@/lib/shared/share'
+import { shareOrCopy } from '@/lib/shared/share'
 import { computed, inject, reactive, ref } from 'vue'
 
 interface Props {
@@ -20,7 +19,6 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const owner = ref<OwnerModel>()
 const formRef = ref<HTMLFormElement>()
 const service = <CrmService>inject(Provided.CrmService)
 const dialogRef = ref<typeof BaseDialog>()
@@ -93,32 +91,6 @@ function clear() {
     clearCondition()
 }
 
-async function shareOrCopy() {
-    const ownerOrErr = await service.findOwner(props.ownerId)
-
-    if (ownerOrErr.isLeft()) {
-        alert(ownerOrErr.value.message)
-        return
-    }
-
-    owner.value = ownerOrErr.value
-
-    const opts = {
-        patientId: props.patientId,
-        hospitalizationId: props.hospitalizationId,
-        ownerId: props.ownerId,
-        phoneNumber: ''
-    }
-
-    if (owner.value!.whatsapp) {
-        opts.phoneNumber = owner.value!.phoneNumber
-        share(opts)
-        return
-    }
-
-    copy(opts)
-}
-
 async function save() {
     if (isDisabled.value) return
 
@@ -128,7 +100,21 @@ async function save() {
 
     close()
 
-    shareOrCopy()
+    const ownerOrErr = await service.findOwner(props.ownerId)
+    if (ownerOrErr.isLeft()) {
+        alert(ownerOrErr.value.message)
+        return
+    }
+
+    const opts = {
+        patientId: props.patientId,
+        hospitalizationId: props.hospitalizationId,
+        ownerId: props.ownerId,
+        phoneNumber: ownerOrErr.value.phoneNumber,
+        hasWhatsApp: ownerOrErr.value.whatsapp
+    }
+
+    shareOrCopy(opts)
 }
 
 defineExpose({ open })

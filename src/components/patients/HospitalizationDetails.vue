@@ -34,7 +34,11 @@ withDefaults(defineProps<Props>(), { active: false })
             <li class="patient-info-item flex-col">
                 <span>Queixas</span>
                 <div class="mt-1 space-x-2 space-y-2">
-                    <span v-for="complaint in hospitalization?.complaints" class="badge badge-dark">
+                    <span
+                        v-for="complaint in hospitalization?.complaints"
+                        :key="complaint"
+                        class="badge badge-dark"
+                    >
                         {{ complaint }}
                     </span>
                 </div>
@@ -44,6 +48,7 @@ withDefaults(defineProps<Props>(), { active: false })
                 <div class="mt-1 space-x-2 space-y-2">
                     <span
                         v-for="diagnostic in hospitalization?.diagnostics"
+                        :key="diagnostic"
                         class="badge badge-dark"
                     >
                         {{ diagnostic }}

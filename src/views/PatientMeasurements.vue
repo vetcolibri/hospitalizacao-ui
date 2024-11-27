@@ -60,28 +60,28 @@ onMounted(async () => {
                     <li>
                         <router-link
                             :to="{ name: 'DailyRound' }"
-                            class="flex items-center p-3 border rounded bg-white space-x-1"
+                            class="flex items-center p-3 border rounded bg-white space-x-2"
                         >
-                            <i class="bi bi-clipboard2-data-fill mr-2 icon"></i>
-                            <span>Ronda diária</span>
+                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <span>Ronda Diária</span>
                         </router-link>
                     </li>
                     <li>
                         <router-link
-                            class="flex items-center p-3 border rounded bg-white space-x-1"
+                            class="flex items-center p-3 border rounded bg-white space-x-2"
                             :to="{ name: 'ChooseParameters' }"
                         >
-                            <i class="bi bi-clipboard2-data-fill mr-2 icon"></i>
-                            <span>Monitorização continuada</span>
+                            <i class="bi bi-clipboard2-data-fill icon"></i>
+                            <span>Monitorização Continuada</span>
                         </router-link>
                     </li>
                     <li>
                         <button
-                            class="flex items-center p-3 border rounded bg-white space-x-1 w-full"
+                            class="flex items-center p-3 border rounded bg-white space-x-2 w-full"
                             @click="openReportDialog()"
                         >
-                            <i class="bi bi-person-fill mr-2 icon"></i>
-                            <span>Comunicar ao Tutor</span>
+                            <i class="bi bi-send-fill icon"></i>
+                            <span>Comunicar</span>
                         </button>
                     </li>
                 </ul>
@@ -153,6 +153,6 @@ onMounted(async () => {
             :ownerId="patientStore.patient.ownerId"
             :hospitalizationId="patientStore.patient.hospitalizationId"
         />
-        <Footer></Footer>
+        <Footer />
     </div>
 </template>

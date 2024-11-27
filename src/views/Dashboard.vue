@@ -39,9 +39,8 @@ onMounted(async () => await pageData.loadData())
                 @reloadPage="pageData.loadData()"
             />
         </section>
-        <router-link :to="{ name: 'RegisterPatient' }" class="bi bi-plus btn-dashboard">
-        </router-link>
+        <router-link :to="{ name: 'RegisterPatient' }" class="bi bi-plus btn-dashboard" />
     </main>
 
-    <Footer></Footer>
+    <Footer />
 </template>

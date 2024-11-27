@@ -84,6 +84,7 @@ onMounted(async () => {
                         <div class="flex flex-wrap">
                             <span
                                 v-for="opt in currentReport?.stateOfConsciousness"
+                                :key="opt"
                                 class="badge badge-dark mr-2 mb-2 sm:mb-0"
                             >
                                 {{ opt }}
@@ -110,6 +111,7 @@ onMounted(async () => {
                             <div class="flex flex-wrap">
                                 <span
                                     v-for="opt in currentReport?.food.types"
+                                    :key="opt"
                                     class="badge badge-dark mr-2"
                                 >
                                     {{ opt }}
@@ -131,7 +133,11 @@ onMounted(async () => {
 
                 <div class="mt-6 border-t text-gray-500 space-y-4">
                     <h2>Descargas</h2>
-                    <ul class="patient-info" v-for="discharge of currentReport?.discharges">
+                    <ul
+                        class="patient-info"
+                        v-for="discharge of currentReport?.discharges"
+                        :key="discharge.type"
+                    >
                         <li class="patient-info-item">
                             <span>Tipo</span>
                             <span>{{ discharge.type }}</span>
@@ -141,6 +147,7 @@ onMounted(async () => {
                             <div class="flex flex-wrap">
                                 <span
                                     v-for="opt in discharge.aspects"
+                                    :key="opt"
                                     class="badge badge-dark mr-2"
                                 >
                                     {{ opt }}
@@ -175,6 +182,7 @@ onMounted(async () => {
                     <li
                         class="cursor-pointer underline text-gray-600 hover:text-blue-500"
                         v-for="report in reports"
+                        :key="report.patientId"
                         @click="changeReport(report.reportId)"
                     >
                         {{ report.patientName }}, {{ report.patientId }} -
@@ -192,9 +200,12 @@ onMounted(async () => {
                     <p class="text-sm">Centro Veterinário de Luanda</p>
                 </div>
 
-                <p class="text-gray-600 mt-6 text-justify">
+                <p v-if="reports?.length === 0" class="text-gray-600 mt-6 text-justify">
                     O seu paciente não possui nenhum relatório de acompanhamento, aguarde pela
                     actualização ou consulte o médico responsável.
+                </p>
+                <p v-else class="text-gray-600 mt-6 text-justify">
+                    A carregar o relatório de acompanhamento.
                 </p>
             </div>
         </div>

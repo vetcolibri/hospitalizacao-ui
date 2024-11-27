@@ -72,6 +72,7 @@ onMounted(async () => {
 
     <main class="main-content">
         <section class="container my-8">
+            <div class="flex items-center justify-between"></div>
             <Today />
             <form ref="form" class="space-y-4">
                 <BaseParameter
