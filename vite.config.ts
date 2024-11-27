@@ -40,11 +40,17 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ],
+                screenshots: [
+                    {
+                        src: './img/cvl-320x320.png',
+                        type: 'image/png',
+                        sizes: '320x320',
+                        formFactor: 'wide'
+                    },
+                ],
+                'display-override': ['fullscreen', 'standalone'],
                 display: 'fullscreen'
             },
-            workbox: {
-                globPatterns: ['**/*.{js,css,html,png,jpg,jpeg,svg}']
-            }
         })
     ],
     resolve: {
