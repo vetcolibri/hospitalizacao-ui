@@ -168,7 +168,7 @@ defineExpose({ open })
 
                 <h1>Observações</h1>
                 <textarea
-                    class="form-control resize-none focus:ring-0 overflow-hidden"
+                    class="form-control resize-none focus:ring-0 overflow-y-auto"
                     placeholder="Comentário do MedVet"
                     rows="4"
                     required
