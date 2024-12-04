@@ -12,6 +12,7 @@ export default defineConfig({
         vueJsx(),
         VitePWA({
             registerType: 'autoUpdate',
+            strategies: "injectManifest",
             injectRegister: 'auto',
             devOptions: {
                 enabled: true
@@ -45,12 +46,15 @@ export default defineConfig({
                         src: './img/cvl-320x320.png',
                         type: 'image/png',
                         sizes: '320x320',
-                        formFactor: 'wide'
+                        form_factor: 'wide'
                     },
                 ],
-                'display-override': ['fullscreen', 'standalone'],
+                display_override: ['fullscreen', 'standalone'],
                 display: 'fullscreen'
             },
+            workbox: {
+                cleanupOutdatedCaches: true,
+            }
         })
     ],
     resolve: {
