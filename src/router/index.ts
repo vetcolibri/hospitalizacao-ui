@@ -43,6 +43,11 @@ const routes = [
         path: '/register-patient/',
         name: 'RegisterPatient',
         component: () => import('@/views/NewPatient.vue')
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('@/views/NotFound.vue')
     }
 ]
 
@@ -51,7 +56,7 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, _from) => {
+router.beforeEach((to) => {
     const auth = useAuth()
 
     if (to.name === 'OwnerReport' && !auth.isAuthenticated()) {
@@ -62,10 +67,9 @@ router.beforeEach((to, _from) => {
         return { name: 'Dashboard' }
     }
 
-    if (to.name != 'Login' && !auth.isAuthenticated()) {
+    if (to.name !== 'Login' && !auth.isAuthenticated()) {
         return { name: 'Login' }
     }
-
 })
 
 export default router

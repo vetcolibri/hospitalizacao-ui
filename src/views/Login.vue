@@ -45,10 +45,12 @@ function toggleVisibility() {
             <div class="md:shadow-lg bg-white p-6 rounded-md">
                 <div class="flex flex-col items-center space-y-4 mb-6">
                     <img src="/img/cvl-192x192.png" width="100" height="100" />
-                    <p v-if="!errorMessage" class="text-gray-500 text-sm text-center">
+                    <p v-if="!errorMessage" class="text-gray-500 text-md text-center">
                         Introduza as suas credencias para entrar.
                     </p>
-                    <p v-else class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
+                    <p v-else class="text-red-500 font-medium text-md text-center">
+                        {{ errorMessage }}
+                    </p>
                 </div>
                 <form class="space-y-4 w-full sm:max-w-sm mx-auto">
                     <BaseInput
