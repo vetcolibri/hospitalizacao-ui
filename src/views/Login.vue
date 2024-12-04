@@ -40,15 +40,15 @@ function toggleVisibility() {
 }
 </script>
 <template>
-    <section class="bg-gray-200 h-screen">
+    <section class="bg-gray-200 h-screen p-6 md:p-0">
         <div class="flex flex-col justify-center h-full mx-auto max-w-sm">
             <div class="md:shadow-lg bg-white p-6 rounded-md">
                 <div class="flex flex-col items-center space-y-4 mb-6">
                     <img src="/img/cvl-192x192.png" width="100" height="100" />
-                    <p v-if="!errorMessage" class="text-gray-500 text-md text-center">
+                    <p v-if="!errorMessage" class="text-gray-500 text-xs md:text-sm text-center">
                         Introduza as suas credencias para entrar.
                     </p>
-                    <p v-else class="text-red-500 font-medium text-md text-center">
+                    <p v-else class="text-red-500 font-medium text-xs md:text-sm text-center">
                         {{ errorMessage }}
                     </p>
                 </div>
