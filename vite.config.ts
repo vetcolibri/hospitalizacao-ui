@@ -12,7 +12,6 @@ export default defineConfig({
         vueJsx(),
         VitePWA({
             registerType: 'autoUpdate',
-            strategies: "injectManifest",
             injectRegister: 'auto',
             devOptions: {
                 enabled: true
