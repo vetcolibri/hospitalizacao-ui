@@ -15,7 +15,6 @@ import { computed, inject, reactive, ref } from 'vue'
 interface Props {
     patientId: string
     ownerId: string
-    hospitalizationId: string
 }
 
 const props = defineProps<Props>()
@@ -108,8 +107,6 @@ async function save() {
 
     const opts = {
         patientId: props.patientId,
-        hospitalizationId: props.hospitalizationId,
-        ownerId: props.ownerId,
         phoneNumber: ownerOrErr.value.phoneNumber,
         hasWhatsApp: ownerOrErr.value.whatsapp
     }

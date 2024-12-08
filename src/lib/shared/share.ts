@@ -1,14 +1,12 @@
 interface Options {
     patientId: string
-    ownerId: string
-    hospitalizationId: string
     phoneNumber: string
     hasWhatsApp: boolean
 }
 
 export function share(options: Options) {
     window.open(
-        `https://api.whatsapp.com/send?phone=+244${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
+        `https://wa.me/send?phone=+244${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
         '_blank'
     )
 }
@@ -29,5 +27,5 @@ export function shareOrCopy(options: Options) {
 
 
 function buildLink(options: Options) {
-    return `${window.location.origin}/owner-report?patientId=${options.patientId}&ownerId=${options.ownerId}&hospitalizationId=${options.hospitalizationId}`
+    return `https://hospital.luanda.vet/owner-report?patientId=${options.patientId}`
 }
