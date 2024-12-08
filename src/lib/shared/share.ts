@@ -27,5 +27,5 @@ export function shareOrCopy(options: Options) {
 
 
 function buildLink(options: Options) {
-    return `https://hospital.luanda.vet/owner-report?patientId=${options.patientId}`
+    return `${window.location.origin}/owner-report?patientId=${options.patientId}`
 }
