@@ -13,8 +13,8 @@ const router = useRouter()
 const pageData = usePageData()
 const currentPatient = useCurrentPatient()
 
-function nextPage(patientId: string, ownerId?: string, hospitalizationId?: string) {
-    currentPatient.$patch({ patientId, ownerId, hospitalizationId })
+function nextPage(patientId: string, ownerId?: string) {
+    currentPatient.$patch({ patientId, ownerId })
     router.push({ name: 'Measurements' })
 }
 

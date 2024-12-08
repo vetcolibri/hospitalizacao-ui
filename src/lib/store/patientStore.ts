@@ -4,7 +4,6 @@ export const useCurrentPatient = defineStore('currentPatient', {
     state: () => {
         return {
             patientId: '',
-            hospitalizationId: '',
             ownerId: ''
         }
     },
@@ -12,7 +11,6 @@ export const useCurrentPatient = defineStore('currentPatient', {
         patient: (state) => {
             return {
                 patientId: state.patientId,
-                hospitalizationId: state.hospitalizationId,
                 ownerId: state.ownerId
             }
         }

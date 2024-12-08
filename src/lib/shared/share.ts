@@ -6,7 +6,7 @@ interface Options {
 
 export function share(options: Options) {
     window.open(
-        `https://wa.me/send?phone=+244${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
+        `https://api.whatsapp.com/send?phone=+244${options.phoneNumber}&text=${encodeURIComponent(buildLink(options))}`,
         '_blank'
     )
 }
@@ -27,5 +27,5 @@ export function shareOrCopy(options: Options) {
 
 
 function buildLink(options: Options) {
-    return `${window.location.origin}/owner-report?patientId=${options.patientId}`
+    return `${window.location.origin}/reports?patientId=${options.patientId}`
 }

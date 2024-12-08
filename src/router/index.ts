@@ -15,7 +15,7 @@ const routes = [
         component: () => import('@/views/Login.vue')
     },
     {
-        path: '/owner-report',
+        path: '/reports',
         name: 'OwnerReport',
         component: () => import('@/views/OwnerReport.vue')
     },
