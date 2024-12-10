@@ -75,7 +75,7 @@ onMounted(async () => {
             />
             <BaseInput
                 class="flex-1"
-                pattern="^9[1-5]\d{7}$"
+                pattern="^9[1-9]\d{7}$"
                 help-text="Por favor, insira um número de telefone válido para Angola."
                 v-model="owner.phoneNumber"
                 :placeholder="ownerExists ? owner.phoneNumber : 'Telemóvel'"
