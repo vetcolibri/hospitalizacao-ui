@@ -47,7 +47,7 @@ docker build --build-arg VITE_SERVER_URL="server-url" --build-arg VITE_WS_URL="w
 Para executar o container com a sua imagem docker criada no passo acima, execute o comando abaixo:
 
 ```bash
-docker run -d -p 3000:8080 hospitalizacao-ui
+docker run -d -p 3000:80 hospitalizacao-ui
 ```
 
 Depois de executar o comando acima a aplicação estará disponível no seguinte endereço: <http://localhost:3000>
