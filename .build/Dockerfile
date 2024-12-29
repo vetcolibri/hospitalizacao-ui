@@ -17,7 +17,9 @@ RUN npm run build
 
 FROM nginx:alpine
 
-EXPOSE 8080
+EXPOSE 80
+
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=builder /hospitalizacao-ui/dist /usr/share/nginx/html
 
