@@ -3,6 +3,7 @@ import BaseDialog from '@/components/BaseDialog.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseSelect from '@/components/BaseSelect.vue';
 import Discharge from '@/components/Discharge.vue';
+import { useAuth } from '@/composables/useAuth';
 
 import { FOOD } from '@/lib/data/food';
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness';
@@ -24,6 +25,8 @@ const service = <CrmService>inject(Provided.CrmService);
 const dialogRef = ref<typeof BaseDialog>();
 const stateOfConsRef = ref<typeof BaseSelect>();
 const foodTypesRef = ref<typeof BaseSelect>();
+
+const username = useAuth().getUser();
 
 const report = reactive<ReportModel>({
     stateOfConsciousness: [],
@@ -94,6 +97,7 @@ function clear() {
 async function save() {
     if (isDisabled.value) return;
 
+    report.comments = report.comments.concat(`\n\nAtt: ${username}`);
     await service.registerReport(props.patientId, report);
 
     clear();
