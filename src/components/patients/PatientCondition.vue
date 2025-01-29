@@ -1,28 +1,29 @@
 <script setup lang="ts">
-import BaseDialog from '@/components/BaseDialog.vue'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseSelect from '@/components/BaseSelect.vue'
-import Discharge from '@/components/Discharge.vue'
+import BaseDialog from '@/components/BaseDialog.vue';
+import BaseInput from '@/components/BaseInput.vue';
+import BaseSelect from '@/components/BaseSelect.vue';
+import Discharge from '@/components/Discharge.vue';
 
-import { FOOD } from '@/lib/data/food'
-import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness'
-import { type DischargeModel, type ReportModel } from '@/lib/models/report'
-import { Provided } from '@/lib/provided'
-import { type CrmService } from '@/lib/services/crm_service'
-import { shareOrCopy } from '@/lib/shared/share'
-import { computed, inject, reactive, ref } from 'vue'
+import { FOOD } from '@/lib/data/food';
+import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness';
+import { type DischargeModel, type ReportModel } from '@/lib/models/report';
+import { myAlert } from '@/lib/myAlert';
+import { Provided } from '@/lib/provided';
+import { type CrmService } from '@/lib/services/crm_service';
+import { shareOrCopy } from '@/lib/shared/share';
+import { computed, inject, reactive, ref } from 'vue';
 
 interface Props {
-    patientId: string
-    ownerId: string
+    patientId: string;
+    ownerId: string;
 }
 
-const props = defineProps<Props>()
-const formRef = ref<HTMLFormElement>()
-const service = <CrmService>inject(Provided.CrmService)
-const dialogRef = ref<typeof BaseDialog>()
-const stateOfConsRef = ref<typeof BaseSelect>()
-const foodTypesRef = ref<typeof BaseSelect>()
+const props = defineProps<Props>();
+const formRef = ref<HTMLFormElement>();
+const service = <CrmService>inject(Provided.CrmService);
+const dialogRef = ref<typeof BaseDialog>();
+const stateOfConsRef = ref<typeof BaseSelect>();
+const foodTypesRef = ref<typeof BaseSelect>();
 
 const report = reactive<ReportModel>({
     stateOfConsciousness: [],
@@ -33,12 +34,12 @@ const report = reactive<ReportModel>({
     },
     discharges: [],
     comments: ''
-})
+});
 
 const isDisabled = computed(() => {
     for (const discharge of report.discharges) {
         if (isInvalidDischarge(discharge)) {
-            return true
+            return true;
         }
     }
 
@@ -48,73 +49,72 @@ const isDisabled = computed(() => {
         !report.food.datetime ||
         !report.food.level ||
         !report.comments
-    )
-})
+    );
+});
 
 function isInvalidDischarge(discharge: DischargeModel) {
-    return discharge.type.length === 0 || discharge.aspects.length === 0
+    return discharge.type.length === 0 || discharge.aspects.length === 0;
 }
 
 function chooseFoodLevel(event: Event) {
-    report.food.level = (event.target as HTMLSelectElement).value
+    report.food.level = (event.target as HTMLSelectElement).value;
 }
 
 function updateComments(event: Event) {
-    report.comments = (event.target as HTMLTextAreaElement).value
+    report.comments = (event.target as HTMLTextAreaElement).value;
 }
 
 function open() {
-    dialogRef.value?.open()
+    dialogRef.value?.open();
 }
 
 function clearCondition() {
-    report.stateOfConsciousness = []
-    report.food.types = []
-    report.food.level = ''
-    report.food.datetime = ''
-    report.discharges = []
-    report.comments = ''
+    report.stateOfConsciousness = [];
+    report.food.types = [];
+    report.food.level = '';
+    report.food.datetime = '';
+    report.discharges = [];
+    report.comments = '';
 }
 
 function close() {
-    dialogRef.value?.close()
+    dialogRef.value?.close();
 }
 
 function clear() {
-    formRef.value?.reset()
+    formRef.value?.reset();
 
-    stateOfConsRef.value?.clear()
+    stateOfConsRef.value?.clear();
 
-    foodTypesRef.value?.clear()
+    foodTypesRef.value?.clear();
 
-    clearCondition()
+    clearCondition();
 }
 
 async function save() {
-    if (isDisabled.value) return
+    if (isDisabled.value) return;
 
-    await service.registerReport(props.patientId, report)
+    await service.registerReport(props.patientId, report);
 
-    clear()
+    clear();
+    close();
 
-    close()
-
-    const ownerOrErr = await service.findOwner(props.ownerId)
+    const ownerOrErr = await service.findOwner(props.ownerId);
     if (ownerOrErr.isLeft()) {
-        alert(ownerOrErr.value.message)
-        return
+        myAlert(ownerOrErr.value.message, ownerOrErr.value);
+        return;
     }
 
     const opts = {
         patientId: props.patientId,
         phoneNumber: ownerOrErr.value.phoneNumber,
         hasWhatsApp: ownerOrErr.value.whatsapp
-    }
+    };
 
-    shareOrCopy(opts)
+    shareOrCopy(opts);
 }
 
-defineExpose({ open })
+defineExpose({ open });
 </script>
 
 <template>
@@ -167,7 +167,7 @@ defineExpose({ open })
                 <textarea
                     class="form-control resize-none focus:ring-0 overflow-y-auto"
                     placeholder="Comentário do MedVet"
-                    rows="4"
+                    rows="8"
                     required
                     @input="updateComments"
                 />

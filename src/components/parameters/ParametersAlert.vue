@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import BaseDialog from '@/components/BaseDialog.vue'
+import BaseDialog from '@/components/BaseDialog.vue';
 
-import { ref, inject, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, inject, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
-import { useParametersStore } from '@/lib/store/parametersStore'
-import { AlertServiceImpl } from '@/lib/services/alert_service'
-import { Provided } from '@/lib/provided'
-import { useCurrentPatient } from '@/lib/store/patientStore'
-import { convert } from '@/lib/shared/convert_seconds'
-import { useAuth } from '@/composables/useAuth'
-import { parameterTitle } from '@/lib/shared/parameters'
+import { useParametersStore } from '@/lib/store/parametersStore';
+import { AlertServiceImpl } from '@/lib/services/alert_service';
+import { Provided } from '@/lib/provided';
+import { useCurrentPatient } from '@/lib/store/patientStore';
+import { convert } from '@/lib/shared/convert_seconds';
+import { useAuth } from '@/composables/useAuth';
+import { parameterTitle } from '@/lib/shared/parameters';
+import { myAlert } from '@/lib/myAlert';
 
 const alertPayload = reactive({
     alertId: '',
@@ -21,63 +22,62 @@ const alertPayload = reactive({
         patientId: '',
         name: ''
     }
-})
+});
 
-const dialogRef = ref<typeof BaseDialog>()
-const disabledAlert = ref<boolean>(false)
-const title = ref<string>('')
-const router = useRouter()
-const alertService = <AlertServiceImpl>inject(Provided.AlertService)!
-const webSocket = <WebSocket>inject(Provided.Websocket)
-const parametersStore = useParametersStore()
-const patientStore = useCurrentPatient()
-const auth = useAuth()
+const dialogRef = ref<typeof BaseDialog>();
+const disabledAlert = ref<boolean>(false);
+const title = ref<string>('');
+const router = useRouter();
+const alertService = <AlertServiceImpl>inject(Provided.AlertService)!;
+const webSocket = <WebSocket>inject(Provided.Websocket);
+const parametersStore = useParametersStore();
+const patientStore = useCurrentPatient();
+const auth = useAuth();
 
-webSocket.onopen = () => {
-    console.log('Websocket Connected.')
-}
+webSocket.onopen = () => console.log('Websocket Connected.');
 
 webSocket.onmessage = (event) => {
-    const data = JSON.parse(event.data)
-    title.value = `Alerta - ${data.patient.name}`
-    makeAlertPayload(data)
-    open()
-}
+    const data = JSON.parse(event.data);
+    title.value = `Alerta - ${data.patient.name}`;
+    makeAlertPayload(data);
+    open();
+};
 
 function makeAlertPayload(data: any) {
-    alertPayload.alertId = data.alertId
-    alertPayload.parameters = data.parameters
-    alertPayload.comments = data.comments
-    alertPayload.repeatEvery = data.repeatEvery
-    alertPayload.patient = data.patient
+    alertPayload.alertId = data.alertId;
+    alertPayload.parameters = data.parameters;
+    alertPayload.comments = data.comments;
+    alertPayload.repeatEvery = data.repeatEvery;
+    alertPayload.patient = data.patient;
 }
 
 async function confirm() {
     if (disabledAlert.value) {
-        const voidOrError = await alertService.cancel(alertPayload.alertId)
+        const voidOrError = await alertService.cancel(alertPayload.alertId);
         if (voidOrError.isLeft()) {
-            alert(voidOrError.value.message)
-            return
+            myAlert('Não foi possível cancelar o alerta.', voidOrError.value);
+
+            return;
         }
-        alert('Alerta foi cancelado com sucesso.')
+        myAlert('Alerta foi cancelado com sucesso.');
     }
 
-    parametersStore.$patch({ parameters: alertPayload.parameters })
-    patientStore.$patch({ patientId: alertPayload.patient.patientId })
-    dialogRef.value?.close()
-    router.push({ name: 'ChooseParameters' })
+    parametersStore.$patch({ parameters: alertPayload.parameters });
+    patientStore.$patch({ patientId: alertPayload.patient.patientId });
+    dialogRef.value?.close();
+    router.push({ name: 'ChooseParameters' });
 }
 
 function open() {
-    if (!auth.isAuthenticated()) return
-    dialogRef.value?.open()
+    if (!auth.isAuthenticated()) return;
+    dialogRef.value?.open();
 }
 
 function close() {
-    dialogRef.value?.close()
+    dialogRef.value?.close();
 }
 
-defineExpose({ open, close })
+defineExpose({ open, close });
 </script>
 <template>
     <BaseDialog ref="dialogRef" :title="title">

@@ -1,111 +1,112 @@
 <script setup lang="ts">
-import Footer from '@/components/Footer.vue'
-import GoBack from '@/components/GoBack.vue'
-import Header from '@/components/Header.vue'
-import BaseParameter from '@/components/parameters/BaseParameter.vue'
-import Summary from '@/components/parameters/ParametersSummary.vue'
-import Today from '@/components/Today.vue'
+import Footer from '@/components/Footer.vue';
+import GoBack from '@/components/GoBack.vue';
+import Header from '@/components/Header.vue';
+import BaseParameter from '@/components/parameters/BaseParameter.vue';
+import Summary from '@/components/parameters/ParametersSummary.vue';
+import Today from '@/components/Today.vue';
 
-import { computed, inject, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, inject, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-import dailyRound from '@/lib/domain/round'
-import type { MeasurementModel } from '@/lib/models/measurement'
-import { Provided } from '@/lib/provided'
-import type { RoundService } from '@/lib/services/round_service'
-import { useParametersStore } from '@/lib/store/parametersStore'
-import { useCurrentPatient } from '@/lib/store/patientStore'
+import dailyRound from '@/lib/domain/round';
+import type { MeasurementModel } from '@/lib/models/measurement';
+import { Provided } from '@/lib/provided';
+import type { RoundService } from '@/lib/services/round_service';
+import { useParametersStore } from '@/lib/store/parametersStore';
+import { useCurrentPatient } from '@/lib/store/patientStore';
+import { myAlert } from '@/lib/myAlert';
 
-const form = ref<HTMLFormElement>()
-const visibleMenu = ref(false)
-const optionsRef = ref()
-const alertPage = ref<boolean>(false)
-const router = useRouter()
-const parametersSummaryRef = ref<typeof Summary>()
-const parametersStore = useParametersStore()
-const service = inject<RoundService>(Provided.RoundService)!
-const measurements = ref<MeasurementModel[]>([])
-const patientStore = useCurrentPatient()
+const form = ref<HTMLFormElement>();
+const visibleMenu = ref(false);
+const optionsRef = ref();
+const alertPage = ref<boolean>(false);
+const router = useRouter();
+const parametersSummaryRef = ref<typeof Summary>();
+const parametersStore = useParametersStore();
+const service = inject<RoundService>(Provided.RoundService)!;
+const measurements = ref<MeasurementModel[]>([]);
+const patientStore = useCurrentPatient();
 
-const hasSomeOneVisible = computed(() => dailyRound.parameters.some((p) => p.visibility === true))
+const hasSomeOneVisible = computed(() => dailyRound.parameters.some((p) => p.visibility === true));
 
 function toggleMenu() {
-    visibleMenu.value = !visibleMenu.value
+    visibleMenu.value = !visibleMenu.value;
 }
 
 function closeMenu(event: Event) {
     if (optionsRef.value && !optionsRef.value.contains(event.target)) {
-        visibleMenu.value = false
+        visibleMenu.value = false;
     }
 }
 
 function getMeasurement(parameter: string) {
-    return measurements.value.find((m) => m.name === parameter)
+    return measurements.value.find((m) => m.name === parameter);
 }
 
 function showParameter(name: string) {
-    const parameter = dailyRound.parameters.find((p) => p.name === name)
+    const parameter = dailyRound.parameters.find((p) => p.name === name);
 
-    if (!parameter) return
+    if (!parameter) return;
 
-    parameter.toggleVisibility()
+    parameter.toggleVisibility();
 }
 
 function showParameters() {
-    if (parametersStore.getParameters.length === 0) return
+    if (parametersStore.getParameters.length === 0) return;
 
-    parametersStore.getParameters.forEach(showParameter)
+    parametersStore.getParameters.forEach(showParameter);
 
-    parametersStore.clear()
+    parametersStore.clear();
 }
 
 function formIsInvalid() {
-    return !form.value?.checkValidity() || form.value?.elements.length === 0
+    return !form.value?.checkValidity() || form.value?.elements.length === 0;
 }
 
 function toggleAlertPage() {
-    alertPage.value = !alertPage.value
+    alertPage.value = !alertPage.value;
 }
 
 function confirm() {
-    if (formIsInvalid()) return form.value?.reportValidity()
+    if (formIsInvalid()) return form.value?.reportValidity();
 
-    const parameters = dailyRound.parameters.filter((p) => p.visibility === true && p.value !== '')
+    const parameters = dailyRound.parameters.filter((p) => p.visibility === true && p.value !== '');
 
-    parametersSummaryRef.value?.add(parameters)
-    parametersSummaryRef.value?.open()
+    parametersSummaryRef.value?.add(parameters);
+    parametersSummaryRef.value?.open();
 }
 
 async function save() {
-    const voidOrErr = await service.newRound(patientStore.patient.patientId, dailyRound.data)
+    const voidOrErr = await service.newRound(patientStore.patient.patientId, dailyRound.data);
     if (voidOrErr.isLeft()) {
-        alert(voidOrErr.value.message)
-        return
+        myAlert(voidOrErr.value.message, voidOrErr.value);
+        return;
     }
 
-    parametersSummaryRef.value?.close()
+    parametersSummaryRef.value?.close();
 
-    dailyRound.reset()
+    dailyRound.reset();
 
-    alert('Parâmetros salvos com sucesso')
+    myAlert('Parâmetros salvos com sucesso');
 
     if (alertPage.value) {
-        router.push({ name: 'ScheduleAlert' })
-        return
+        router.push({ name: 'ScheduleAlert' });
+        return;
     }
 
-    router.push({ name: 'Dashboard' })
+    router.push({ name: 'Dashboard' });
 }
 
 onMounted(async () => {
-    if (!patientStore.patient) return router.back()
+    if (!patientStore.patient) return router.back();
 
-    document.addEventListener('click', closeMenu)
+    document.addEventListener('click', closeMenu);
 
-    measurements.value = await service.latestMeasurement(patientStore.patient.patientId)
+    measurements.value = await service.latestMeasurement(patientStore.patient.patientId);
 
-    showParameters()
-})
+    showParameters();
+});
 </script>
 <template>
     <Header title="Escolha os parâmetros">

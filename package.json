@@ -8,6 +8,7 @@
     },
     "scripts": {
         "dev": "vite --host",
+        "clean": "rm -rf dist, node_modules && npm install",
         "build": "run-p type-check build-only",
         "preview": "vite preview",
         "test:unit": "vitest",
