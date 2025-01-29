@@ -86,6 +86,7 @@ onMounted(async () => {
 
 onUnmounted(async () => {
     await wakeLock.value?.release();
+    console.log('Tela desbloqueada com sucesso!');
 });
 </script>
 <template>
