@@ -19,12 +19,10 @@ export function copy(options: Options) {
 }
 
 export function shareOrCopy(options: Options) {
-    if (!options.hasWhatsApp) {
-        copy(options);
-        return;
+    copy(options);
+    if (options.hasWhatsApp) {
+        share(options);
     }
-
-    share(options);
 }
 
 function buildLink(options: Options) {

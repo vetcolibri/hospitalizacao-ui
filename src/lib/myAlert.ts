@@ -5,11 +5,13 @@ export function myAlert(title: string, error?: Object) {
     const errorDetails = error ? JSON.stringify(error, null, 2) : '';
 
     dialog.innerHTML = `
-        <h2>${title}</h2>
+        <h2 class="text-xl my-4">${title}</h2>
 
         <textarea readonly>${errorDetails}</textarea>
 
-        <button>Fechar</button>
+        <center>
+            <button class="btn btn-success space-x-2">Fechar</button>
+        </center>
 
         <style>
             .my-alert {
@@ -32,30 +34,13 @@ export function myAlert(title: string, error?: Object) {
                 align-items: center;
             }
             
-            .my-alert h2 {
-                margin-top: 0;
-            }
-
             .my-alert textarea {
                 width: 100%;
                 height: 150px;
                 margin-top: 1.5rem;
                 display: none;
             }
-
-            .my-alert button {
-                margin-top: 1.5rem;
-                padding: 0.5rem 1rem;
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 0.25rem;
-                cursor: pointer;
-            }
-
-            .my-alert button:hover {
-                background: #0056b3;
-            }
+            
         </style>
     `;
 
