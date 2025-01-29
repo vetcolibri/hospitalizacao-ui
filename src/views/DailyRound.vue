@@ -6,7 +6,7 @@ import BaseParameter from '@/components/parameters/BaseParameter.vue';
 import ParametersSummary from '@/components/parameters/ParametersSummary.vue';
 import Today from '@/components/Today.vue';
 
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import dailyRound from '@/lib/domain/round';
@@ -23,6 +23,8 @@ const measurements = ref<MeasurementModel[]>([]);
 const router = useRouter();
 const roundService = inject<RoundServiceImpl>(Provided.RoundService)!;
 const patientStore = useCurrentPatient();
+
+const wakeLock = ref<WakeLockSentinel | undefined>();
 
 function toggleAlertPage() {
     alertPage.value = !alertPage.value;
@@ -62,8 +64,28 @@ function confirm() {
 }
 
 onMounted(async () => {
-    if (!patientStore.patient) return router.back();
+    if (!patientStore.patient) {
+        return router.back();
+    }
+
     measurements.value = await roundService.latestMeasurement(patientStore.patient.patientId);
+    if ('wakeLock' in navigator) {
+        console.log('Screen Wake Lock API suportada!');
+    } else {
+        console.log('Screen Wake Lock API não suportada.');
+        return;
+    }
+
+    try {
+        wakeLock.value = await navigator.wakeLock.request('screen');
+        console.log('Tela bloqueada com sucesso!');
+    } catch (err) {
+        console.error('Falha ao bloquear a tela:', err);
+    }
+});
+
+onUnmounted(async () => {
+    await wakeLock.value?.release();
 });
 </script>
 <template>

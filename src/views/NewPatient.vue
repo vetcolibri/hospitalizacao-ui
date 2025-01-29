@@ -1,41 +1,62 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
-import Footer from '@/components/Footer.vue'
-import GoBack from '@/components/GoBack.vue'
-import PatientForm from '@/components/forms/PatientForm.vue'
-import HospitalizationForm from '@/components/forms/HospitalizationForm.vue'
-import OwnerForm from '@/components/forms/OwnerForm.vue'
-import BudgetForm from '@/components/forms/BudgetForm.vue'
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+import GoBack from '@/components/GoBack.vue';
+import PatientForm from '@/components/forms/PatientForm.vue';
+import HospitalizationForm from '@/components/forms/HospitalizationForm.vue';
+import OwnerForm from '@/components/forms/OwnerForm.vue';
+import BudgetForm from '@/components/forms/BudgetForm.vue';
 
-import { inject, ref } from 'vue'
-import { Provided } from '@/lib/provided'
-import type { PatientService } from '@/lib/services/patient_service'
+import { inject, onMounted, onUnmounted, ref } from 'vue';
+import { Provided } from '@/lib/provided';
+import type { PatientService } from '@/lib/services/patient_service';
 
-const form = ref<HTMLFormElement>()
-const patientData = ref()
-const ownerData = ref()
-const hospitalizationData = ref()
-const budgetData = ref()
-const hospitalizationFormRef = ref<typeof HospitalizationForm>()
-const ownerFormRef = ref<typeof OwnerForm>()
+const form = ref<HTMLFormElement>();
+const patientData = ref();
+const ownerData = ref();
+const hospitalizationData = ref();
+const budgetData = ref();
+const hospitalizationFormRef = ref<typeof HospitalizationForm>();
+const ownerFormRef = ref<typeof OwnerForm>();
 
-const patientService = <PatientService>inject(Provided.PatientService)!
+const patientService = <PatientService>inject(Provided.PatientService)!;
+const wakeLock = ref<WakeLockSentinel | undefined>();
 
 async function hospitalize() {
-    if (!form.value?.checkValidity()) return form.value?.reportValidity()
+    if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
     await patientService.newPatient({
         patientData: patientData.value,
         ownerData: ownerData.value,
         hospitalizationData: hospitalizationData.value,
         budgetData: budgetData.value
-    })
+    });
 
-    hospitalizationFormRef.value?.clear()
-    ownerFormRef.value?.clear()
+    hospitalizationFormRef.value?.clear();
+    ownerFormRef.value?.clear();
 
-    form.value?.reset()
+    form.value?.reset();
 }
+
+onMounted(async () => {
+    if ('wakeLock' in navigator) {
+        console.log('Screen Wake Lock API suportada!');
+    } else {
+        console.log('Screen Wake Lock API não suportada.');
+        return;
+    }
+
+    try {
+        wakeLock.value = await navigator.wakeLock.request('screen');
+        console.log('Tela bloqueada com sucesso!');
+    } catch (err) {
+        console.error('Falha ao bloquear a tela:', err);
+    }
+});
+
+onUnmounted(async () => {
+    await wakeLock.value?.release();
+});
 </script>
 
 <template>
