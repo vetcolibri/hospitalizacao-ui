@@ -9,24 +9,26 @@ import BudgetForm from '@/components/forms/BudgetForm.vue';
 
 import { inject, onMounted, onUnmounted, ref } from 'vue';
 import { Provided } from '@/lib/provided';
-import type { PatientService } from '@/lib/services/patient_service';
+import type { NewPatientData, PatientService } from '@/lib/services/patient_service';
+import type { PatientModel } from '@/lib/models/patient';
+
+const patientService = <PatientService>inject(Provided.PatientService)!;
 
 const form = ref<HTMLFormElement>();
-const patientData = ref();
+const patientData = ref<Partial<PatientModel>>({});
 const ownerData = ref();
 const hospitalizationData = ref();
 const budgetData = ref();
 const hospitalizationFormRef = ref<typeof HospitalizationForm>();
 const ownerFormRef = ref<typeof OwnerForm>();
 
-const patientService = <PatientService>inject(Provided.PatientService)!;
 const wakeLock = ref<WakeLockSentinel | undefined>();
 
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
     await patientService.newPatient({
-        patientData: patientData.value,
+        patientData: patientData.value as PatientModel,
         ownerData: ownerData.value,
         hospitalizationData: hospitalizationData.value,
         budgetData: budgetData.value
@@ -36,6 +38,18 @@ async function hospitalize() {
     ownerFormRef.value?.clear();
 
     form.value?.reset();
+}
+
+function checkPatient(patient: Partial<PatientModel & { exists: boolean }>) {
+    patientData.value.patientId = patient.patientId;
+    patientData.value.name = patient.name;
+    patientData.value.specie = patient.specie;
+    patientData.value.breed = patient.breed;
+    patientData.value.birthDate = patient.birthDate;
+
+    if (patient.exists) {
+        ownerFormRef.value?.findOwner(patient.ownerId);
+    }
 }
 
 onMounted(async () => {
@@ -72,7 +86,7 @@ onUnmounted(async () => {
                     Preencha os campos abaixo com os dados do paciente.
                 </p>
 
-                <PatientForm @patient="patientData = $event" />
+                <PatientForm @patient="checkPatient($event)" />
 
                 <OwnerForm ref="ownerFormRef" @owner="ownerData = $event" />
             </section>

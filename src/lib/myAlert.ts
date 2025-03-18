@@ -21,7 +21,7 @@ export function myAlert(title: string, error?: Object) {
                 max-width: 500px;
                 width: 100%;
             }
-            
+
             .my-alert::backdrop {
                 position: fixed;
                 top: 0;
@@ -33,14 +33,15 @@ export function myAlert(title: string, error?: Object) {
                 justify-content: center;
                 align-items: center;
             }
-            
+
             .my-alert textarea {
                 width: 100%;
                 height: 150px;
                 margin-top: 1.5rem;
+                margin-bottom: 1.5rem;
                 display: none;
             }
-            
+
         </style>
     `;
 

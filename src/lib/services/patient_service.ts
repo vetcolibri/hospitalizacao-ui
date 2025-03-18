@@ -23,6 +23,7 @@ export interface PatientService {
         patientId: string,
         status: string
     ): Promise<Either<ApiError, void>>;
+    getPatientById(patientId: string): Promise<Either<ApiError, PatientModel>>;
 }
 
 export class PatientServiceImpl implements PatientService {
@@ -73,6 +74,17 @@ export class PatientServiceImpl implements PatientService {
 
         const resOrErr = await this.apiClient.get(url);
         if (resOrErr.isLeft()) return left(resOrErr.value);
+
+        return right(resOrErr.value.data);
+    }
+
+    async getPatientById(patientId: string): Promise<Either<ApiError, PatientModel>> {
+        const url = `${this.baseUrl}/${this.resource}/${patientId}`;
+
+        const resOrErr = await this.apiClient.get(url);
+        if (resOrErr.isLeft()) {
+            return left(resOrErr.value);
+        }
 
         return right(resOrErr.value.data);
     }

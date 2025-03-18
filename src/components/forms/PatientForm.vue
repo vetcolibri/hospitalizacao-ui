@@ -1,33 +1,96 @@
 <script setup lang="ts">
-import BaseInput from '@/components/BaseInput.vue'
-import ChooseBreed from '@/components/forms/ChooseBreed.vue'
-import { findBreed } from '@/lib/shared/find_breed'
-import { ref } from 'vue'
+import BaseInput from '@/components/BaseInput.vue';
+import ChooseBreed from '@/components/forms/ChooseBreed.vue';
+import type { PatientModel } from '@/lib/models/patient';
+import { Provided } from '@/lib/provided';
+import type { PatientService } from '@/lib/services/patient_service';
+import { findBreed } from '@/lib/shared/find_breed';
+import { inject, onMounted, ref } from 'vue';
 
-const patient = ref({ patientId: '', name: '', specie: '', breed: '', birthDate: '' })
-const emits = defineEmits<{ (e: 'patient', value: object): void }>()
-const breeds = ref<string[]>([])
+const emits = defineEmits<{ (e: 'patient', value: object): void }>();
+
+const patientData = ref<{
+    patientId: string;
+    name: string;
+    specie: string;
+    breed: string;
+    birthDate: string;
+    ownerId?: string;
+    exists: boolean;
+}>({ patientId: '', name: '', specie: '', breed: '', birthDate: '', exists: false });
+
+const patientService = <PatientService>inject(Provided.PatientService)!;
+
+const patients = ref<PatientModel[]>([]);
+const breeds = ref<string[]>([]);
 
 function chooseSpecie(specie: string) {
-    patient.value.breed = ''
-    breeds.value = findBreed(specie)
-    emits('patient', patient.value)
+    breeds.value = findBreed(specie);
+
+    patientData.value.specie = specie;
+    patientData.value.breed = '';
+
+    emitPatient();
 }
+
+function findPatient(patientId: string) {
+    if (!patientId) {
+        return;
+    }
+
+    const patient = patients.value.find((o) => o.patientId === patientId);
+
+    if (!patient) {
+        patientData.value.patientId = patientId;
+        patientData.value.exists = false;
+
+        emitPatient();
+        return;
+    }
+
+    patientData.value = {
+        birthDate: patient.birthDate,
+        breed: patient.breed,
+        name: patient.name,
+        patientId: patient.patientId,
+        specie: patient.specie,
+        exists: true,
+        ownerId: patient.ownerId
+    };
+
+    emitPatient();
+}
+
+function emitPatient() {
+    emits('patient', patientData.value);
+}
+
+onMounted(() => {
+    patientService.listNonHospitalized().then((patientsOrErr) => {
+        if (patientsOrErr.isLeft()) {
+            console.error(patientsOrErr.value);
+            return;
+        }
+
+        patients.value = patientsOrErr.value;
+    });
+});
 </script>
 <template>
     <div class="space-y-3">
         <BaseInput
             placeholder="ID do Paciente"
-            v-model="patient.patientId"
+            v-model="patientData.patientId"
             :required="true"
-            @update:model-value="$emit('patient', patient)"
+            @update:model-value="findPatient($event)"
         />
 
         <BaseInput
             placeholder="Nome do Paciente"
-            v-model="patient.name"
-            :required="true"
-            @update:model-value="$emit('patient', patient)"
+            v-model="patientData.name"
+            required
+            :disabled="patientData.exists"
+            @update:model-value="emitPatient()"
         />
 
         <div class="form-container">
@@ -35,8 +98,9 @@ function chooseSpecie(specie: string) {
                 <select
                     class="form-control"
                     required
-                    v-model="patient.specie"
-                    @change="chooseSpecie(patient.specie)"
+                    :disabled="patientData.exists"
+                    :value="patientData.specie"
+                    @change="chooseSpecie(patientData.specie ?? '')"
                 >
                     <option value="" selected>Escolher Espécie</option>
                     <option value="CANINO">CANINO</option>
@@ -51,9 +115,9 @@ function chooseSpecie(specie: string) {
             <ChooseBreed
                 class="flex-1"
                 title="Escolher Raça"
-                :value="patient.breed"
+                :value="patientData.breed"
                 :breeds="breeds"
-                @choose="patient.breed = $event"
+                @choose="emitPatient()"
             />
         </div>
 
@@ -61,9 +125,10 @@ function chooseSpecie(specie: string) {
             title="Data de nascimento"
             type="date"
             placeholder="Data de nascimento"
-            v-model="patient.birthDate"
-            :required="true"
-            @update:model-value="$emit('patient', patient)"
+            required
+            v-model="patientData.birthDate"
+            :disabled="patientData.exists"
+            @update:model-value="emitPatient()"
         />
     </div>
 </template>

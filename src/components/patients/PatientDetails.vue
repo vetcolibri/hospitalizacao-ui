@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { PatientModel } from '@/lib/models/patient'
-import type { OwnerModel } from '@/lib/models/owner'
+import type { PatientModel } from '@/lib/models/patient';
+import type { OwnerModel } from '@/lib/models/owner';
 
 interface Props {
-    patient: PatientModel
-    owner?: OwnerModel
-    weight?: number
-    active: boolean
+    patient: PatientModel;
+    owner?: OwnerModel;
+    weight?: number;
+    active: boolean;
 }
 
-withDefaults(defineProps<Props>(), { active: false })
+withDefaults(defineProps<Props>(), { active: false });
 </script>
 
 <template>
@@ -24,7 +24,7 @@ withDefaults(defineProps<Props>(), { active: false })
         </li>
         <li class="patient-info-item">
             <span>Idade</span>
-            <span class="patient-info-text">{{ patient.birthDate }}</span>
+            <span class="patient-info-text">{{ patient.age }}</span>
         </li>
         <li class="patient-info-item">
             <span>Peso (Kg)</span>

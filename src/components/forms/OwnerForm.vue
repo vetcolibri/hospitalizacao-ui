@@ -1,59 +1,60 @@
 <script setup lang="ts">
-import BaseInput from '@/components/BaseInput.vue'
-import type { OwnerModel } from '@/lib/models/owner'
-import { Provided } from '@/lib/provided'
-import type { CrmService } from '@/lib/services/crm_service'
-import { inject, onMounted, ref } from 'vue'
-const owners = ref<OwnerModel[]>([])
+import BaseInput from '@/components/BaseInput.vue';
+import type { OwnerModel } from '@/lib/models/owner';
+import { Provided } from '@/lib/provided';
+import type { CrmService } from '@/lib/services/crm_service';
+import { inject, onMounted, ref } from 'vue';
+const owners = ref<OwnerModel[]>([]);
 
-const owner = ref({ ownerId: '', name: '', phoneNumber: '', whatsapp: false })
-const ownerExists = ref<boolean>(false)
+const owner = ref({ ownerId: '', name: '', phoneNumber: '', whatsapp: false });
+const ownerExists = ref<boolean>(false);
 
-const emits = defineEmits<{ (e: 'owner', value: OwnerModel): void }>()
-const crmService = <CrmService>inject(Provided.CrmService)!
+const emits = defineEmits<{ (e: 'owner', value: OwnerModel): void }>();
+const crmService = <CrmService>inject(Provided.CrmService)!;
 
 function findOwner(ownerId: string) {
     if (!ownerId) {
-        clearOwnerData()
-        return
+        clear();
+        return;
     }
 
-    const voidOrOwner = owners.value.find((o) => o.ownerId === ownerId)
+    const voidOrOwner = owners.value.find((o) => o.ownerId === ownerId);
+    console.log('Owner', ownerId, owner.value);
 
     if (!voidOrOwner) {
-        clearOwnerData()
-        owner.value.ownerId = ownerId
-        emits('owner', owner.value)
-        return
+        clear();
+        owner.value.ownerId = ownerId;
+        emits('owner', owner.value);
+        return;
     }
 
-    ownerExists.value = true
+    ownerExists.value = true;
     owner.value = {
         ownerId: voidOrOwner.ownerId,
         name: voidOrOwner.name,
         phoneNumber: voidOrOwner.phoneNumber,
         whatsapp: voidOrOwner.whatsapp
-    }
-    emits('owner', owner.value)
-}
+    };
 
-function clearOwnerData() {
-    if (!owner.value.name || !owner.value.phoneNumber) return
-
-    ownerExists.value = false
-    owner.value = { ownerId: '', name: '', phoneNumber: '', whatsapp: false }
-    emits('owner', owner.value)
+    emits('owner', owner.value);
 }
 
 function clear() {
-    clearOwnerData()
+    if (!owner.value.name || !owner.value.phoneNumber) return;
+
+    ownerExists.value = false;
+    owner.value = { ownerId: '', name: '', phoneNumber: '', whatsapp: false };
+    emits('owner', owner.value);
 }
 
-defineExpose({ clear })
+defineExpose({
+    clear,
+    findOwner
+});
 
 onMounted(async () => {
-    owners.value = await crmService.getOwners()
-})
+    owners.value = await crmService.getOwners();
+});
 </script>
 <template>
     <div class="space-y-3">
