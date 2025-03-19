@@ -31,3 +31,4 @@ dev-dist/
 *.sln
 *.sw?
 .vscode
+bun.lock*

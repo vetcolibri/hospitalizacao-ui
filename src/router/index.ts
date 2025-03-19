@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
-import Dashboard from '@/views/Dashboard.vue'
-import { useAuth } from '@/composables/useAuth'
+import Dashboard from '@/views/Dashboard.vue';
+import { useAuth } from '@/composables/useAuth';
 
 const routes = [
     {
@@ -49,27 +49,25 @@ const routes = [
         name: 'NotFound',
         component: () => import('@/views/NotFound.vue')
     }
-]
+];
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes
-})
+});
 
 router.beforeEach((to) => {
-    const auth = useAuth()
+    const auth = useAuth();
 
-    if (to.name === 'OwnerReport' && !auth.isAuthenticated()) {
-        return true
-    }
-
-    if (to.name === 'OwnerReport' && auth.isAuthenticated()) {
-        return { name: 'Dashboard' }
+    if (to.name === 'OwnerReport') {
+        return true;
     }
 
     if (to.name !== 'Login' && !auth.isAuthenticated()) {
-        return { name: 'Login' }
+        return { name: 'Login' };
     }
-})
 
-export default router
+    return true;
+});
+
+export default router;
