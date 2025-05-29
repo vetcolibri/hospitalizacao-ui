@@ -12,15 +12,9 @@ main {
     height: calc(100vh - 8rem);
 }
 
-form:invalid input:required {
-    @apply w-full border-red-500 rounded shadow-sm focus:border-red-500 focus:ring-0;
-}
-
-form:invalid select:required {
-    @apply w-full border-red-500 rounded shadow-sm focus:border-red-500 focus:ring-0;
-}
-
-form:invalid textarea:required {
+form input:invalid,
+form select:invalid,
+form textarea:invalid {
     @apply w-full border-red-500 rounded shadow-sm focus:border-red-500 focus:ring-0;
 }
 

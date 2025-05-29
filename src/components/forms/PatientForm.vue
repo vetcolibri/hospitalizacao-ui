@@ -100,7 +100,7 @@ onMounted(() => {
                     required
                     :disabled="patientData.exists"
                     :value="patientData.specie"
-                    @change="chooseSpecie(patientData.specie ?? '')"
+                    @change="chooseSpecie($event.target.value)"
                 >
                     <option value="" selected>Escolher Espécie</option>
                     <option value="CANINO">CANINO</option>
@@ -115,9 +115,9 @@ onMounted(() => {
             <ChooseBreed
                 class="flex-1"
                 title="Escolher Raça"
-                :value="patientData.breed"
+                v-model="patientData.breed"
                 :breeds="breeds"
-                @choose="emitPatient()"
+                @update:model-value="emitPatient()"
             />
         </div>
 

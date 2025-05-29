@@ -48,6 +48,7 @@ function checkPatient(patient: Partial<PatientModel & { exists: boolean }>) {
     patientData.value.birthDate = patient.birthDate;
 
     if (patient.exists) {
+        console.log('Trying to find owner');
         ownerFormRef.value?.findOwner(patient.ownerId);
     }
 }

@@ -19,7 +19,6 @@ function findOwner(ownerId: string) {
     }
 
     const voidOrOwner = owners.value.find((o) => o.ownerId === ownerId);
-    console.log('Owner', ownerId, owner.value);
 
     if (!voidOrOwner) {
         clear();
