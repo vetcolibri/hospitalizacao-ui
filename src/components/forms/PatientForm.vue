@@ -24,7 +24,8 @@ const patientService = <PatientService>inject(Provided.PatientService)!;
 const patients = ref<PatientModel[]>([]);
 const breeds = ref<string[]>([]);
 
-function chooseSpecie(specie: string) {
+function chooseSpecie(event: Event) {
+    const specie = (event.target as HTMLSelectElement)?.value;
     breeds.value = findBreed(specie);
 
     patientData.value.specie = specie;
@@ -100,7 +101,7 @@ onMounted(() => {
                     required
                     :disabled="patientData.exists"
                     :value="patientData.specie"
-                    @change="chooseSpecie($event.target.value)"
+                    @change="chooseSpecie($event)"
                 >
                     <option value="" selected>Escolher Espécie</option>
                     <option value="CANINO">CANINO</option>
