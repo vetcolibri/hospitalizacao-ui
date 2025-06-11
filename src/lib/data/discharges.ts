@@ -9,6 +9,7 @@ export const DISCHARGES = {
         'Líquido',
         'Esverdeado',
         'Pastoso',
-        'Com parasitas'
+        'Com parasitas',
+        'Sem descargas'
     ]
 };
