@@ -50,7 +50,7 @@ test('a failed detail surfaces the error to the caller', async () => {
     expect(result.isLeft()).toBe(true);
 });
 
-test('the pending legacy diagnostic is an authenticated read of its own', async () => {
+test('the pending legacy diagnostic is an authenticated read bound to the patient', async () => {
     const urls: string[] = [];
     const apiClient = {
         get: (url: string) => {
@@ -63,9 +63,9 @@ test('the pending legacy diagnostic is an authenticated read of its own', async 
         }
     } as unknown as ApiClient;
 
-    const result = await new HospitalizationHistoryServiceImpl(apiClient, '/api').linkStatus();
+    const result = await new HospitalizationHistoryServiceImpl(apiClient, '/api').linkStatus('sys-1');
 
-    expect(urls).toEqual(['/api/hospitalizations/legacy-link-status']);
+    expect(urls).toEqual(['/api/patients/sys-1/legacy-link-status']);
     if (result.isRight()) {
         expect(result.value.reportsWithoutHospitalization).toBe(1154);
     }

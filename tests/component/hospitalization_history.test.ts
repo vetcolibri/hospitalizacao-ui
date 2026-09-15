@@ -75,7 +75,10 @@ function makeDetail(hospitalizationId: string, marker: string) {
                 createdAt: '2026-03-02T09:30:00.000Z',
                 stateOfConsciousness: ['Alerta'],
                 food: { types: ['Ração'], level: '1', datetime: '2026-03-02T09:30:00.000Z' },
-                discharges: [],
+                discharges: [
+                    { type: 'Urina', aspects: [marker] },
+                    { type: 'Fezes', aspects: ['Normal', marker] }
+                ],
                 comments: marker
             }
         ],
@@ -90,7 +93,7 @@ type DetailResult = Either<ApiError, ReturnType<typeof makeDetail>>;
 interface ServiceOptions {
     list?: () => Promise<ListResult>;
     detail?: (hospitalizationId: string) => Promise<DetailResult>;
-    linkStatus?: () => Promise<Either<ApiError, typeof ZERO_LINK_STATUS>>;
+    linkStatus?: (patientId: string) => Promise<Either<ApiError, typeof ZERO_LINK_STATUS>>;
 }
 
 function makeService(options: ServiceOptions = {}) {
@@ -99,8 +102,8 @@ function makeService(options: ServiceOptions = {}) {
         detail: vi.fn((_patientId: string, hospitalizationId: string) =>
             (options.detail ?? ((id: string) => Promise.resolve(right(makeDetail(id, 'x')))))(hospitalizationId)
         ),
-        linkStatus: vi.fn(() =>
-            (options.linkStatus ?? (() => Promise.resolve(right(ZERO_LINK_STATUS))))()
+        linkStatus: vi.fn((patientId: string) =>
+            (options.linkStatus ?? (() => Promise.resolve(right(ZERO_LINK_STATUS))))(patientId)
         )
     };
 
@@ -247,6 +250,25 @@ describe('histórico de hospitalizações do paciente', () => {
         }
     });
 
+    it('renderiza as descargas do relatório do episódio seleccionado', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) =>
+                Promise.resolve(right(makeDetail(id, id === 'h1' ? 'MARCADOR-H1' : 'MARCADOR-H2')))
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+
+        // Tipos e aspectos das descargas do episódio seleccionado.
+        expect(wrapper.text()).toContain('Urina');
+        expect(wrapper.text()).toContain('Fezes');
+        expect(wrapper.text()).toContain('MARCADOR-H1');
+        expect(wrapper.text()).not.toContain('MARCADOR-H2');
+    });
+
     it('assinala o legado por classificar sem o atribuir a um episódio', async () => {
         const service = makeService({
             list: () => Promise.resolve(right([OPEN_EPISODE])),
@@ -259,6 +281,20 @@ describe('histórico de hospitalizações do paciente', () => {
         const wrapper = await loadHistory(service);
 
         expect(wrapper.text()).toContain('por classificar');
+        // O aviso é do paciente actual, não um total global.
+        expect(service.linkStatus).toHaveBeenCalledWith(PATIENT_ID);
+    });
+
+    it('não mostra aviso quando o paciente actual não tem pendências', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE])),
+            linkStatus: () => Promise.resolve(right(ZERO_LINK_STATUS))
+        });
+
+        const wrapper = await loadHistory(service);
+
+        expect(wrapper.text()).not.toContain('por classificar');
+        expect(service.linkStatus).toHaveBeenCalledWith(PATIENT_ID);
     });
 });
 
