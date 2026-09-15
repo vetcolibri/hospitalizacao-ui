@@ -38,11 +38,16 @@ async function hospitalize() {
     const systemId = patientData.value.systemId;
     const isExistingPatient = patientData.value.exists === true && !!systemId;
 
+    // Para um paciente existente, envia a correcção dos dados globais do tutor
+    // apenas quando o utilizador a efectuou.
+    const ownerChange = isExistingPatient ? ownerFormRef.value?.ownerChange?.() : undefined;
+
     const result = isExistingPatient
         ? await patientService.newHospitalization(
               systemId as string,
               hospitalizationData.value,
-              budgetData.value
+              budgetData.value,
+              ownerChange
           )
         : await patientService.newPatient({
               patientData: patientData.value as PatientModel,

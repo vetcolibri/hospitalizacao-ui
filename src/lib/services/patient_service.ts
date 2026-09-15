@@ -16,7 +16,8 @@ export interface PatientService {
     newHospitalization(
         patientId: string,
         hospitalizationData: HospitalizationModel,
-        budgetData: BudgetModel
+        budgetData: BudgetModel,
+        ownerData?: OwnerModel
     ): Promise<Either<ApiError, void>>;
     endHospitalization(patientId: string): Promise<Either<ApiError, void>>;
     endBudget(
@@ -54,13 +55,17 @@ export class PatientServiceImpl implements PatientService {
     async newHospitalization(
         patientId: string,
         hospitalizationData: HospitalizationModel,
-        budgetData: BudgetModel
+        budgetData: BudgetModel,
+        ownerData?: OwnerModel
     ): Promise<Either<ApiError, void>> {
-        const body = {
+        const body: Record<string, unknown> = {
             patientId,
             hospitalizationData,
             budgetData
         };
+
+        // Só envia a edição quando o tutor existente foi realmente alterado.
+        if (ownerData) body.ownerData = ownerData;
 
         const url = `${this.baseUrl}/${this.resource}/hospitalize`;
 
