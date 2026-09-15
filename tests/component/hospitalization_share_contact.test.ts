@@ -2,7 +2,8 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import PatientCondition from '@/components/patients/PatientCondition.vue';
 import { Provided } from '@/lib/provided';
-import { right } from '@/lib/shared/either';
+import { left, right, type Either } from '@/lib/shared/either';
+import type { ApiError } from '@/lib/apiClient/api_error';
 import type { OwnerModel } from '@/lib/models/owner';
 import type { ContactModel } from '@/lib/models/contact';
 
@@ -43,10 +44,10 @@ const EXCEPTION: ContactModel = {
     whatsapp: false
 };
 
-function makeCrmService() {
+function makeCrmService(ownerResult: Either<ApiError, OwnerModel> = right(OWNER)) {
     return {
         registerReport: vi.fn().mockResolvedValue(right(undefined)),
-        findOwner: vi.fn().mockResolvedValue(right(OWNER)),
+        findOwner: vi.fn().mockResolvedValue(ownerResult),
         getOwners: vi.fn().mockResolvedValue([]),
         getReports: vi.fn().mockResolvedValue(right([]))
     };
@@ -105,6 +106,21 @@ describe('partilha com o contacto efectivo da hospitalização', () => {
         await fillReport(wrapper);
         await communicate(wrapper);
 
+        expect(shareOrCopy).toHaveBeenCalledWith({
+            patientId: 'sys-A',
+            phoneNumber: EXCEPTION.phoneNumber,
+            hasWhatsApp: EXCEPTION.whatsapp
+        });
+    });
+
+    it('com excepção não consulta o tutor nem deixa a sua falha impedir a partilha', async () => {
+        const service = makeCrmService(left({ status: 404, message: 'Tutor não encontrado.' }));
+        const wrapper = mountCondition(service, EXCEPTION);
+
+        await fillReport(wrapper);
+        await communicate(wrapper);
+
+        expect(service.findOwner).not.toHaveBeenCalled();
         expect(shareOrCopy).toHaveBeenCalledWith({
             patientId: 'sys-A',
             phoneNumber: EXCEPTION.phoneNumber,

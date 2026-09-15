@@ -105,13 +105,22 @@ function makeHospitalizationFormStub() {
             expose({ clear: clearSpy });
             emit('hospitalization', HOSPITALIZATION);
             return () =>
-                h('input', {
-                    'data-field': 'hospitalizationData.contact.phoneNumber',
-                    value: contact.value.phoneNumber,
-                    onInput: (event: Event) => {
-                        contact.value.phoneNumber = (event.target as HTMLInputElement).value;
-                    }
-                });
+                h('div', [
+                    h('input', {
+                        'data-field': 'hospitalizationData.contact.name',
+                        value: contact.value.name,
+                        onInput: (event: Event) => {
+                            contact.value.name = (event.target as HTMLInputElement).value;
+                        }
+                    }),
+                    h('input', {
+                        'data-field': 'hospitalizationData.contact.phoneNumber',
+                        value: contact.value.phoneNumber,
+                        onInput: (event: Event) => {
+                            contact.value.phoneNumber = (event.target as HTMLInputElement).value;
+                        }
+                    })
+                ]);
         }
     });
 }
@@ -202,6 +211,35 @@ describe('contacto específico na nova hospitalização', () => {
             .element as HTMLInputElement;
 
         expect(field.validationMessage).toContain('telefone angolano');
+        expect(clearSpy).not.toHaveBeenCalled();
+    });
+
+    it('ao recusar o nome do contacto preserva os dados e associa o erro ao campo', async () => {
+        clearSpy.mockClear();
+        const patientService = new ControlledPatientService();
+        patientService.hospitalizationResult = left({
+            status: 400,
+            message: 'Corrija os campos indicados.',
+            errors: [
+                {
+                    code: 'too_big',
+                    path: 'hospitalizationData.contact.name',
+                    message: 'O nome do contacto não pode ter mais de 50 caracteres.'
+                }
+            ]
+        });
+        const crmService = new ControlledCrmService();
+        const wrapper = mountForm(patientService, crmService);
+
+        await selectPatient(wrapper, patientService, crmService);
+
+        await hospitalizarButton(wrapper).trigger('click');
+        await flushPromises();
+
+        const field = wrapper.find('[data-field="hospitalizationData.contact.name"]')
+            .element as HTMLInputElement;
+
+        expect(field.validationMessage).toContain('50 caracteres');
         expect(clearSpy).not.toHaveBeenCalled();
     });
 

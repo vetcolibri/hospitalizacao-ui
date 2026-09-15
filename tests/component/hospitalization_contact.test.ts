@@ -135,6 +135,15 @@ describe('contacto específico na hospitalização', () => {
         expect(phone.validity.patternMismatch).toBe(false);
     });
 
+    it('limita o nome do contacto ao tamanho da coluna (50)', async () => {
+        const wrapper = mountForm();
+
+        await toggle(wrapper).setValue(true);
+        const name = contactInput(wrapper, 'name');
+
+        expect(name.maxLength).toBe(50);
+    });
+
     it('ao limpar depois de guardar remove a excepção', async () => {
         const wrapper = mountForm();
 
