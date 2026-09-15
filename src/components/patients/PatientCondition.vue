@@ -7,6 +7,8 @@ import { useAuth } from '@/composables/useAuth';
 
 import { FOOD } from '@/lib/data/food';
 import { STATE_OF_CONSCIOUSNESS } from '@/lib/data/state_of_consciousness';
+import type { ContactModel } from '@/lib/models/contact';
+import { resolveEffectiveContact } from '@/lib/domain/effective_contact';
 import { type DischargeModel, type ReportModel } from '@/lib/models/report';
 import { myAlert } from '@/lib/myAlert';
 import { Provided } from '@/lib/provided';
@@ -17,6 +19,8 @@ import { computed, inject, reactive, ref } from 'vue';
 interface Props {
     patientId: string;
     ownerId: string;
+    /** Excepção da hospitalização activa, se existir (RF-13). */
+    contact?: ContactModel;
 }
 
 const props = defineProps<Props>();
@@ -112,10 +116,15 @@ async function save() {
         return;
     }
 
+    // O contacto efectivo é resolvido num único seam: excepção do episódio ou,
+    // sem ela, o tutor principal — a mesma regra dos detalhes da hospitalização.
+    const contact = resolveEffectiveContact(ownerOrErr.value, props.contact);
+    if (!contact) return;
+
     const opts = {
         patientId: props.patientId,
-        phoneNumber: ownerOrErr.value.phoneNumber,
-        hasWhatsApp: ownerOrErr.value.whatsapp
+        phoneNumber: contact.phoneNumber,
+        hasWhatsApp: contact.whatsapp
     };
 
     shareOrCopy(opts);

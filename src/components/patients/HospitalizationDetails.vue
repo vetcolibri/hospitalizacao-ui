@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
+import type { ContactModel } from '@/lib/models/contact'
 import { Provided } from '@/lib/provided'
 import type { PatientService } from '@/lib/services/patient_service'
 import { formatDate } from '@/lib/shared/format_date'
@@ -7,6 +8,9 @@ import { inject } from 'vue'
 
 interface Props {
     hospitalization?: HospitalizationModel
+    /** Contacto efectivamente usado neste episódio (tutor ou excepção). */
+    contact?: ContactModel
+    contactIsSpecific?: boolean
     active: boolean
 }
 
@@ -66,6 +70,21 @@ withDefaults(defineProps<Props>(), { active: false })
                 <span class="patient-info-text">
                     {{ formatDate(hospitalization?.dischargeDate) }}
                 </span>
+            </li>
+            <li v-if="contact" class="patient-info-item flex-col">
+                <span>Contacto usado</span>
+                <div class="flex flex-wrap items-center gap-2 mt-1">
+                    <span class="patient-info-text">{{ contact.name }}</span>
+                    <span class="badge badge-dark">
+                        {{ contactIsSpecific ? 'Contacto específico desta hospitalização' : 'Tutor principal' }}
+                    </span>
+                </div>
+                <div class="mt-1 space-x-2">
+                    <span class="patient-info-text">{{ contact.phoneNumber }}</span>
+                    <span class="patient-info-text">
+                        {{ contact.whatsapp ? 'Tem WhatsApp' : 'Não tem WhatsApp' }}
+                    </span>
+                </div>
             </li>
         </ul>
 

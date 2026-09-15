@@ -151,6 +151,7 @@ onMounted(async () => {
             ref="patientConditionRef"
             :patientId="patientStore.patient.patientId"
             :ownerId="patientStore.patient.ownerId"
+            :contact="patientStore.patient.contact"
         />
         <Footer />
     </div>

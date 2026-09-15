@@ -7,6 +7,7 @@ import { type BudgetService } from '@/lib/services/budget_service'
 import type { AlertModel } from '@/lib/models/alert'
 import type { BudgetModel } from '@/lib/models/budget'
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
+import type { ContactModel } from '@/lib/models/contact'
 import type { OwnerModel } from '@/lib/models/owner'
 import { Provided } from '@/lib/provided'
 import type { PatientModel } from '@/lib/models/patient'
@@ -23,7 +24,7 @@ interface Props {
 }
 
 interface Emits {
-    (e: 'nextPage', patientId: string, owerId?: string): void
+    (e: 'nextPage', patientId: string, owerId?: string, contact?: ContactModel): void
     (e: 'reloadPage'): void
 }
 
@@ -123,7 +124,7 @@ async function save() {
         </div>
         <div
             class="flex flex-col justify-center cursor-pointer gap-1 mt-4"
-            @click="$emit('nextPage', patient.systemId, patient.ownerId)"
+            @click="$emit('nextPage', patient.systemId, patient.ownerId, findHospitalization(patient.systemId)?.contact)"
         >
             <ul class="patient-info">
                 <li class="patient-info-item">

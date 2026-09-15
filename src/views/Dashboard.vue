@@ -6,6 +6,7 @@ import Today from '@/components/Today.vue'
 import { onMounted, toValue } from 'vue'
 
 import { useCurrentPatient } from '@/lib/store/patientStore'
+import type { ContactModel } from '@/lib/models/contact'
 import { useRouter } from 'vue-router'
 import { usePageData } from '@/composables/usePageData'
 
@@ -13,8 +14,8 @@ const router = useRouter()
 const pageData = usePageData()
 const currentPatient = useCurrentPatient()
 
-function nextPage(patientId: string, ownerId?: string) {
-    currentPatient.$patch({ patientId, ownerId })
+function nextPage(patientId: string, ownerId?: string, contact?: ContactModel) {
+    currentPatient.$patch({ patientId, ownerId, contact })
     router.push({ name: 'Measurements' })
 }
 

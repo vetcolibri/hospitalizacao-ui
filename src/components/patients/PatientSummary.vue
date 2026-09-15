@@ -6,9 +6,11 @@ import PatientDetails from './PatientDetails.vue'
 
 import { type BudgetModel } from '@/lib/models/budget'
 import type { HospitalizationModel } from '@/lib/models/hospitalization'
+import type { ContactModel } from '@/lib/models/contact'
 import type { OwnerModel } from '@/lib/models/owner'
 import type { PatientModel } from '@/lib/models/patient'
-import { reactive, ref } from 'vue'
+import { resolveEffectiveContact } from '@/lib/domain/effective_contact'
+import { computed, reactive, ref } from 'vue'
 
 interface Props {
     patient: PatientModel
@@ -21,8 +23,16 @@ interface Emits {
     (e: 'reloadPage'): void
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
+
+// Um único ponto de resolução para os detalhes: a excepção do episódio quando
+// existe, senão o tutor principal.
+const effectiveContact = computed<ContactModel | undefined>(() =>
+    resolveEffectiveContact(props.owner, props.hospitalization?.contact)
+)
+
+const contactIsSpecific = computed<boolean>(() => !!props.hospitalization?.contact)
 const dialogRef = ref<typeof BaseDialog>()
 const tabs = reactive([
     { id: '1', name: 'Paciente', active: true },
@@ -75,6 +85,8 @@ defineExpose({ open })
 
         <HospitalizationDetails
             :hospitalization="hospitalization"
+            :contact="effectiveContact"
+            :contact-is-specific="contactIsSpecific"
             :active="getTab('2')?.active"
             @close-dialog="close()"
         />
