@@ -23,8 +23,12 @@ export class AxiosAdapter implements ApiClient {
             return Promise.resolve(right({ status: response.status, data: response.data }))
         } catch (Error) {
             const error = <AxiosError>Error
-            const { message } = <ApiError>error.response?.data
-            return Promise.resolve(left({ status: error.response?.status, message: message }))
+            const data = <ApiError | undefined>error.response?.data
+            return Promise.resolve(left({
+                status: error.response?.status,
+                message: data?.message ?? error.message,
+                errors: data?.errors
+            }))
         }
     }
 
@@ -41,8 +45,12 @@ export class AxiosAdapter implements ApiClient {
             return Promise.resolve(right({ status: response.status, data: response.data }))
         } catch (Error) {
             const error = <AxiosError>Error
-            const { message } = <ApiError>error.response?.data
-            return Promise.resolve(left({ status: error.response?.status, message }))
+            const data = <ApiError | undefined>error.response?.data
+            return Promise.resolve(left({
+                status: error.response?.status,
+                message: data?.message ?? error.message,
+                errors: data?.errors
+            }))
         }
     }
 }

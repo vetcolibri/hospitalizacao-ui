@@ -46,6 +46,7 @@ defineExpose({ clear })
         <BaseInput
             type="number"
             placeholder="Peso Kg"
+            data-field="hospitalizationData.weight"
             v-model="hospitalization.weight"
             :required="true"
             :max="100"
@@ -57,6 +58,7 @@ defineExpose({ clear })
         <BaseSelect
             ref="complaintsRef"
             title="Escolher Queixas"
+            data-field="hospitalizationData.complaints"
             v-model="hospitalization.complaints"
             :options="COMPLAINTS"
             :limit="10"
@@ -67,6 +69,7 @@ defineExpose({ clear })
         <BaseSelect
             ref="diagnosticsRef"
             title="Escolher Diagnosticos"
+            data-field="hospitalizationData.diagnostics"
             v-model="hospitalization.diagnostics"
             :options="DIAGNOSTICS"
             :limit="5"
@@ -79,6 +82,7 @@ defineExpose({ clear })
                 title="Data de entrada"
                 type="date"
                 class="flex-1"
+                data-field="hospitalizationData.entryDate"
                 v-model="hospitalization.entryDate"
                 :required="true"
                 @update:model-value="$emit('hospitalization', hospitalization)"
@@ -88,6 +92,7 @@ defineExpose({ clear })
                 title="Previsão de Alta Médica"
                 type="date"
                 class="flex-1"
+                data-field="hospitalizationData.dischargeDate"
                 v-model="hospitalization.dischargeDate"
                 @update:model-value="$emit('hospitalization', hospitalization)"
             />

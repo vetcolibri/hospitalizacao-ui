@@ -81,6 +81,7 @@ onMounted(() => {
     <div class="space-y-3">
         <BaseInput
             placeholder="ID do Paciente"
+            data-field="patientData.patientId"
             v-model="patientData.patientId"
             :required="true"
             @update:model-value="findPatient($event)"
@@ -88,6 +89,7 @@ onMounted(() => {
 
         <BaseInput
             placeholder="Nome do Paciente"
+            data-field="patientData.name"
             v-model="patientData.name"
             required
             :disabled="patientData.exists"
@@ -98,6 +100,7 @@ onMounted(() => {
             <div class="flex-1">
                 <select
                     class="form-control"
+                    data-field="patientData.specie"
                     required
                     :disabled="patientData.exists"
                     :value="patientData.specie"
@@ -116,6 +119,7 @@ onMounted(() => {
             <ChooseBreed
                 class="flex-1"
                 title="Escolher Raça"
+                data-field="patientData.breed"
                 v-model="patientData.breed"
                 :breeds="breeds"
                 @update:model-value="emitPatient()"
@@ -126,6 +130,7 @@ onMounted(() => {
             title="Data de nascimento"
             type="date"
             placeholder="Data de nascimento"
+            data-field="patientData.birthDate"
             required
             v-model="patientData.birthDate"
             :disabled="patientData.exists"

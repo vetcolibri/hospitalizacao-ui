@@ -9,7 +9,7 @@ import BudgetForm from '@/components/forms/BudgetForm.vue';
 
 import { inject, onMounted, onUnmounted, ref } from 'vue';
 import { Provided } from '@/lib/provided';
-import type { NewPatientData, PatientService } from '@/lib/services/patient_service';
+import type { PatientService } from '@/lib/services/patient_service';
 import type { PatientModel } from '@/lib/models/patient';
 
 const patientService = <PatientService>inject(Provided.PatientService)!;
@@ -34,12 +34,35 @@ async function hospitalize() {
         budgetData: budgetData.value
     });
 
-    if (result.isLeft()) return;
+    if (result.isLeft()) {
+        let firstInvalidField: HTMLInputElement | HTMLSelectElement | undefined;
+        for (const issue of result.value.errors ?? []) {
+            const container = form.value?.querySelector<HTMLElement>(
+                `[data-field="${CSS.escape(issue.path)}"]`
+            );
+            const field = container instanceof HTMLInputElement || container instanceof HTMLSelectElement
+                ? container
+                : container?.querySelector('input, select');
+            if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement) {
+                field.setCustomValidity(issue.message);
+                firstInvalidField ??= field;
+            }
+        }
+        firstInvalidField?.reportValidity();
+        return;
+    }
 
     hospitalizationFormRef.value?.clear();
     ownerFormRef.value?.clear();
 
     form.value?.reset();
+}
+
+function clearFieldError(event: Event) {
+    const field = event.target;
+    if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement) {
+        field.setCustomValidity('');
+    }
 }
 
 function checkPatient(patient: Partial<PatientModel & { exists: boolean }>) {
@@ -82,7 +105,7 @@ onUnmounted(async () => {
         <GoBack />
     </Header>
     <main class="main-content text-gray-500">
-        <form ref="form">
+        <form ref="form" @input="clearFieldError">
             <section class="container rounded my-4">
                 <h1 class="font-medium">Paciente</h1>
                 <p class="text-sm text-gray-500">

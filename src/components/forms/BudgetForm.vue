@@ -29,6 +29,7 @@ defineEmits<{ (e: 'budget', value: Budget): void }>()
         <div class="flex-1 mt-2">
             <select
                 class="form-control"
+                data-field="budgetData.status"
                 required
                 v-model="budget.status"
                 @change="$emit('budget', budget)"
@@ -48,6 +49,7 @@ defineEmits<{ (e: 'budget', value: Budget): void }>()
                 title="Inicia em"
                 type="date"
                 class="flex-1"
+                data-field="budgetData.startOn"
                 v-model="budget.startOn"
                 :required="true"
                 @update:model-value="$emit('budget', budget)"
@@ -57,6 +59,7 @@ defineEmits<{ (e: 'budget', value: Budget): void }>()
                 title="Termina em"
                 type="date"
                 class="flex-1"
+                data-field="budgetData.endOn"
                 v-model="budget.endOn"
                 :required="true"
                 @update:model-value="$emit('budget', budget)"

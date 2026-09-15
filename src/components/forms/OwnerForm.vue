@@ -59,6 +59,7 @@ onMounted(async () => {
     <div class="space-y-3">
         <BaseInput
             placeholder="ID Proprietário"
+            data-field="ownerData.ownerId"
             v-model="owner.ownerId"
             :required="true"
             @update:model-value="findOwner($event)"
@@ -68,6 +69,7 @@ onMounted(async () => {
             <BaseInput
                 class="flex-1"
                 v-model="owner.name"
+                data-field="ownerData.name"
                 :placeholder="ownerExists ? owner.name : 'Nome do Proprietário'"
                 :required="true"
                 :disabled="ownerExists"
@@ -77,6 +79,7 @@ onMounted(async () => {
                 class="flex-1"
                 pattern="^9[1-9]\d{7}$"
                 help-text="Por favor, insira um número de telefone válido para Angola."
+                data-field="ownerData.phoneNumber"
                 v-model="owner.phoneNumber"
                 :placeholder="ownerExists ? owner.phoneNumber : 'Telemóvel'"
                 :required="true"
