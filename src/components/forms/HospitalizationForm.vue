@@ -135,12 +135,14 @@ defineExpose({ clear })
 
         <div class="flex items-center space-x-2">
             <input
+                id="hospitalization-use-contact"
+                name="hospitalizationUseContact"
                 type="checkbox"
                 data-field="hospitalizationData.useContact"
                 :checked="useSpecificContact"
                 @change="toggleSpecificContact"
             />
-            <label>Usar outro contacto nesta hospitalização</label>
+            <label for="hospitalization-use-contact">Usar outro contacto nesta hospitalização</label>
         </div>
 
         <div v-if="useSpecificContact" class="space-y-3">
@@ -167,12 +169,16 @@ defineExpose({ clear })
 
             <div class="flex items-center space-x-2">
                 <input
+                    id="hospitalization-contact-whatsapp"
+                    name="hospitalizationContactWhatsapp"
                     type="checkbox"
                     data-field="hospitalizationData.contact.whatsapp"
                     :checked="contact.whatsapp"
                     @change="toggleContactWhatsapp"
                 />
-                <label>Marque caso este contacto tenha WhatsApp.</label>
+                <label for="hospitalization-contact-whatsapp">
+                    Marque caso este contacto tenha WhatsApp.
+                </label>
             </div>
         </div>
     </section>
