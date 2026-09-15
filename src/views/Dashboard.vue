@@ -27,6 +27,15 @@ onMounted(async () => await pageData.loadData())
 
     <main class="main-content pb-6">
         <Today class="mt-6" />
+        <div class="mt-4 flex justify-end xl:mx-auto xl:max-w-7xl">
+            <router-link
+                :to="{ name: 'PatientHistory' }"
+                class="btn btn-secondary inline-flex items-center gap-2"
+            >
+                <i class="bi bi-search"></i>
+                <span>Consultar histórico</span>
+            </router-link>
+        </div>
         <section class="patients-container">
             <PatientHospitalized
                 v-for="patient in toValue(pageData.patients)"
