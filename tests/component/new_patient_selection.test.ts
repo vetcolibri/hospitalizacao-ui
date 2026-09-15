@@ -135,6 +135,7 @@ async function fillNewPatient(wrapper: VueWrapper) {
     await wrapper.find('select').setValue('CANINO');
     await wrapper.find('[data-field="patientData.breed"] .absolute').trigger('click');
     await wrapper.findAll('[data-field="patientData.breed"] li')[0].trigger('click');
+    await wrapper.find('input[type="date"]').setValue('2020-01-01');
 }
 
 describe('nova hospitalização de um paciente já existente', () => {
