@@ -11,6 +11,7 @@ import { myAlert } from '../myAlert';
 export interface PatientService {
     listHospitalized(): Promise<PatientModel[]>;
     listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>>;
+    searchPatient(patientId: string): Promise<Either<ApiError, PatientModel>>;
     newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>>;
     newHospitalization(
         patientId: string,
@@ -85,6 +86,15 @@ export class PatientServiceImpl implements PatientService {
         if (resOrErr.isLeft()) {
             return left(resOrErr.value);
         }
+
+        return right(resOrErr.value.data);
+    }
+
+    async searchPatient(patientId: string): Promise<Either<ApiError, PatientModel>> {
+        const url = `${this.baseUrl}/${this.resource}/search/${encodeURIComponent(patientId)}`;
+
+        const resOrErr = await this.apiClient.get(url);
+        if (resOrErr.isLeft()) return left(resOrErr.value);
 
         return right(resOrErr.value.data);
     }

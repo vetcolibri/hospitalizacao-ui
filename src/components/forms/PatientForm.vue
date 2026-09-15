@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import BaseInput from '@/components/BaseInput.vue';
 import ChooseBreed from '@/components/forms/ChooseBreed.vue';
-import type { PatientModel } from '@/lib/models/patient';
 import { Provided } from '@/lib/provided';
 import type { PatientService } from '@/lib/services/patient_service';
 import { findBreed } from '@/lib/shared/find_breed';
-import { inject, onMounted, ref } from 'vue';
+import { inject, ref } from 'vue';
 
 const emits = defineEmits<{ (e: 'patient', value: object): void }>();
 
 const patientData = ref<{
+    systemId?: string;
     patientId: string;
     name: string;
     specie: string;
@@ -21,7 +21,6 @@ const patientData = ref<{
 
 const patientService = <PatientService>inject(Provided.PatientService)!;
 
-const patients = ref<PatientModel[]>([]);
 const breeds = ref<string[]>([]);
 
 function chooseSpecie(event: Event) {
@@ -34,22 +33,34 @@ function chooseSpecie(event: Event) {
     emitPatient();
 }
 
-function findPatient(patientId: string) {
+async function findPatient(patientId: string) {
     if (!patientId) {
         return;
     }
 
-    const patient = patients.value.find((o) => o.patientId === patientId);
+    const patientOrErr = await patientService.searchPatient(patientId);
 
-    if (!patient) {
-        patientData.value.patientId = patientId;
-        patientData.value.exists = false;
+    // Ignora uma resposta antiga se o utilizador continuou a escrever.
+    if (patientData.value.patientId !== patientId) return;
+
+    if (patientOrErr.isLeft() || !patientOrErr.value) {
+        patientData.value = {
+            patientId,
+            name: '',
+            specie: '',
+            breed: '',
+            birthDate: '',
+            exists: false
+        };
 
         emitPatient();
         return;
     }
 
+    const patient = patientOrErr.value;
+
     patientData.value = {
+        systemId: patient.systemId,
         birthDate: patient.birthDate,
         breed: patient.breed,
         name: patient.name,
@@ -65,17 +76,6 @@ function findPatient(patientId: string) {
 function emitPatient() {
     emits('patient', patientData.value);
 }
-
-onMounted(() => {
-    patientService.listNonHospitalized().then((patientsOrErr) => {
-        if (patientsOrErr.isLeft()) {
-            console.error(patientsOrErr.value);
-            return;
-        }
-
-        patients.value = patientsOrErr.value;
-    });
-});
 </script>
 <template>
     <div class="space-y-3">

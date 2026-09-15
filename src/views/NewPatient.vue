@@ -15,7 +15,8 @@ import type { PatientModel } from '@/lib/models/patient';
 const patientService = <PatientService>inject(Provided.PatientService)!;
 
 const form = ref<HTMLFormElement>();
-const patientData = ref<Partial<PatientModel>>({});
+type FormPatient = Partial<PatientModel> & { exists?: boolean };
+const patientData = ref<FormPatient>({});
 const ownerData = ref();
 const hospitalizationData = ref();
 const budgetData = ref();
@@ -27,12 +28,21 @@ const wakeLock = ref<WakeLockSentinel | undefined>();
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
-    const result = await patientService.newPatient({
-        patientData: patientData.value as PatientModel,
-        ownerData: ownerData.value,
-        hospitalizationData: hospitalizationData.value,
-        budgetData: budgetData.value
-    });
+    const systemId = patientData.value.systemId;
+    const isExistingPatient = patientData.value.exists === true && !!systemId;
+
+    const result = isExistingPatient
+        ? await patientService.newHospitalization(
+              systemId as string,
+              hospitalizationData.value,
+              budgetData.value
+          )
+        : await patientService.newPatient({
+              patientData: patientData.value as PatientModel,
+              ownerData: ownerData.value,
+              hospitalizationData: hospitalizationData.value,
+              budgetData: budgetData.value
+          });
 
     if (result.isLeft()) {
         let firstInvalidField: HTMLInputElement | HTMLSelectElement | undefined;
@@ -55,6 +65,7 @@ async function hospitalize() {
     hospitalizationFormRef.value?.clear();
     ownerFormRef.value?.clear();
 
+    patientData.value = {};
     form.value?.reset();
 }
 
@@ -65,12 +76,14 @@ function clearFieldError(event: Event) {
     }
 }
 
-function checkPatient(patient: Partial<PatientModel & { exists: boolean }>) {
+function checkPatient(patient: Partial<PatientModel> & { exists?: boolean }) {
     patientData.value.patientId = patient.patientId;
     patientData.value.name = patient.name;
     patientData.value.specie = patient.specie;
     patientData.value.breed = patient.breed;
     patientData.value.birthDate = patient.birthDate;
+    patientData.value.systemId = patient.systemId;
+    patientData.value.exists = patient.exists;
 
     if (patient.exists) {
         console.log('Trying to find owner');
