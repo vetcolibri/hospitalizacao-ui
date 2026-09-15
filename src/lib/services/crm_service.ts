@@ -8,7 +8,7 @@ import { myAlert } from '../myAlert';
 export interface CrmService {
     getOwners(): Promise<OwnerModel[]>;
     findOwner(ownerId: string): Promise<Either<ApiError, OwnerModel>>;
-    registerReport(patientId: string, report: ReportModel): Promise<void>;
+    registerReport(patientId: string, report: ReportModel): Promise<Either<ApiError, void>>;
     getReports(
         patientId: string,
         ownerId: string,
@@ -48,15 +48,20 @@ export class CrmServiceImpl implements CrmService {
         return right(resOrErr.value.data);
     }
 
-    async registerReport(patientId: string, report: ReportModel): Promise<void> {
+    async registerReport(
+        patientId: string,
+        report: ReportModel
+    ): Promise<Either<ApiError, void>> {
         const url = `${this.baseUrl}/owners/register-report`;
 
         const resOrErr = await this.apiClient.post(url, { patientId, ...report });
         if (resOrErr.isLeft()) {
             console.error(resOrErr.value);
             myAlert('Erro ao registrar informações para o Tutor', resOrErr.value);
-            return;
+            return left(resOrErr.value);
         }
+
+        return right(undefined);
     }
 
     async getReports(

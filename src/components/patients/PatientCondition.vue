@@ -97,8 +97,11 @@ function clear() {
 async function save() {
     if (isDisabled.value) return;
 
-    report.comments = report.comments.concat(`\n\nAtt: ${username}`);
-    await service.registerReport(props.patientId, report);
+    const result = await service.registerReport(props.patientId, {
+        ...report,
+        comments: report.comments.concat(`\n\nAtt: ${username}`)
+    });
+    if (result.isLeft()) return;
 
     clear();
     close();
