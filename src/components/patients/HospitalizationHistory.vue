@@ -30,8 +30,8 @@ const listError = ref('')
 const detailLoading = ref(false)
 const detailError = ref('')
 
-let loaded = false
-// Descarta respostas antigas quando o utilizador troca de episódio depressa.
+let loadedPatientId: string | undefined
+// Descarta respostas antigas quando o utilizador troca de episódio ou de paciente.
 let detailRequest = 0
 
 // O backend já ordena; repetimos aqui para garantir o desempate por id mesmo
@@ -109,11 +109,24 @@ async function select(hospitalizationId: string) {
     detail.value = result.value
 }
 
+function resetForPatient() {
+    summaries.value = []
+    selectedId.value = undefined
+    detail.value = undefined
+    listError.value = ''
+    detailError.value = ''
+    linkStatus.value = undefined
+    // Invalida qualquer detalhe em voo do paciente anterior.
+    detailRequest++
+}
+
 watch(
-    () => props.active,
-    (active) => {
-        if (!active || loaded) return
-        loaded = true
+    [() => props.active, () => props.patientId],
+    ([active, patientId]) => {
+        if (!active || loadedPatientId === patientId) return
+
+        loadedPatientId = patientId
+        resetForPatient()
         load()
     },
     { immediate: true }
