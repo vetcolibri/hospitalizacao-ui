@@ -2,6 +2,7 @@
 import BaseDialog from '@/components/BaseDialog.vue'
 import BudgetDetails from '@/components/patients/BudgetDetails.vue'
 import HospitalizationDetails from '@/components/patients/HospitalizationDetails.vue'
+import HospitalizationHistory from '@/components/patients/HospitalizationHistory.vue'
 import PatientDetails from './PatientDetails.vue'
 
 import { type BudgetModel } from '@/lib/models/budget'
@@ -37,7 +38,8 @@ const dialogRef = ref<typeof BaseDialog>()
 const tabs = reactive([
     { id: '1', name: 'Paciente', active: true },
     { id: '2', name: 'Hospitalização', active: false },
-    { id: '3', name: 'Orçamento', active: false }
+    { id: '3', name: 'Orçamento', active: false },
+    { id: '4', name: 'Histórico', active: false }
 ])
 
 function showTab(id: string) {
@@ -95,6 +97,10 @@ defineExpose({ open })
             :patient-id="patient.systemId"
             :active="getTab('3')?.active"
             @close-dialog="close()"
+        />
+        <HospitalizationHistory
+            :patient-id="patient.systemId"
+            :active="getTab('4')?.active ?? false"
         />
     </BaseDialog>
 </template>
