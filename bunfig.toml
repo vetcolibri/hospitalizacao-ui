@@ -1,2 +1,3 @@
+# Os testes de componente (.vue) correm com vitest (npm run test:unit).
 [test]
-pathIgnorePatterns = ["*.component.test.ts"]
+pathIgnorePatterns = ["tests/component/*.test.ts"]

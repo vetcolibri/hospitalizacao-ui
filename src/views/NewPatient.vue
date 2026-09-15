@@ -24,8 +24,13 @@ const hospitalizationFormRef = ref<typeof HospitalizationForm>();
 const ownerFormRef = ref<typeof OwnerForm>();
 
 const wakeLock = ref<WakeLockSentinel | undefined>();
+const searchingPatient = ref(false);
 
 async function hospitalize() {
+    // Enquanto a pesquisa do paciente decorre não há selecção válida: submeter
+    // poderia hospitalizar o paciente pesquisado anteriormente.
+    if (searchingPatient.value) return;
+
     if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
     const systemId = patientData.value.systemId;
@@ -124,7 +129,10 @@ onUnmounted(async () => {
                     Preencha os campos abaixo com os dados do paciente.
                 </p>
 
-                <PatientForm @patient="checkPatient($event)" />
+                <PatientForm
+                    @patient="checkPatient($event)"
+                    @searching="searchingPatient = $event"
+                />
 
                 <OwnerForm ref="ownerFormRef" @owner="ownerData = $event" />
             </section>
@@ -138,7 +146,11 @@ onUnmounted(async () => {
         </form>
     </main>
     <Footer>
-        <button class="btn btn-success space-x-2" @click="hospitalize()">
+        <button
+            class="btn btn-success space-x-2"
+            :disabled="searchingPatient"
+            @click="hospitalize()"
+        >
             <i class="bi bi-floppy2"></i>
             <span class="font-medium">Hospitalizar</span>
         </button>

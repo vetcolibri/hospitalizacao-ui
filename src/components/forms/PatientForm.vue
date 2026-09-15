@@ -4,9 +4,13 @@ import ChooseBreed from '@/components/forms/ChooseBreed.vue';
 import { Provided } from '@/lib/provided';
 import type { PatientService } from '@/lib/services/patient_service';
 import { findBreed } from '@/lib/shared/find_breed';
+import { toDateInputValue } from '@/lib/shared/format_date';
 import { inject, ref } from 'vue';
 
-const emits = defineEmits<{ (e: 'patient', value: object): void }>();
+const emits = defineEmits<{
+    (e: 'patient', value: object): void;
+    (e: 'searching', value: boolean): void;
+}>();
 
 const patientData = ref<{
     systemId?: string;
@@ -34,14 +38,25 @@ function chooseSpecie(event: Event) {
 }
 
 async function findPatient(patientId: string) {
+    // Qualquer alteração ao ID invalida já a selecção anterior: enquanto a
+    // pesquisa decorre não pode ser hospitalizado o paciente anterior.
+    patientData.value.exists = false;
+    patientData.value.systemId = undefined;
+    emitPatient();
+
     if (!patientId) {
+        emits('searching', false);
         return;
     }
+
+    emits('searching', true);
 
     const patientOrErr = await patientService.searchPatient(patientId);
 
     // Ignora uma resposta antiga se o utilizador continuou a escrever.
     if (patientData.value.patientId !== patientId) return;
+
+    emits('searching', false);
 
     if (patientOrErr.isLeft() || !patientOrErr.value) {
         patientData.value = {
@@ -61,7 +76,7 @@ async function findPatient(patientId: string) {
 
     patientData.value = {
         systemId: patient.systemId,
-        birthDate: patient.birthDate,
+        birthDate: toDateInputValue(patient.birthDate),
         breed: patient.breed,
         name: patient.name,
         patientId: patient.patientId,
@@ -70,6 +85,7 @@ async function findPatient(patientId: string) {
         ownerId: patient.ownerId
     };
 
+    breeds.value = findBreed(patient.specie);
     emitPatient();
 }
 
