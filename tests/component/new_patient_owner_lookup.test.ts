@@ -247,7 +247,10 @@ describe('tutor do paciente seleccionado', () => {
         expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('OWN1');
         expect(ownerInput(wrapper, 'ownerData.name').value).toBe('Yoan Fowas');
         expect(ownerInput(wrapper, 'ownerData.phoneNumber').value).toBe('998210817');
-        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(true);
+        // RF-11/RF-12: o tutor do paciente existente passa a ser editável.
+        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(false);
+        expect(ownerInput(wrapper, 'ownerData.phoneNumber').disabled).toBe(false);
+        expect(wrapper.text()).toContain('actualiza a ficha geral do tutor');
         expect(wrapper.text()).toContain('Proprietário tem WhatsApp.');
         expect(hospitalizarButton(wrapper).attributes('disabled')).toBeUndefined();
 
@@ -441,12 +444,12 @@ describe('tutor do paciente seleccionado', () => {
         const crmService = new ControlledCrmService();
         const wrapper = mountForm(patientService, crmService);
 
-        // Pesquisa manual: um tutor existente preenche e bloqueia os campos.
+        // Pesquisa manual: um tutor existente preenche os campos, agora editáveis.
         await wrapper.find('[data-field="ownerData.ownerId"] input').setValue('OWN1');
         crmService.lookups[0].resolve(OWNER_A);
         await flushPromises();
         expect(ownerInput(wrapper, 'ownerData.name').value).toBe('Yoan Fowas');
-        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(true);
+        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(false);
 
         // Outro ID: novo lookup e os dados do tutor anterior saem do formulário.
         await wrapper.find('[data-field="ownerData.ownerId"] input').setValue('OWN2');
