@@ -118,13 +118,13 @@ async function save() {
 
     // O contacto efectivo é resolvido num único seam: excepção do episódio ou,
     // sem ela, o tutor principal — a mesma regra dos detalhes da hospitalização.
-    const contact = resolveEffectiveContact(ownerOrErr.value, props.contact);
-    if (!contact) return;
+    const effectiveContact = resolveEffectiveContact(ownerOrErr.value, props.contact);
+    if (!effectiveContact) return;
 
     const opts = {
         patientId: props.patientId,
-        phoneNumber: contact.phoneNumber,
-        hasWhatsApp: contact.whatsapp
+        phoneNumber: effectiveContact.phoneNumber,
+        hasWhatsApp: effectiveContact.whatsapp
     };
 
     shareOrCopy(opts);
