@@ -110,15 +110,10 @@ async function save() {
     clear();
     close();
 
-    const ownerOrErr = await service.findOwner(props.ownerId);
-    if (ownerOrErr.isLeft()) {
-        myAlert(ownerOrErr.value.message, ownerOrErr.value);
-        return;
-    }
-
-    // O contacto efectivo é resolvido num único seam: excepção do episódio ou,
-    // sem ela, o tutor principal — a mesma regra dos detalhes da hospitalização.
-    const effectiveContact = resolveEffectiveContact(ownerOrErr.value, props.contact);
+    // Resolve primeiro a excepção do episódio: existindo, é usada
+    // exclusivamente e o tutor nunca é consultado — a sua ausência ou falha
+    // não pode impedir a partilha.
+    const effectiveContact = await resolveContactForShare();
     if (!effectiveContact) return;
 
     const opts = {
@@ -128,6 +123,18 @@ async function save() {
     };
 
     shareOrCopy(opts);
+}
+
+async function resolveContactForShare(): Promise<ContactModel | undefined> {
+    if (props.contact) return resolveEffectiveContact(undefined, props.contact);
+
+    const ownerOrErr = await service.findOwner(props.ownerId);
+    if (ownerOrErr.isLeft()) {
+        myAlert(ownerOrErr.value.message, ownerOrErr.value);
+        return undefined;
+    }
+
+    return resolveEffectiveContact(ownerOrErr.value);
 }
 
 defineExpose({ open });

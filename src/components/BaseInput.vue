@@ -10,6 +10,7 @@ interface Props {
     min?: number
     max?: number
     step?: number
+    maxlength?: number
     required?: boolean
     pattern?: string
     helpText?: string
@@ -59,6 +60,7 @@ function emitValue(e: Event) {
             :min="min ? min : ''"
             :max="max ? max : ''"
             :step="step ? step : ''"
+            :maxlength="maxlength"
             :pattern="pattern ? pattern : undefined"
             :title="helpText ? helpText : ''"
             :autocomplete="type === 'password' ? 'current-password' : ''"

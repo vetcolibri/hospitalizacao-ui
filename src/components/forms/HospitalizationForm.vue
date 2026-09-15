@@ -152,6 +152,7 @@ defineExpose({ clear })
                     placeholder="Nome do contacto"
                     data-field="hospitalizationData.contact.name"
                     v-model="contact.name"
+                    :maxlength="50"
                     :required="true"
                     @update:model-value="emitHospitalization()"
                 />
