@@ -65,13 +65,18 @@ defineExpose({ open })
 <template>
     <BaseDialog ref="dialogRef" title="Resumo">
         <div class="border-b border-gray-200 mb-3">
-            <ul class="flex flex-wrap gap-2 font-medium text-center text-gray-500">
+            <ul class="flex flex-wrap gap-2 font-medium text-center text-gray-500" role="tablist">
                 <li
                     class="tab"
                     v-for="tab in tabs"
                     :key="tab.id"
+                    role="tab"
+                    tabindex="0"
+                    :aria-selected="tab.active ? 'true' : 'false'"
                     :class="{ 'text-blue-500': tab.active }"
                     @click="showTab(tab.id)"
+                    @keydown.enter.prevent="showTab(tab.id)"
+                    @keydown.space.prevent="showTab(tab.id)"
                 >
                     {{ tab.name }}
                 </li>
@@ -101,6 +106,7 @@ defineExpose({ open })
         <HospitalizationHistory
             :patient-id="patient.systemId"
             :active="getTab('4')?.active ?? false"
+            role="tabpanel"
         />
     </BaseDialog>
 </template>
