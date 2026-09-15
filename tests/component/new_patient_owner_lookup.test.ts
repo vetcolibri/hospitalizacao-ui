@@ -66,14 +66,20 @@ const BUDGET = {
 };
 
 class ControlledPatientService {
-    readonly searches: { patientId: string; resolve: (patient: unknown) => void }[] = [];
+    readonly searches: {
+        patientId: string;
+        resolve: (patient: unknown) => void;
+        rejectAsMissing: () => void;
+    }[] = [];
     readonly calls: { method: string; args: unknown[] }[] = [];
 
     searchPatient(patientId: string): Promise<unknown> {
         return new Promise((resolve) => {
             this.searches.push({
                 patientId,
-                resolve: (patient) => resolve(right(patient))
+                resolve: (patient) => resolve(right(patient)),
+                rejectAsMissing: () =>
+                    resolve(left({ status: 404, message: 'Paciente não encontrado' }))
             });
         });
     }
@@ -185,6 +191,29 @@ async function clickHospitalizar(wrapper: VueWrapper) {
 async function fillOwnerByHand(wrapper: VueWrapper) {
     await wrapper.find('[data-field="ownerData.name"] input').setValue('Tutor Escrito');
     await wrapper.find('[data-field="ownerData.phoneNumber"] input').setValue('923456789');
+}
+
+/** O utilizador regista um tutor novo: escreve o ID, a API responde 404 e preenche os dados. */
+async function fillNewOwner(
+    wrapper: VueWrapper,
+    crmService: ControlledCrmService,
+    ownerId: string,
+    name = 'Tutor Novo'
+) {
+    await wrapper.find('[data-field="ownerData.ownerId"] input').setValue(ownerId);
+    crmService.lookups[crmService.lookups.length - 1].rejectAsMissing();
+    await flushPromises();
+    await wrapper.find('[data-field="ownerData.name"] input').setValue(name);
+    await wrapper.find('[data-field="ownerData.phoneNumber"] input').setValue('923456789');
+}
+
+/** Preenche os dados obrigatórios do paciente novo (o ID já está escrito). */
+async function fillNewPatient(wrapper: VueWrapper) {
+    await wrapper.find('[data-field="patientData.name"] input').setValue('Bolinha');
+    await wrapper.find('[data-field="patientData.specie"]').setValue('CANINO');
+    await wrapper.find('[data-field="patientData.breed"] .absolute').trigger('click');
+    await wrapper.findAll('[data-field="patientData.breed"] li')[0].trigger('click');
+    await wrapper.find('[data-field="patientData.birthDate"] input').setValue('2020-01-01');
 }
 
 describe('tutor do paciente seleccionado', () => {
@@ -322,5 +351,88 @@ describe('tutor do paciente seleccionado', () => {
         await clickHospitalizar(wrapper);
         await flushPromises();
         expect(patientService.calls).toEqual([]);
+    });
+
+    it('limpa o tutor de um paciente anterior quando o paciente seguinte não existe', async () => {
+        const patientService = new ControlledPatientService();
+        const crmService = new ControlledCrmService();
+        const wrapper = mountForm(patientService, crmService);
+
+        // Paciente A encontrado e o lookup do tutor de A ainda em curso.
+        await wrapper.find('input[placeholder="ID do Paciente"]').setValue('10340A');
+        patientService.searches[0].resolve(PATIENT_A);
+        await flushPromises();
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('OWN1');
+
+        // Antes da resposta, o utilizador passa a um ID de paciente que não existe.
+        await wrapper.find('input[placeholder="ID do Paciente"]').setValue('ZZZZ99');
+        patientService.searches[1].rejectAsMissing();
+        await flushPromises();
+
+        // O tutor de A não pode ficar escrito no formulário de um paciente novo.
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.phoneNumber').value).toBe('');
+        expect((wrapper.find('input[type="checkbox"]').element as HTMLInputElement).checked).toBe(
+            false
+        );
+
+        // Nem uma resposta tardia do tutor de A pode ressuscitar a selecção.
+        crmService.lookups[0].resolve(OWNER_A);
+        await flushPromises();
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('');
+
+        // O paciente novo pode ser registado com o tutor que o utilizador escrever.
+        await fillNewPatient(wrapper);
+        await fillNewOwner(wrapper, crmService, 'OWN9');
+        expect((wrapper.find('form').element as HTMLFormElement).checkValidity()).toBe(true);
+        await hospitalizarButton(wrapper).trigger('click');
+        await flushPromises();
+
+        expect(patientService.calls).toHaveLength(1);
+        expect(patientService.calls[0].method).toBe('newPatient');
+        expect(patientService.calls[0].args[0]).toMatchObject({
+            patientData: { patientId: 'ZZZZ99' },
+            ownerData: {
+                ownerId: 'OWN9',
+                name: 'Tutor Novo',
+                phoneNumber: '923456789',
+                whatsapp: false
+            }
+        });
+    });
+
+    it('limpa também o WhatsApp do tutor do paciente anterior', async () => {
+        const patientService = new ControlledPatientService();
+        const crmService = new ControlledCrmService();
+        const wrapper = mountForm(patientService, crmService);
+
+        await wrapper.find('input[placeholder="ID do Paciente"]').setValue('10340A');
+        patientService.searches[0].resolve(PATIENT_A);
+        await flushPromises();
+        crmService.lookups[0].resolve(OWNER_A);
+        await flushPromises();
+        expect(wrapper.text()).toContain('Proprietário tem WhatsApp.');
+
+        await wrapper.find('input[placeholder="ID do Paciente"]').setValue('ZZZZ99');
+        patientService.searches[1].rejectAsMissing();
+        await flushPromises();
+
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.phoneNumber').value).toBe('');
+        expect(wrapper.text()).not.toContain('Proprietário tem WhatsApp.');
+        const whatsapp = wrapper.find('input[type="checkbox"]').element as HTMLInputElement;
+        expect(whatsapp.checked).toBe(false);
+
+        await fillNewPatient(wrapper);
+        await fillNewOwner(wrapper, crmService, 'OWN9', 'Outro Tutor');
+        await hospitalizarButton(wrapper).trigger('click');
+        await flushPromises();
+
+        expect(patientService.calls[0].args[0]).toMatchObject({
+            ownerData: { ownerId: 'OWN9', name: 'Outro Tutor', whatsapp: false }
+        });
     });
 });
