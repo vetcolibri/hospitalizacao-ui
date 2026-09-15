@@ -91,14 +91,16 @@ type ListResult = Either<ApiError, HospitalizationHistorySummaryModel[]>;
 type DetailResult = Either<ApiError, ReturnType<typeof makeDetail>>;
 
 interface ServiceOptions {
-    list?: () => Promise<ListResult>;
+    list?: (patientId: string) => Promise<ListResult>;
     detail?: (hospitalizationId: string) => Promise<DetailResult>;
     linkStatus?: (patientId: string) => Promise<Either<ApiError, typeof ZERO_LINK_STATUS>>;
 }
 
 function makeService(options: ServiceOptions = {}) {
     const service = {
-        listByPatient: vi.fn(() => (options.list ?? (() => Promise.resolve(right([]))))()),
+        listByPatient: vi.fn((patientId: string) =>
+            (options.list ?? (() => Promise.resolve(right([]))))(patientId)
+        ),
         detail: vi.fn((_patientId: string, hospitalizationId: string) =>
             (options.detail ?? ((id: string) => Promise.resolve(right(makeDetail(id, 'x')))))(hospitalizationId)
         ),
@@ -295,6 +297,36 @@ describe('histórico de hospitalizações do paciente', () => {
 
         expect(wrapper.text()).not.toContain('por classificar');
         expect(service.linkStatus).toHaveBeenCalledWith(PATIENT_ID);
+    });
+
+    it('recarrega o histórico e o aviso quando o paciente muda', async () => {
+        const service = makeService({
+            list: (patientId) =>
+                Promise.resolve(right(patientId === PATIENT_ID ? [OPEN_EPISODE] : [CLOSED_EPISODE])),
+            linkStatus: (patientId) =>
+                Promise.resolve(
+                    right(
+                        patientId === PATIENT_ID
+                            ? { reportsWithoutHospitalization: 5, roundsWithoutHospitalization: 5 }
+                            : ZERO_LINK_STATUS
+                    )
+                )
+        });
+
+        const wrapper = await loadHistory(service);
+        expect(episodeItems(wrapper).map((item) => item.attributes('data-hospitalization-id'))).toEqual([
+            'h2'
+        ]);
+        expect(wrapper.text()).toContain('por classificar');
+
+        await wrapper.setProps({ patientId: 'sys-B' });
+        await flushPromises();
+
+        expect(episodeItems(wrapper).map((item) => item.attributes('data-hospitalization-id'))).toEqual([
+            'h1'
+        ]);
+        expect(wrapper.text()).not.toContain('por classificar');
+        expect(service.linkStatus).toHaveBeenCalledWith('sys-B');
     });
 });
 
