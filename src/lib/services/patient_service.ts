@@ -11,7 +11,7 @@ import { myAlert } from '../myAlert';
 export interface PatientService {
     listHospitalized(): Promise<PatientModel[]>;
     listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>>;
-    newPatient(newPatientData: NewPatientData): Promise<void>;
+    newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>>;
     newHospitalization(
         patientId: string,
         hospitalizationData: HospitalizationModel,
@@ -89,7 +89,7 @@ export class PatientServiceImpl implements PatientService {
         return right(resOrErr.value.data);
     }
 
-    async newPatient(newPatientData: NewPatientData): Promise<void> {
+    async newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>> {
         const { patientData, hospitalizationData, budgetData, ownerData } = newPatientData;
         const body = {
             patientData,
@@ -103,10 +103,11 @@ export class PatientServiceImpl implements PatientService {
         if (resOrErr.isLeft()) {
             console.error(resOrErr.value);
             myAlert('Erro ao hospitalizar paciente', resOrErr.value);
-            return;
+            return left(resOrErr.value);
         }
 
         myAlert('Paciente hospitalizado com sucesso!');
+        return right(undefined);
     }
 
     async endHospitalization(patientId: string): Promise<Either<ApiError, void>> {

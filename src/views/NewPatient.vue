@@ -27,12 +27,14 @@ const wakeLock = ref<WakeLockSentinel | undefined>();
 async function hospitalize() {
     if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
-    await patientService.newPatient({
+    const result = await patientService.newPatient({
         patientData: patientData.value as PatientModel,
         ownerData: ownerData.value,
         hospitalizationData: hospitalizationData.value,
         budgetData: budgetData.value
     });
+
+    if (result.isLeft()) return;
 
     hospitalizationFormRef.value?.clear();
     ownerFormRef.value?.clear();
