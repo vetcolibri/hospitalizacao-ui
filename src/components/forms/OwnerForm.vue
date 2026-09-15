@@ -65,13 +65,12 @@ async function findOwner(ownerId: string) {
 }
 
 function clear() {
-    setPending(false);
-
-    if (!owner.value.name || !owner.value.phoneNumber) return;
-
+    // Invalidação explícita (paciente anterior ou formulário já submetido): limpa SEMPRE
+    // todos os campos e emite o tutor limpo, para nenhum dado antigo sobreviver.
     ownerExists.value = false;
     owner.value = { ownerId: '', name: '', phoneNumber: '', whatsapp: false };
     emits('owner', owner.value);
+    setPending(false);
 }
 
 defineExpose({

@@ -435,4 +435,35 @@ describe('tutor do paciente seleccionado', () => {
             ownerData: { ownerId: 'OWN9', name: 'Outro Tutor', whatsapp: false }
         });
     });
+
+    it('continua a permitir procurar e limpar o tutor manualmente', async () => {
+        const patientService = new ControlledPatientService();
+        const crmService = new ControlledCrmService();
+        const wrapper = mountForm(patientService, crmService);
+
+        // Pesquisa manual: um tutor existente preenche e bloqueia os campos.
+        await wrapper.find('[data-field="ownerData.ownerId"] input').setValue('OWN1');
+        crmService.lookups[0].resolve(OWNER_A);
+        await flushPromises();
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('Yoan Fowas');
+        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(true);
+
+        // Outro ID: novo lookup e os dados do tutor anterior saem do formulário.
+        await wrapper.find('[data-field="ownerData.ownerId"] input').setValue('OWN2');
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('OWN2');
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.phoneNumber').value).toBe('');
+        crmService.lookups[1].resolve(OWNER_B);
+        await flushPromises();
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('Maria Silva');
+
+        // Limpar o ID limpa todo o tutor e não pede nada à API.
+        await wrapper.find('[data-field="ownerData.ownerId"] input').setValue('');
+        await flushPromises();
+        expect(crmService.lookups).toHaveLength(2);
+        expect(ownerInput(wrapper, 'ownerData.ownerId').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.name').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.phoneNumber').value).toBe('');
+        expect(ownerInput(wrapper, 'ownerData.name').disabled).toBe(false);
+    });
 });
