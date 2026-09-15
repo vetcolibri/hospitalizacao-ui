@@ -130,6 +130,16 @@ function hospitalizarButton(wrapper: VueWrapper) {
     return wrapper.findAll('button').find((button) => button.text().includes('Hospitalizar'))!;
 }
 
+/**
+ * O atributo disabled impede o evento no browser; removemo-lo antes do clique para
+ * provar a guarda de hospitalize() e não apenas o botão desactivado.
+ */
+async function clickHospitalizar(wrapper: VueWrapper) {
+    const button = hospitalizarButton(wrapper);
+    button.element.removeAttribute('disabled');
+    await button.trigger('click');
+}
+
 async function fillNewPatient(wrapper: VueWrapper) {
     await wrapper.find('input[placeholder="Nome do Paciente"]').setValue('Bolinha');
     await wrapper.find('select').setValue('CANINO');
@@ -159,11 +169,12 @@ describe('nova hospitalização de um paciente já existente', () => {
         expect(service.searches.map((search) => search.patientId)).toEqual(['10340A', '10340B']);
 
         // Submeter neste intervalo não pode hospitalizar A nem criar B.
-        await hospitalizarButton(wrapper).trigger('click');
+        expect(hospitalizarButton(wrapper).attributes('disabled')).toBeDefined();
+        expect(form.checkValidity()).toBe(true);
+
+        await clickHospitalizar(wrapper);
         await flushPromises();
         expect(service.calls).toEqual([]);
-        expect(form.checkValidity()).toBe(true);
-        expect(hospitalizarButton(wrapper).attributes('disabled')).toBeDefined();
 
         service.searches[1].resolve(PATIENT_B);
         await flushPromises();

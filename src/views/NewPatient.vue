@@ -25,11 +25,13 @@ const ownerFormRef = ref<typeof OwnerForm>();
 
 const wakeLock = ref<WakeLockSentinel | undefined>();
 const searchingPatient = ref(false);
+const pendingOwner = ref(false);
 
 async function hospitalize() {
     // Enquanto a pesquisa do paciente decorre não há selecção válida: submeter
-    // poderia hospitalizar o paciente pesquisado anteriormente.
-    if (searchingPatient.value) return;
+    // poderia hospitalizar o paciente pesquisado anteriormente. Enquanto o tutor
+    // do paciente seleccionado está por resolver, a hospitalização gravaria outro tutor.
+    if (searchingPatient.value || pendingOwner.value) return;
 
     if (!form.value?.checkValidity()) return form.value?.reportValidity();
 
@@ -90,9 +92,12 @@ function checkPatient(patient: Partial<PatientModel> & { exists?: boolean }) {
     patientData.value.exists = patient.exists;
 
     if (patient.exists) {
-        console.log('Trying to find owner');
-        ownerFormRef.value?.findOwner(patient.ownerId);
+        void ownerFormRef.value?.findOwner(patient.ownerId);
+        return;
     }
+
+    // O paciente passa a ser novo: o tutor do paciente anterior não pode ser herdado.
+    ownerFormRef.value?.clear();
 }
 
 onMounted(async () => {
@@ -134,7 +139,11 @@ onUnmounted(async () => {
                     @searching="searchingPatient = $event"
                 />
 
-                <OwnerForm ref="ownerFormRef" @owner="ownerData = $event" />
+                <OwnerForm
+                    ref="ownerFormRef"
+                    @owner="ownerData = $event"
+                    @pending="pendingOwner = $event"
+                />
             </section>
 
             <HospitalizationForm
@@ -148,7 +157,7 @@ onUnmounted(async () => {
     <Footer>
         <button
             class="btn btn-success space-x-2"
-            :disabled="searchingPatient"
+            :disabled="searchingPatient || pendingOwner"
             @click="hospitalize()"
         >
             <i class="bi bi-floppy2"></i>

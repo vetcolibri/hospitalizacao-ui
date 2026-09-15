@@ -1,44 +1,72 @@
 <script setup lang="ts">
 import BaseInput from '@/components/BaseInput.vue';
+import { myAlert } from '@/lib/myAlert';
 import type { OwnerModel } from '@/lib/models/owner';
 import { Provided } from '@/lib/provided';
 import type { CrmService } from '@/lib/services/crm_service';
-import { inject, onMounted, ref } from 'vue';
-const owners = ref<OwnerModel[]>([]);
+import { inject, ref } from 'vue';
 
 const owner = ref({ ownerId: '', name: '', phoneNumber: '', whatsapp: false });
 const ownerExists = ref<boolean>(false);
+// O tutor do paciente seleccionado está por resolver: enquanto a pesquisa decorre (ou
+// depois de falhar) não se pode submeter, para não gravar outro tutor nem criar um duplicado.
+const pending = ref<boolean>(false);
 
-const emits = defineEmits<{ (e: 'owner', value: OwnerModel): void }>();
+const emits = defineEmits<{
+    (e: 'owner', value: OwnerModel): void;
+    (e: 'pending', value: boolean): void;
+}>();
 const crmService = <CrmService>inject(Provided.CrmService)!;
 
-function findOwner(ownerId: string) {
+function setPending(value: boolean) {
+    if (pending.value === value) return;
+
+    pending.value = value;
+    emits('pending', value);
+}
+
+async function findOwner(ownerId: string) {
     if (!ownerId) {
         clear();
         return;
     }
 
-    const voidOrOwner = owners.value.find((o) => o.ownerId === ownerId);
+    // Qualquer alteração ao ID invalida já o tutor anterior.
+    ownerExists.value = false;
+    owner.value = { ownerId, name: '', phoneNumber: '', whatsapp: false };
+    emits('owner', owner.value);
+    setPending(true);
 
-    if (!voidOrOwner) {
-        clear();
-        owner.value.ownerId = ownerId;
+    const ownerOrErr = await crmService.findOwner(ownerId);
+
+    // Ignora uma resposta antiga se o ID entretanto mudou.
+    if (owner.value.ownerId !== ownerId) return;
+
+    if (ownerOrErr.isRight()) {
+        ownerExists.value = true;
+        owner.value = { ...ownerOrErr.value };
         emits('owner', owner.value);
+        setPending(false);
         return;
     }
 
-    ownerExists.value = true;
-    owner.value = {
-        ownerId: voidOrOwner.ownerId,
-        name: voidOrOwner.name,
-        phoneNumber: voidOrOwner.phoneNumber,
-        whatsapp: voidOrOwner.whatsapp
-    };
+    // 404: não existe tutor com este ID, pode ser registado um novo.
+    if (ownerOrErr.value.status === 404) {
+        ownerExists.value = false;
+        owner.value = { ownerId, name: '', phoneNumber: '', whatsapp: false };
+        emits('owner', owner.value);
+        setPending(false);
+        return;
+    }
 
-    emits('owner', owner.value);
+    // Falha transitória ou de autorização: não pode ser tratada como tutor novo.
+    myAlert('Erro ao procurar o tutor', ownerOrErr.value);
+    // O tutor fica por resolver: nova pesquisa (mudar o ID) desbloqueia a submissão.
 }
 
 function clear() {
+    setPending(false);
+
     if (!owner.value.name || !owner.value.phoneNumber) return;
 
     ownerExists.value = false;
@@ -49,10 +77,6 @@ function clear() {
 defineExpose({
     clear,
     findOwner
-});
-
-onMounted(async () => {
-    owners.value = await crmService.getOwners();
 });
 </script>
 <template>

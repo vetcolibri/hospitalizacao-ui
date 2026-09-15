@@ -171,6 +171,16 @@ function alertDialog(): HTMLElement | null {
     return document.body.querySelector('dialog.my-alert');
 }
 
+/**
+ * O atributo disabled impede o evento no browser; removemo-lo antes do clique para
+ * provar a guarda de hospitalize() e não apenas o botão desactivado.
+ */
+async function clickHospitalizar(wrapper: VueWrapper) {
+    const button = hospitalizarButton(wrapper);
+    button.element.removeAttribute('disabled');
+    await button.trigger('click');
+}
+
 /** O utilizador preenche o tutor enquanto a pesquisa ainda decorre. */
 async function fillOwnerByHand(wrapper: VueWrapper) {
     await wrapper.find('[data-field="ownerData.name"] input').setValue('Tutor Escrito');
@@ -197,7 +207,7 @@ describe('tutor do paciente seleccionado', () => {
         await fillOwnerByHand(wrapper);
         expect((wrapper.find('form').element as HTMLFormElement).checkValidity()).toBe(true);
 
-        await hospitalizarButton(wrapper).trigger('click');
+        await clickHospitalizar(wrapper);
         await flushPromises();
         expect(patientService.calls).toEqual([]);
 
@@ -249,7 +259,7 @@ describe('tutor do paciente seleccionado', () => {
         // Mesmo com o formulário válido à mão, não se hospitaliza B antes do tutor de B.
         await fillOwnerByHand(wrapper);
         expect((wrapper.find('form').element as HTMLFormElement).checkValidity()).toBe(true);
-        await hospitalizarButton(wrapper).trigger('click');
+        await clickHospitalizar(wrapper);
         await flushPromises();
         expect(patientService.calls).toEqual([]);
 
@@ -309,7 +319,7 @@ describe('tutor do paciente seleccionado', () => {
 
         await fillOwnerByHand(wrapper);
         expect((wrapper.find('form').element as HTMLFormElement).checkValidity()).toBe(true);
-        await hospitalizarButton(wrapper).trigger('click');
+        await clickHospitalizar(wrapper);
         await flushPromises();
         expect(patientService.calls).toEqual([]);
     });
