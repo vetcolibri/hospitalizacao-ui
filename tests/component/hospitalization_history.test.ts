@@ -182,6 +182,36 @@ describe('histórico de hospitalizações do paciente', () => {
         expect(wrapper.find('form').exists()).toBe(false);
     });
 
+    it('no episódio encerrado não existem controlos de edição nem acções clínicas', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => Promise.resolve(right(makeDetail(id, 'MARCADOR-H1')))
+        });
+
+        const wrapper = await loadHistory(service);
+
+        // Abre o episódio encerrado (h1).
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('Encerrada');
+        expect(wrapper.find('form').exists()).toBe(false);
+        expect(wrapper.find('input').exists()).toBe(false);
+        expect(wrapper.find('select').exists()).toBe(false);
+        expect(wrapper.find('textarea').exists()).toBe(false);
+
+        for (const action of ['Encerrar', 'Editar', 'Alterar', 'Guardar', 'Apagar', 'Cancelar']) {
+            expect(wrapper.text()).not.toContain(action);
+        }
+
+        // A única interacção é a selecção entre episódios; não há botões de acção.
+        const buttons = wrapper.findAll('button');
+        expect(buttons.length).toBeGreaterThan(0);
+        expect(
+            buttons.every((button) => button.attributes('data-hospitalization-id') !== undefined)
+        ).toBe(true);
+    });
+
     it('durante o carregamento mantém a selecção e os dados anteriores', async () => {
         let resolveSecond: (result: DetailResult) => void = () => {};
         const second = new Promise<DetailResult>((resolve) => (resolveSecond = resolve));
