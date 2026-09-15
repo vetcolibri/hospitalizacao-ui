@@ -182,7 +182,7 @@ onMounted(async () => {
                     <li
                         class="cursor-pointer underline text-gray-600 hover:text-blue-500"
                         v-for="report in reports"
-                        :key="report.patientId"
+                        :key="report.reportId"
                         @click="changeReport(report.reportId)"
                     >
                         {{ report.patientName }}, {{ report.patientId }} -
