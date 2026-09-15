@@ -296,4 +296,26 @@ describe('ficha do paciente', () => {
 
         expect(service.listByPatient).toHaveBeenCalledWith(PATIENT_ID);
     });
+
+    it('abre o separador Histórico com o teclado', async () => {
+        const service = makeService({ list: () => Promise.resolve(right([])) });
+
+        const wrapper = mount(PatientSummary, {
+            props: { patient: PATIENT, owner: undefined, hospitalization: undefined, budget: undefined },
+            global: {
+                provide: {
+                    [Provided.PatientService]: { endBudget: () => Promise.resolve() },
+                    [Provided.HospitalizationHistoryService]: service
+                }
+            }
+        });
+
+        const tab = wrapper.findAll('li.tab').find((item) => item.text().includes('Histórico'))!;
+        expect(tab.attributes('tabindex')).toBe('0');
+
+        await tab.trigger('keydown.enter');
+        await flushPromises();
+
+        expect(service.listByPatient).toHaveBeenCalledWith(PATIENT_ID);
+    });
 });
