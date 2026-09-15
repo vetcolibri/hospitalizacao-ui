@@ -16,7 +16,7 @@ export interface HospitalizationHistoryService {
         patientId: string,
         hospitalizationId: string
     ): Promise<Either<ApiError, HospitalizationHistoryDetailModel>>
-    linkStatus(): Promise<Either<ApiError, HospitalizationLinkStatusModel>>
+    linkStatus(patientId: string): Promise<Either<ApiError, HospitalizationLinkStatusModel>>
 }
 
 /**
@@ -57,8 +57,8 @@ export class HospitalizationHistoryServiceImpl implements HospitalizationHistory
         return right(resOrErr.value.data)
     }
 
-    async linkStatus(): Promise<Either<ApiError, HospitalizationLinkStatusModel>> {
-        const url = `${this.baseUrl}/hospitalizations/legacy-link-status`
+    async linkStatus(patientId: string): Promise<Either<ApiError, HospitalizationLinkStatusModel>> {
+        const url = `${this.baseUrl}/patients/${encodeURIComponent(patientId)}/legacy-link-status`
 
         const resOrErr = await this.apiClient.get(url)
         if (resOrErr.isLeft()) return left(resOrErr.value)

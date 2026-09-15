@@ -84,7 +84,7 @@ async function load() {
 
     summaries.value = result.value
 
-    const status = await service.linkStatus()
+    const status = await service.linkStatus(props.patientId)
     if (status.isRight()) linkStatus.value = status.value
 }
 
@@ -292,6 +292,19 @@ watch(
                             <p v-if="report.comments" class="text-sm text-gray-700">
                                 {{ report.comments }}
                             </p>
+                            <div v-if="report.discharges.length > 0" class="mt-1">
+                                <p class="text-sm text-gray-500">Descargas</p>
+                                <ul class="space-y-1">
+                                    <li
+                                        v-for="discharge in report.discharges"
+                                        :key="discharge.type + discharge.aspects.join(',')"
+                                        class="text-sm text-gray-700"
+                                    >
+                                        <span class="font-medium">{{ discharge.type }}</span>:
+                                        {{ discharge.aspects.join(', ') }}
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                     <p v-else class="mt-2 text-sm text-gray-600">Sem relatórios registados</p>
