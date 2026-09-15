@@ -1,0 +1,299 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import HospitalizationHistory from '@/components/patients/HospitalizationHistory.vue';
+import PatientSummary from '@/components/patients/PatientSummary.vue';
+import { Provided } from '@/lib/provided';
+import { left, right, type Either } from '@/lib/shared/either';
+import type { ApiError } from '@/lib/apiClient/api_error';
+import type { HospitalizationHistorySummaryModel } from '@/lib/models/hospitalization_history';
+import type { PatientModel } from '@/lib/models/patient';
+
+beforeAll(() => {
+    HTMLDialogElement.prototype.showModal ??= function () {
+        this.setAttribute('open', '');
+    };
+    HTMLDialogElement.prototype.close ??= function () {
+        this.removeAttribute('open');
+    };
+});
+
+const PATIENT_ID = 'sys-A';
+
+const OPEN_EPISODE: HospitalizationHistorySummaryModel = {
+    hospitalizationId: 'h2',
+    entryDate: '2026-03-01T08:00:00.000Z',
+    status: 'Aberta'
+};
+
+const CLOSED_EPISODE: HospitalizationHistorySummaryModel = {
+    hospitalizationId: 'h1',
+    entryDate: '2026-03-01T08:00:00.000Z',
+    dischargeDate: '2026-03-05T08:00:00.000Z',
+    status: 'Fechada'
+};
+
+const OLDER_EPISODE: HospitalizationHistorySummaryModel = {
+    hospitalizationId: 'h0',
+    entryDate: '2026-01-01T08:00:00.000Z',
+    dischargeDate: '2026-01-04T08:00:00.000Z',
+    status: 'Fechada'
+};
+
+const ZERO_LINK_STATUS = { reportsWithoutHospitalization: 0, roundsWithoutHospitalization: 0 };
+
+function makeDetail(hospitalizationId: string, marker: string) {
+    return {
+        hospitalization: {
+            hospitalizationId,
+            patientId: PATIENT_ID,
+            weight: 12.5,
+            status: hospitalizationId === 'h2' ? 'Aberta' : 'Fechada',
+            complaints: ['Anorexia'],
+            diagnostics: ['Por Definir'],
+            entryDate: '2026-03-01T08:00:00.000Z'
+        },
+        budget:
+            hospitalizationId === 'h2'
+                ? null
+                : {
+                      budgetId: 'budget-1',
+                      hospitalizationId,
+                      startOn: '2026-03-01T00:00:00.000Z',
+                      endOn: '2026-03-05T00:00:00.000Z',
+                      status: 'PAGO'
+                  },
+        rounds: [
+            {
+                roundId: 'round-1',
+                issuedAt: '2026-03-02T09:00:00.000Z',
+                measurements: [{ name: 'heartRate', value: marker, issuedAt: '2026-03-02T09:00:00.000Z' }]
+            }
+        ],
+        reports: [
+            {
+                reportId: 'report-1',
+                createdAt: '2026-03-02T09:30:00.000Z',
+                stateOfConsciousness: ['Alerta'],
+                food: { types: ['Ração'], level: '1', datetime: '2026-03-02T09:30:00.000Z' },
+                discharges: [],
+                comments: marker
+            }
+        ],
+        contact: { name: `Contacto ${marker}`, phoneNumber: '923456789', whatsapp: false },
+        contactIsSpecific: hospitalizationId === 'h2'
+    };
+}
+
+type ListResult = Either<ApiError, HospitalizationHistorySummaryModel[]>;
+type DetailResult = Either<ApiError, ReturnType<typeof makeDetail>>;
+
+interface ServiceOptions {
+    list?: () => Promise<ListResult>;
+    detail?: (hospitalizationId: string) => Promise<DetailResult>;
+    linkStatus?: () => Promise<Either<ApiError, typeof ZERO_LINK_STATUS>>;
+}
+
+function makeService(options: ServiceOptions = {}) {
+    const service = {
+        listByPatient: vi.fn(() => (options.list ?? (() => Promise.resolve(right([]))))()),
+        detail: vi.fn((_patientId: string, hospitalizationId: string) =>
+            (options.detail ?? ((id: string) => Promise.resolve(right(makeDetail(id, 'x')))))(hospitalizationId)
+        ),
+        linkStatus: vi.fn(() =>
+            (options.linkStatus ?? (() => Promise.resolve(right(ZERO_LINK_STATUS))))()
+        )
+    };
+
+    return service;
+}
+
+function mountHistory(service: ReturnType<typeof makeService>) {
+    return mount(HospitalizationHistory, {
+        props: { patientId: PATIENT_ID, active: true },
+        global: { provide: { [Provided.HospitalizationHistoryService]: service } }
+    });
+}
+
+async function loadHistory(service: ReturnType<typeof makeService>): Promise<VueWrapper> {
+    const wrapper = mountHistory(service);
+    await flushPromises();
+    return wrapper;
+}
+
+function episodeItems(wrapper: VueWrapper) {
+    return wrapper.findAll('[data-hospitalization-id]');
+}
+
+describe('histórico de hospitalizações do paciente', () => {
+    it('lista da mais recente para a mais antiga e desempata pelo id', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OLDER_EPISODE, CLOSED_EPISODE, OPEN_EPISODE]))
+        });
+
+        const wrapper = await loadHistory(service);
+        const ids = episodeItems(wrapper).map((item) => item.attributes('data-hospitalization-id'));
+
+        expect(ids).toEqual(['h2', 'h1', 'h0']);
+    });
+
+    it('distingue visualmente o episódio activo do encerrado', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([CLOSED_EPISODE, OPEN_EPISODE]))
+        });
+
+        const wrapper = await loadHistory(service);
+        const items = episodeItems(wrapper);
+
+        expect(items[0].text()).toContain('Activa');
+        expect(items[1].text()).toContain('Encerrada');
+    });
+
+    it('mostra um estado vazio claro quando o paciente não tem histórico', async () => {
+        const wrapper = await loadHistory(makeService({ list: () => Promise.resolve(right([])) }));
+
+        expect(wrapper.text()).toContain('Sem histórico de hospitalizações');
+        expect(episodeItems(wrapper)).toHaveLength(0);
+    });
+
+    it('abre um episódio e mostra só os seus dados, em modo de leitura', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => Promise.resolve(right(makeDetail(id, id === 'h1' ? 'MARCADOR-H1' : 'MARCADOR-H2')))
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+
+        expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'h1');
+        expect(wrapper.text()).toContain('MARCADOR-H1');
+        expect(wrapper.text()).not.toContain('MARCADOR-H2');
+        expect(wrapper.text()).toContain('Orçamento');
+        expect(wrapper.text()).toContain('Rondas / Exames');
+        expect(wrapper.text()).toContain('Relatórios / Comunicações');
+        expect(wrapper.text()).toContain('Contacto usado');
+        // Modo de leitura nesta fase: sem botões de acção clínica.
+        expect(wrapper.find('form').exists()).toBe(false);
+    });
+
+    it('durante o carregamento mantém a selecção e os dados anteriores', async () => {
+        let resolveSecond: (result: DetailResult) => void = () => {};
+        const second = new Promise<DetailResult>((resolve) => (resolveSecond = resolve));
+        let calls = 0;
+
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => {
+                calls++;
+                if (calls === 1) return Promise.resolve(right(makeDetail(id, 'MARCADOR-H2')));
+                return second;
+            }
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[0].trigger('click');
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+        expect(episodeItems(wrapper)[1].attributes('aria-current')).toBe('true');
+
+        resolveSecond(right(makeDetail('h1', 'MARCADOR-H1')));
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H1');
+    });
+
+    it('em erro mantém os dados anteriores e assinala a falha', async () => {
+        let calls = 0;
+
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => {
+                calls++;
+                if (calls === 1) return Promise.resolve(right(makeDetail(id, 'MARCADOR-H2')));
+                return Promise.resolve(left({ status: 404, message: 'Hospitalização não encontrada' }) as DetailResult);
+            }
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[0].trigger('click');
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+        expect(wrapper.text()).toContain('Não foi possível carregar este episódio');
+        expect(episodeItems(wrapper)[1].attributes('aria-current')).toBe('true');
+    });
+
+    it('expõe cada episódio como um botão acessível por teclado', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE]))
+        });
+
+        const wrapper = await loadHistory(service);
+
+        for (const item of episodeItems(wrapper)) {
+            expect(item.element.tagName).toBe('BUTTON');
+            expect(item.attributes('type')).toBe('button');
+        }
+    });
+
+    it('assinala o legado por classificar sem o atribuir a um episódio', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE])),
+            linkStatus: () =>
+                Promise.resolve(
+                    right({ reportsWithoutHospitalization: 1154, roundsWithoutHospitalization: 503 })
+                )
+        });
+
+        const wrapper = await loadHistory(service);
+
+        expect(wrapper.text()).toContain('por classificar');
+    });
+});
+
+describe('ficha do paciente', () => {
+    const PATIENT: PatientModel = {
+        systemId: PATIENT_ID,
+        patientId: '10340A',
+        name: 'Loki',
+        specie: 'CANINO',
+        breed: 'Akita',
+        status: 'HOSPITALIZADO',
+        birthDate: '2012-11-11',
+        age: '13 anos',
+        ownerId: 'OWN1'
+    };
+
+    it('inclui o separador Histórico na ficha do paciente', async () => {
+        const service = makeService({ list: () => Promise.resolve(right([])) });
+
+        const wrapper = mount(PatientSummary, {
+            props: { patient: PATIENT, owner: undefined, hospitalization: undefined, budget: undefined },
+            global: {
+                provide: {
+                    [Provided.PatientService]: { endBudget: () => Promise.resolve() },
+                    [Provided.HospitalizationHistoryService]: service
+                }
+            }
+        });
+
+        const tab = wrapper.findAll('li.tab').find((item) => item.text().includes('Histórico'));
+        expect(tab).toBeDefined();
+
+        await tab!.trigger('click');
+        await flushPromises();
+
+        expect(service.listByPatient).toHaveBeenCalledWith(PATIENT_ID);
+    });
+});
