@@ -65,7 +65,6 @@ async function hospitalize() {
     hospitalizationFormRef.value?.clear();
     ownerFormRef.value?.clear();
 
-    patientData.value = {};
     form.value?.reset();
 }
 

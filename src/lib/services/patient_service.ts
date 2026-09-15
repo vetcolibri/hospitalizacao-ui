@@ -65,8 +65,13 @@ export class PatientServiceImpl implements PatientService {
         const url = `${this.baseUrl}/${this.resource}/hospitalize`;
 
         const resOrErr = await this.apiClient.post(url, body);
-        if (resOrErr.isLeft()) return left(resOrErr.value);
+        if (resOrErr.isLeft()) {
+            console.error(resOrErr.value);
+            myAlert('Erro ao hospitalizar paciente', resOrErr.value);
+            return left(resOrErr.value);
+        }
 
+        myAlert('Paciente hospitalizado com sucesso!');
         return right(undefined);
     }
 

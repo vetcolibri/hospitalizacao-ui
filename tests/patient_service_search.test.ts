@@ -4,12 +4,16 @@ import * as either from '../src/lib/shared/either';
 
 mock.module('@/lib/shared/either', () => either);
 
+const alerts: unknown[] = [];
+const makeDialog = () => ({
+    setAttribute() {}, innerHTML: '', close() {}, showModal() {},
+    querySelector: (selector: string) =>
+        selector === 'textarea' ? { style: {} } : { onclick: undefined }
+});
+
 globalThis.document = {
-    createElement: () => ({
-        setAttribute() {}, innerHTML: '', close() {}, showModal() {},
-        querySelector: (selector: string) => selector === 'textarea' ? { style: {} } : {}
-    }),
-    body: { appendChild() {}, removeChild() {} }
+    createElement: () => makeDialog(),
+    body: { appendChild: (dialog: unknown) => alerts.push(dialog), removeChild() {} }
 } as unknown as Document;
 
 let PatientServiceImpl: typeof import('../src/lib/services/patient_service').PatientServiceImpl;
@@ -37,7 +41,22 @@ test('searching a patient asks the API for the clinic id', async () => {
     if (result.isRight()) expect(result.value.systemId).toBe('sys-1');
 });
 
+test('searching a patient escapes the clinic id in the url', async () => {
+    const urls: string[] = [];
+    const apiClient = {
+        get: (url: string) => {
+            urls.push(url);
+            return Promise.resolve(either.right({ data: {} }));
+        }
+    } as unknown as ApiClient;
+
+    await new PatientServiceImpl(apiClient, '/api').searchPatient('10 340/A');
+
+    expect(urls).toEqual(['/api/patients/search/10%20340%2FA']);
+});
+
 test('hospitalizing an existing patient sends the budget for that patient', async () => {
+    alerts.length = 0;
     const calls: { url: string; body: unknown }[] = [];
     const apiClient = {
         post: (url: string, body: unknown) => {
@@ -46,7 +65,7 @@ test('hospitalizing an existing patient sends the budget for that patient', asyn
         }
     } as unknown as ApiClient;
 
-    await new PatientServiceImpl(apiClient, '/api').newHospitalization(
+    const result = await new PatientServiceImpl(apiClient, '/api').newHospitalization(
         'sys-1',
         { weight: 16.5 } as never,
         { status: 'NÃO PAGO' } as never
@@ -62,4 +81,25 @@ test('hospitalizing an existing patient sends the budget for that patient', asyn
             }
         }
     ]);
+    expect(result.isRight()).toBe(true);
+    expect(alerts.length).toBe(1);
+});
+
+test('hospitalizing an existing patient reports the refusal to the user', async () => {
+    alerts.length = 0;
+    const apiClient = {
+        post: () =>
+            Promise.resolve(
+                either.left({ status: 400, message: { message: 'Paciente Loki está hospitalizado' } })
+            )
+    } as unknown as ApiClient;
+
+    const result = await new PatientServiceImpl(apiClient, '/api').newHospitalization(
+        'sys-1',
+        {} as never,
+        {} as never
+    );
+
+    expect(result.isLeft()).toBe(true);
+    expect(alerts.length).toBe(1);
 });
