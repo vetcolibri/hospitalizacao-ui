@@ -30,6 +30,11 @@ const patientService = <PatientService>inject(Provided.PatientService)!;
 
 const breeds = ref<string[]>([]);
 
+// Uma selecção da pesquisa unificada bloqueia TAMBÉM o ID Paciente, para não
+// poder ser trocado localmente sem invalidar a pesquisa. A pesquisa directa por
+// ID (fluxo antigo) mantém o campo editável.
+const presetActive = ref(false);
+
 function chooseSpecie(event: Event) {
     const specie = (event.target as HTMLSelectElement)?.value;
     breeds.value = findBreed(specie);
@@ -102,12 +107,14 @@ watch(
     () => props.preset,
     (preset) => {
         if (preset) {
+            presetActive.value = true;
             patientData.value = { ...preset, exists: true };
             breeds.value = findBreed(preset.specie);
             emitPatient();
             return;
         }
 
+        presetActive.value = false;
         patientData.value = {
             patientId: '',
             name: '',
@@ -120,6 +127,23 @@ watch(
         emitPatient();
     }
 );
+
+/** Repõe o formulário em modo "paciente novo" (após submissão com sucesso). */
+function clear() {
+    presetActive.value = false;
+    patientData.value = {
+        patientId: '',
+        name: '',
+        specie: '',
+        breed: '',
+        birthDate: '',
+        exists: false
+    };
+    breeds.value = [];
+    emitPatient();
+}
+
+defineExpose({ clear });
 </script>
 <template>
     <div class="space-y-3">
@@ -128,6 +152,7 @@ watch(
             data-field="patientData.patientId"
             v-model="patientData.patientId"
             :required="true"
+            :disabled="presetActive"
             @update:model-value="findPatient($event)"
         />
 

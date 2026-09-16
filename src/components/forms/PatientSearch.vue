@@ -3,7 +3,7 @@ import BaseInput from '@/components/BaseInput.vue'
 import { Provided } from '@/lib/provided'
 import type { PatientSearchResultModel } from '@/lib/models/patient'
 import type { PatientService } from '@/lib/services/patient_service'
-import { inject, ref } from 'vue'
+import { inject, onUnmounted, ref } from 'vue'
 
 /**
  * Pesquisa unificada de pacientes (RF nova hospitalização).
@@ -36,6 +36,8 @@ const searched = ref(false)
 let debounce: ReturnType<typeof setTimeout> | undefined
 // Descarta respostas obsoletas quando o termo muda enquanto a pesquisa decorre.
 let request = 0
+// Depois de desmontar, uma resposta em voo não pode emitir nem actualizar nada.
+let disposed = false
 
 function isHospitalized(result: PatientSearchResultModel) {
     return result.status === 'HOSPITALIZADO'
@@ -70,8 +72,8 @@ function onInput(value: string) {
 async function runSearch(trimmed: string, current: number) {
     const resOrErr = await service.searchPatients(trimmed)
 
-    // Resposta antiga (termo mudou ou nova pesquisa já arrancou): descarta.
-    if (current !== request || term.value.trim() !== trimmed) return
+    // Desmontado ou resposta antiga (termo mudou / nova pesquisa arrancou): descarta.
+    if (disposed || current !== request || term.value.trim() !== trimmed) return
 
     loading.value = false
     searched.value = true
@@ -92,7 +94,8 @@ function select(result: PatientSearchResultModel) {
     emits('select', result)
 }
 
-function newPatient() {
+/** Limpa todo o estado da pesquisa sem pedir modo novo (usado após submeter). */
+function reset() {
     term.value = ''
     results.value = []
     error.value = ''
@@ -102,8 +105,20 @@ function newPatient() {
     request++
     emits('clear')
     emits('searching', false)
+}
+
+function newPatient() {
+    reset()
     emits('new')
 }
+
+defineExpose({ clear: reset })
+
+onUnmounted(() => {
+    disposed = true
+    request++
+    if (debounce) clearTimeout(debounce)
+})
 </script>
 
 <template>

@@ -27,6 +27,8 @@ const hospitalizationData = ref();
 const budgetData = ref();
 const hospitalizationFormRef = ref<typeof HospitalizationForm>();
 const ownerFormRef = ref<typeof OwnerForm>();
+const patientFormRef = ref<typeof PatientForm>();
+const patientSearchRef = ref<typeof PatientSearch>();
 
 const wakeLock = ref<WakeLockSentinel | undefined>();
 const searchingPatient = ref(false);
@@ -66,7 +68,7 @@ function invalidateSearchSelection() {
 }
 
 function focusNewPatient() {
-    const field = form.value?.querySelector<HTMLInputElement>('[data-field="patientData.patientId"]');
+    const field = form.value?.querySelector<HTMLInputElement>('input[placeholder="ID do Paciente"]');
     field?.focus();
 }
 
@@ -94,7 +96,9 @@ async function hospitalize() {
               ownerChange
           )
         : await patientService.newPatient({
-              patientData: patientData.value as PatientModel,
+              // Cópia: o estado do formulário é limpo após o sucesso e não pode
+              // alterar o pedido já enviado.
+              patientData: { ...patientData.value } as PatientModel,
               ownerData: ownerData.value,
               hospitalizationData: hospitalizationData.value,
               budgetData: budgetData.value
@@ -118,6 +122,12 @@ async function hospitalize() {
         return;
     }
 
+    // Submissão aceite: limpa TODO o estado do formulário, incluindo a pesquisa
+    // unificada e a selecção, para não sobrar nada do paciente anterior nem
+    // permitir resubmetê-lo. O tutor é também limpo.
+    searchSelection.value = undefined;
+    patientSearchRef.value?.clear();
+    patientFormRef.value?.clear();
     hospitalizationFormRef.value?.clear();
     ownerFormRef.value?.clear();
 
@@ -184,6 +194,7 @@ onUnmounted(async () => {
                 </p>
 
                 <PatientSearch
+                    ref="patientSearchRef"
                     @select="selectSearchedPatient($event)"
                     @clear="invalidateSearchSelection()"
                     @new="focusNewPatient()"
@@ -191,6 +202,7 @@ onUnmounted(async () => {
                 />
 
                 <PatientForm
+                    ref="patientFormRef"
                     :preset="searchPreset"
                     @patient="checkPatient($event)"
                     @searching="searchingPatient = $event"
