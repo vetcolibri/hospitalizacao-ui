@@ -223,4 +223,43 @@ describe('nova hospitalização - pesquisa unificada', () => {
         expect(nameField(wrapper).value).toBe('Bolinha');
         expect(nameField(wrapper).disabled).toBe(false);
     });
+
+    it('uma selecção explícita bloqueia o ID Paciente (não pode ser trocado localmente)', async () => {
+        const harness = mountView();
+
+        await selectResult(harness);
+
+        const idField = harness.wrapper.find('input[placeholder="ID do Paciente"]');
+        expect((idField.element as HTMLInputElement).value).toBe('10340A');
+        expect((idField.element as HTMLInputElement).disabled).toBe(true);
+
+        // Editar a pesquisa invalida a selecção e volta a permitir o ID.
+        await searchInput(harness.wrapper).setValue('loki x');
+        await flushPromises();
+
+        expect((idField.element as HTMLInputElement).disabled).toBe(false);
+        expect((idField.element as HTMLInputElement).value).toBe('');
+    });
+
+    it('após hospitalizar com sucesso não sobra termo, selecção nem paciente', async () => {
+        const harness = mountView();
+        const { wrapper } = harness;
+
+        await selectResult(harness);
+        await hospitalizarButton(wrapper).trigger('click');
+        await flushPromises();
+        expect(harness.service.calls).toHaveLength(1);
+
+        const idField = wrapper.find('input[placeholder="ID do Paciente"]');
+        expect((searchInput(wrapper).element as HTMLInputElement).value).toBe('');
+        expect(wrapper.findAll('[data-search-system-id]')).toHaveLength(0);
+        expect((idField.element as HTMLInputElement).value).toBe('');
+        expect((idField.element as HTMLInputElement).disabled).toBe(false);
+        expect(nameField(wrapper).value).toBe('');
+
+        // O paciente anterior já não pode ser resubmetido.
+        await hospitalizarButton(wrapper).trigger('click');
+        await flushPromises();
+        expect(harness.service.calls).toHaveLength(1);
+    });
 });

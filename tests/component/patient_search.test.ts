@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
+import { defineComponent, h, nextTick, ref } from 'vue';
 import PatientSearch from '@/components/forms/PatientSearch.vue';
 import { Provided } from '@/lib/provided';
 import { left, right } from '@/lib/shared/either';
@@ -207,5 +208,59 @@ describe('pesquisa unificada de pacientes', () => {
         expect(wrapper.emitted('clear')).toBeDefined();
         expect((wrapper.find('input').element as HTMLInputElement).value).toBe('');
         expect(wrapper.findAll('[data-search-system-id]')).toHaveLength(0);
+    });
+
+    it('ao desmontar cancela o debounce e não chega a pesquisar', async () => {
+        const service = new ControlledSearchService();
+        const wrapper = mountSearch(service);
+
+        await wrapper.find('input').setValue('loki');
+        wrapper.unmount();
+
+        await waitDebounce();
+
+        expect(service.calls).toHaveLength(0);
+    });
+
+    it('ao desmontar ignora uma resposta em voo e não volta a chamar o pai', async () => {
+        const service = new ControlledSearchService();
+
+        // Pai que fica montado e observa os eventos do filho.
+        const Parent = defineComponent({
+            setup() {
+                const events: boolean[] = [];
+                const show = ref(true);
+                return { events, show };
+            },
+            render() {
+                return h('div', this.show
+                    ? [
+                        h(PatientSearch, {
+                            onSearching: (value: boolean) => this.events.push(value),
+                            onClear: () => this.events.push(false)
+                        })
+                    ]
+                    : []);
+            }
+        });
+
+        const wrapper = mount(Parent, {
+            global: { provide: { [Provided.PatientService]: service } }
+        });
+
+        await wrapper.find('input').setValue('loki');
+        await waitDebounce();
+        expect(service.calls).toHaveLength(1);
+
+        const before = (wrapper.vm as unknown as { events: boolean[] }).events.length;
+
+        // Desmonta só o filho; o pai continua montado a observar.
+        (wrapper.vm as unknown as { show: boolean }).show = false;
+        await nextTick();
+
+        service.calls[0].resolve(right([SEARCHABLE]));
+        await flushPromises();
+
+        expect((wrapper.vm as unknown as { events: boolean[] }).events.length).toBe(before);
     });
 });
