@@ -112,9 +112,9 @@ function makeService(options: ServiceOptions = {}) {
     return service;
 }
 
-function mountHistory(service: ReturnType<typeof makeService>) {
+function mountHistory(service: ReturnType<typeof makeService>, props: Record<string, unknown> = {}) {
     return mount(HospitalizationHistory, {
-        props: { patientId: PATIENT_ID, active: true },
+        props: { patientId: PATIENT_ID, active: true, ...props },
         global: { provide: { [Provided.HospitalizationHistoryService]: service } }
     });
 }
@@ -357,6 +357,52 @@ describe('histórico de hospitalizações do paciente', () => {
         ]);
         expect(wrapper.text()).not.toContain('por classificar');
         expect(service.linkStatus).toHaveBeenCalledWith('sys-B');
+    });
+
+    it('abre o episódio exacto indicado pelo deep-link', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => Promise.resolve(right(makeDetail(id, 'DEEP-LINK-H1')))
+        });
+
+        const wrapper = mountHistory(service, { initialHospitalizationId: 'h1' });
+        await flushPromises();
+
+        expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'h1');
+        expect(wrapper.text()).toContain('DEEP-LINK-H1');
+    });
+
+    it('o deep-link para episódio de outro paciente mostra o erro do backend', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE])),
+            detail: () =>
+                Promise.resolve(
+                    left({ status: 404, message: 'Hospitalização não encontrada' }) as DetailResult
+                )
+        });
+
+        const wrapper = mountHistory(service, { initialHospitalizationId: 'de-outro-paciente' });
+        await flushPromises();
+
+        expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'de-outro-paciente');
+        expect(wrapper.text()).toContain('Não foi possível carregar este episódio');
+    });
+
+    it('mudar o deep-link selecciona o novo episódio', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => Promise.resolve(right(makeDetail(id, `DEEP-${id}`)))
+        });
+
+        const wrapper = mountHistory(service, { initialHospitalizationId: 'h1' });
+        await flushPromises();
+        expect(wrapper.text()).toContain('DEEP-h1');
+
+        await wrapper.setProps({ initialHospitalizationId: 'h2' });
+        await flushPromises();
+
+        expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'h2');
+        expect(wrapper.text()).toContain('DEEP-h2');
     });
 });
 
