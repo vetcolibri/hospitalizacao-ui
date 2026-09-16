@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import BaseInput from '@/components/BaseInput.vue';
 import ChooseBreed from '@/components/forms/ChooseBreed.vue';
+import type { PatientPresetModel } from '@/lib/models/patient';
 import { Provided } from '@/lib/provided';
 import type { PatientService } from '@/lib/services/patient_service';
 import { findBreed } from '@/lib/shared/find_breed';
 import { toDateInputValue } from '@/lib/shared/format_date';
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
+
+const props = defineProps<{ preset?: PatientPresetModel }>();
 
 const emits = defineEmits<{
     (e: 'patient', value: object): void;
@@ -92,6 +95,31 @@ async function findPatient(patientId: string) {
 function emitPatient() {
     emits('patient', patientData.value);
 }
+
+// Uma selecção da pesquisa unificada preenche e bloqueia o paciente existente;
+// quando é invalidada (editar o termo ou "criar novo"), volta ao modo editável.
+watch(
+    () => props.preset,
+    (preset) => {
+        if (preset) {
+            patientData.value = { ...preset, exists: true };
+            breeds.value = findBreed(preset.specie);
+            emitPatient();
+            return;
+        }
+
+        patientData.value = {
+            patientId: '',
+            name: '',
+            specie: '',
+            breed: '',
+            birthDate: '',
+            exists: false
+        };
+        breeds.value = [];
+        emitPatient();
+    }
+);
 </script>
 <template>
     <div class="space-y-3">

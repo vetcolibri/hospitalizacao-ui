@@ -3,7 +3,7 @@ import type { ApiError } from '@/lib/apiClient/api_error';
 import type { BudgetModel } from '@/lib/models/budget';
 import type { HospitalizationModel } from '@/lib/models/hospitalization';
 import type { OwnerModel } from '@/lib/models/owner';
-import type { PatientModel } from '@/lib/models/patient';
+import type { PatientModel, PatientSearchResultModel } from '@/lib/models/patient';
 import type { Either } from '@/lib/shared/either';
 import { left, right } from '@/lib/shared/either';
 import { myAlert } from '../myAlert';
@@ -12,6 +12,7 @@ export interface PatientService {
     listHospitalized(): Promise<PatientModel[]>;
     listNonHospitalized(): Promise<Either<ApiError, PatientModel[]>>;
     searchPatient(patientId: string): Promise<Either<ApiError, PatientModel>>;
+    searchPatients(term: string): Promise<Either<ApiError, PatientSearchResultModel[]>>;
     newPatient(newPatientData: NewPatientData): Promise<Either<ApiError, void>>;
     newHospitalization(
         patientId: string,
@@ -102,6 +103,15 @@ export class PatientServiceImpl implements PatientService {
 
     async searchPatient(patientId: string): Promise<Either<ApiError, PatientModel>> {
         const url = `${this.baseUrl}/${this.resource}/search/${encodeURIComponent(patientId)}`;
+
+        const resOrErr = await this.apiClient.get(url);
+        if (resOrErr.isLeft()) return left(resOrErr.value);
+
+        return right(resOrErr.value.data);
+    }
+
+    async searchPatients(term: string): Promise<Either<ApiError, PatientSearchResultModel[]>> {
+        const url = `${this.baseUrl}/${this.resource}/search?term=${encodeURIComponent(term)}`;
 
         const resOrErr = await this.apiClient.get(url);
         if (resOrErr.isLeft()) return left(resOrErr.value);
