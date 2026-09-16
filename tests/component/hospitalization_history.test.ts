@@ -220,7 +220,7 @@ describe('histórico de hospitalizações do paciente', () => {
         ).toBe(true);
     });
 
-    it('durante o carregamento mantém a selecção e os dados anteriores', async () => {
+    it('durante o carregamento limpa o detalhe anterior e mantém a selecção', async () => {
         let resolveSecond: (result: DetailResult) => void = () => {};
         const second = new Promise<DetailResult>((resolve) => (resolveSecond = resolve));
         let calls = 0;
@@ -243,7 +243,8 @@ describe('histórico de hospitalizações do paciente', () => {
         await episodeItems(wrapper)[1].trigger('click');
         await flushPromises();
 
-        expect(wrapper.text()).toContain('MARCADOR-H2');
+        // O detalhe anterior desaparece imediatamente ao iniciar nova selecção.
+        expect(wrapper.text()).not.toContain('MARCADOR-H2');
         expect(episodeItems(wrapper)[1].attributes('aria-current')).toBe('true');
 
         resolveSecond(right(makeDetail('h1', 'MARCADOR-H1')));
@@ -251,7 +252,7 @@ describe('histórico de hospitalizações do paciente', () => {
         expect(wrapper.text()).toContain('MARCADOR-H1');
     });
 
-    it('em erro mantém os dados anteriores e assinala a falha', async () => {
+    it('em erro limpa o detalhe anterior e assinala a falha', async () => {
         let calls = 0;
 
         const service = makeService({
@@ -272,9 +273,61 @@ describe('histórico de hospitalizações do paciente', () => {
         await episodeItems(wrapper)[1].trigger('click');
         await flushPromises();
 
-        expect(wrapper.text()).toContain('MARCADOR-H2');
+        // Nunca mostra o detalhe de H1 sob a selecção de H2.
+        expect(wrapper.text()).not.toContain('MARCADOR-H2');
         expect(wrapper.text()).toContain('Não foi possível carregar este episódio');
         expect(episodeItems(wrapper)[1].attributes('aria-current')).toBe('true');
+    });
+
+    it('H1 carregado -> H2 (mesmo paciente): H1 desaparece e nunca aparece sob H2', async () => {
+        const h2 = deferred<DetailResult>();
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) =>
+                id === 'h1'
+                    ? Promise.resolve(right(makeDetail('h1', 'MARCADOR-H1')))
+                    : h2.promise
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H1');
+
+        // H2 fica em voo: H1 tem de desaparecer logo.
+        await episodeItems(wrapper)[0].trigger('click');
+        await flushPromises();
+        expect(wrapper.text()).not.toContain('MARCADOR-H1');
+
+        h2.resolve(right(makeDetail('h2', 'MARCADOR-H2')));
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+        expect(wrapper.text()).not.toContain('MARCADOR-H1');
+    });
+
+    it('H1 carregado -> H2 falha: H1 nunca aparece sob H2', async () => {
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) =>
+                id === 'h1'
+                    ? Promise.resolve(right(makeDetail('h1', 'MARCADOR-H1')))
+                    : Promise.resolve(
+                        left({ status: 404, message: 'Hospitalização não encontrada' }) as DetailResult
+                    )
+        });
+
+        const wrapper = await loadHistory(service);
+
+        await episodeItems(wrapper)[1].trigger('click');
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H1');
+
+        await episodeItems(wrapper)[0].trigger('click');
+        await flushPromises();
+
+        expect(wrapper.text()).not.toContain('MARCADOR-H1');
+        expect(wrapper.text()).toContain('Não foi possível carregar este episódio');
     });
 
     it('expõe cada episódio como um botão acessível por teclado', async () => {

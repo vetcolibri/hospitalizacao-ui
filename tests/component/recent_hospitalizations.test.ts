@@ -213,6 +213,50 @@ describe('página dos últimos internamentos', () => {
         expect(wrapper.text()).not.toContain('Não foi possível carregar');
     });
 
+    it('500 com texto sensível usa a mensagem genérica sem expor internals', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        await setTerm(wrapper, 'loki');
+        lastCall(service).resolve(
+            left({
+                status: 500,
+                message: 'SQLSTATE 23505 duplicate key value violates unique constraint'
+            })
+        );
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('Não foi possível carregar os internamentos.');
+        expect(wrapper.text()).not.toContain('SQLSTATE');
+        expect(wrapper.text()).not.toContain('duplicate key');
+    });
+
+    it('403 usa mensagem de autorização segura, não o texto do servidor', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        await setTerm(wrapper, 'loki');
+        lastCall(service).resolve(
+            left({ status: 403, message: 'O nível de Utilizador não lhe permite pesquisar pacientes.' })
+        );
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('Não tem permissão para consultar os internamentos.');
+        expect(wrapper.text()).not.toContain('O nível de Utilizador');
+    });
+
+    it('401 usa mensagem de sessão segura', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        await setTerm(wrapper, 'loki');
+        lastCall(service).resolve(left({ status: 401, message: 'token inválido' }));
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('Sessão expirada');
+        expect(wrapper.text()).not.toContain('token inválido');
+    });
+
     it('mudar um filtro limpa imediatamente as linhas antigas', async () => {
         const service = new FakeService();
         const wrapper = await mountPage(service, router);
