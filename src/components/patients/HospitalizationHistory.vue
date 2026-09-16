@@ -107,6 +107,9 @@ async function select(patientId: string, hospitalizationId: string) {
     const request = ++detailRequest
 
     selectedId.value = hospitalizationId
+    // Limpa já o detalhe anterior: nunca mostrar dados clínicos de H1 sob a
+    // selecção/deep-link H2, nem durante o carregamento nem em falha.
+    detail.value = undefined
     detailError.value = ''
     detailLoading.value = true
 
@@ -117,7 +120,6 @@ async function select(patientId: string, hospitalizationId: string) {
     detailLoading.value = false
 
     if (result.isLeft()) {
-        // Mantém o detalhe anterior e a selecção; apenas assinala a falha.
         detailError.value = 'Não foi possível carregar este episódio.'
         return
     }

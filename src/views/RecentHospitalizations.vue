@@ -73,8 +73,10 @@ function scheduleSearch(delay: number, invalidate: boolean) {
     debounce = setTimeout(() => runSearch(current), delay)
 }
 
-/** Mensagem segura do servidor (filtro), sem expor detalhes internos. */
-function safeApiMessage(apiError: ApiError): string {
+/** Mensagem de validação do servidor, SÓ para 400 (filtros inválidos). */
+function safeFilterMessage(apiError: ApiError): string {
+    if (apiError.status !== 400) return ''
+
     if (typeof apiError.message === 'string' && apiError.message.trim()) {
         return apiError.message
     }
@@ -85,6 +87,30 @@ function safeApiMessage(apiError: ApiError): string {
     }
 
     return ''
+}
+
+/**
+ * Mensagem segura por estado. Nunca reutiliza o texto do servidor fora do 400
+ * de validação, para não expor internals nem tratar erros de autorização como
+ * validação.
+ */
+function filterOutcome(apiError: ApiError): { kind: 'filter' | 'error'; message: string } {
+    if (apiError.status === 400) {
+        const message = safeFilterMessage(apiError)
+        return message
+            ? { kind: 'filter', message }
+            : { kind: 'error', message: 'Filtros inválidos.' }
+    }
+
+    if (apiError.status === 401) {
+        return { kind: 'error', message: 'Sessão expirada. Volte a autenticar-se.' }
+    }
+
+    if (apiError.status === 403) {
+        return { kind: 'error', message: 'Não tem permissão para consultar os internamentos.' }
+    }
+
+    return { kind: 'error', message: 'Não foi possível carregar os internamentos.' }
 }
 
 async function runSearch(current: number) {
@@ -101,15 +127,14 @@ async function runSearch(current: number) {
 
     if (result.isLeft()) {
         items.value = []
-        const message = safeApiMessage(result.value)
+        const outcome = filterOutcome(result.value)
 
-        if (message) {
-            // Filtro inválido: mostra a mensagem do servidor, não o genérico.
-            filterMessage.value = message
+        if (outcome.kind === 'filter') {
+            filterMessage.value = outcome.message
             error.value = ''
         } else {
             filterMessage.value = ''
-            error.value = 'Não foi possível carregar os internamentos.'
+            error.value = outcome.message
         }
         return
     }
