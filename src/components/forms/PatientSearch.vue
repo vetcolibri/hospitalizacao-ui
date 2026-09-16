@@ -133,7 +133,6 @@ function newPatient() {
                     type="button"
                     :disabled="isHospitalized(result)"
                     :data-search-system-id="result.systemId"
-                    :aria-label="`Selecionar ${result.patientName}`"
                     class="search-result flex w-full flex-wrap items-center justify-between gap-2 rounded border bg-gray-50 p-2.5 text-left hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
                     @click="select(result)"
                 >
