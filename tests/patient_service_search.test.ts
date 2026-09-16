@@ -55,6 +55,36 @@ test('searching a patient escapes the clinic id in the url', async () => {
     expect(urls).toEqual(['/api/patients/search/10%20340%2FA']);
 });
 
+test('unified search asks the API with the term in the query string', async () => {
+    const urls: string[] = [];
+    const apiClient = {
+        get: (url: string) => {
+            urls.push(url);
+            return Promise.resolve(either.right({ data: [{ systemId: 'sys-1' }] }));
+        }
+    } as unknown as ApiClient;
+
+    const result = await new PatientServiceImpl(apiClient, '/api').searchPatients('Loki Tutor');
+
+    expect(urls).toEqual(['/api/patients/search?term=Loki%20Tutor']);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) expect(result.value.length).toBe(1);
+});
+
+test('unified search keeps percent and underscore literal in the url', async () => {
+    const urls: string[] = [];
+    const apiClient = {
+        get: (url: string) => {
+            urls.push(url);
+            return Promise.resolve(either.right({ data: [] }));
+        }
+    } as unknown as ApiClient;
+
+    await new PatientServiceImpl(apiClient, '/api').searchPatients('100%_x');
+
+    expect(urls).toEqual(['/api/patients/search?term=100%25_x']);
+});
+
 test('hospitalizing an existing patient sends the budget for that patient', async () => {
     alerts.length = 0;
     const calls: { url: string; body: unknown }[] = [];
