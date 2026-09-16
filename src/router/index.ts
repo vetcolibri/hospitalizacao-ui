@@ -50,6 +50,11 @@ const routes = [
         component: () => import('@/views/PatientHistory.vue')
     },
     {
+        path: '/hospitalizations/',
+        name: 'RecentHospitalizations',
+        component: () => import('@/views/RecentHospitalizations.vue')
+    },
+    {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: () => import('@/views/NotFound.vue')

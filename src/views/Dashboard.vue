@@ -27,7 +27,14 @@ onMounted(async () => await pageData.loadData())
 
     <main class="main-content pb-6">
         <Today class="mt-6" />
-        <div class="mt-4 flex justify-end xl:mx-auto xl:max-w-7xl">
+        <div class="mt-4 flex flex-wrap justify-end gap-2 xl:mx-auto xl:max-w-7xl">
+            <router-link
+                :to="{ name: 'RecentHospitalizations' }"
+                class="btn btn-secondary inline-flex items-center gap-2"
+            >
+                <i class="bi bi-clock-history"></i>
+                <span>Últimos internamentos</span>
+            </router-link>
             <router-link
                 :to="{ name: 'PatientHistory' }"
                 class="btn btn-secondary inline-flex items-center gap-2"

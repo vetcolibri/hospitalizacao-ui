@@ -14,6 +14,11 @@ interface Props {
     patientId: string
     /** Só carrega quando o separador do histórico está visível. */
     active: boolean
+    /**
+     * Deep-link seguro: abre este episódio exacto. O backend valida que o
+     * episódio pertence ao paciente (RF-15).
+     */
+    initialHospitalizationId?: string
 }
 
 const props = withDefaults(defineProps<Props>(), { active: false })
@@ -121,13 +126,19 @@ function resetForPatient() {
 }
 
 watch(
-    [() => props.active, () => props.patientId],
-    ([active, patientId]) => {
-        if (!active || loadedPatientId === patientId) return
+    [() => props.active, () => props.patientId, () => props.initialHospitalizationId],
+    async ([active, patientId, initialId]) => {
+        if (!active) return
 
-        loadedPatientId = patientId
-        resetForPatient()
-        load()
+        if (loadedPatientId !== patientId) {
+            loadedPatientId = patientId
+            resetForPatient()
+            await load()
+        }
+
+        if (initialId && initialId !== selectedId.value) {
+            await select(initialId)
+        }
     },
     { immediate: true }
 )
