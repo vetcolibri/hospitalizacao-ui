@@ -38,6 +38,10 @@ const detailError = ref('')
 let loadedPatientId: string | undefined
 // Descarta respostas antigas quando o utilizador troca de episódio ou de paciente.
 let detailRequest = 0
+// Guarda da listagem (por paciente) e da navegação (watcher): impedem que uma
+// execução antiga retome e misture estado de outro paciente ou episódio.
+let listRequest = 0
+let navigation = 0
 
 // O backend já ordena; repetimos aqui para garantir o desempate por id mesmo
 // que a origem mude.
@@ -73,11 +77,14 @@ function statusLabel(status?: string) {
     return status ?? 'N/D'
 }
 
-async function load() {
+async function load(patientId: string, request: number) {
     listLoading.value = true
     listError.value = ''
 
-    const result = await service.listByPatient(props.patientId)
+    const result = await service.listByPatient(patientId)
+
+    // Resposta obsoleta (paciente mudou): não mistura summaries de A em B.
+    if (request !== listRequest) return
 
     listLoading.value = false
 
@@ -89,17 +96,21 @@ async function load() {
 
     summaries.value = result.value
 
-    const status = await service.linkStatus(props.patientId)
+    const status = await service.linkStatus(patientId)
+
+    // O diagnóstico também é do paciente desta chamada, não do actual.
+    if (request !== listRequest) return
     if (status.isRight()) linkStatus.value = status.value
 }
 
-async function select(hospitalizationId: string) {
+async function select(patientId: string, hospitalizationId: string) {
+    const request = ++detailRequest
+
     selectedId.value = hospitalizationId
     detailError.value = ''
     detailLoading.value = true
 
-    const request = ++detailRequest
-    const result = await service.detail(props.patientId, hospitalizationId)
+    const result = await service.detail(patientId, hospitalizationId)
 
     if (request !== detailRequest) return
 
@@ -115,14 +126,15 @@ async function select(hospitalizationId: string) {
 }
 
 function resetForPatient() {
+    // Invalida a listagem e o detalhe em voo do paciente anterior.
+    listRequest++
+    detailRequest++
     summaries.value = []
     selectedId.value = undefined
     detail.value = undefined
     listError.value = ''
     detailError.value = ''
     linkStatus.value = undefined
-    // Invalida qualquer detalhe em voo do paciente anterior.
-    detailRequest++
 }
 
 watch(
@@ -130,14 +142,19 @@ watch(
     async ([active, patientId, initialId]) => {
         if (!active) return
 
+        const run = ++navigation
+
         if (loadedPatientId !== patientId) {
             loadedPatientId = patientId
             resetForPatient()
-            await load()
+            await load(patientId, listRequest)
+            // A query mudou enquanto a lista carregava: nunca seleccionar o
+            // initialHospitalizationId anterior.
+            if (run !== navigation) return
         }
 
         if (initialId && initialId !== selectedId.value) {
-            await select(initialId)
+            await select(patientId, initialId)
         }
     },
     { immediate: true }
@@ -169,7 +186,7 @@ watch(
                     :aria-current="item.hospitalizationId === selectedId ? 'true' : undefined"
                     class="history-item flex w-full flex-wrap items-center justify-between gap-2 rounded border bg-gray-50 p-2.5 text-left hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     :class="{ 'border-blue-400': item.hospitalizationId === selectedId }"
-                    @click="select(item.hospitalizationId)"
+                    @click="select(patientId, item.hospitalizationId)"
                 >
                     <span class="text-sm text-gray-700">
                         {{ formatDate(item.entryDate) }}

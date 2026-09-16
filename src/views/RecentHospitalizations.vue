@@ -5,6 +5,7 @@ import GoBack from '@/components/GoBack.vue'
 import Header from '@/components/Header.vue'
 import HospitalizationHistory from '@/components/patients/HospitalizationHistory.vue'
 import type { RecentHospitalizationModel } from '@/lib/models/recent_hospitalization'
+import type { ApiError } from '@/lib/apiClient/api_error'
 import { Provided } from '@/lib/provided'
 import type { HospitalizationService } from '@/lib/services/hospitalization_service'
 import { formatDate } from '@/lib/shared/format_date'
@@ -22,6 +23,8 @@ import { useRoute, useRouter } from 'vue-router'
  */
 
 const DEBOUNCE_MS = 300
+const MIN_TERM = 2
+const MAX_TERM = 50
 
 const service = inject<HospitalizationService>(Provided.HospitalizationService)!
 const router = useRouter()
@@ -34,6 +37,7 @@ const to = ref('')
 const items = ref<RecentHospitalizationModel[]>([])
 const loading = ref(false)
 const error = ref('')
+const filterMessage = ref('')
 const searched = ref(false)
 
 let debounce: ReturnType<typeof setTimeout> | undefined
@@ -53,14 +57,34 @@ function invalidateSelection() {
 }
 
 function scheduleSearch(delay: number, invalidate: boolean) {
-    // Alterar qualquer filtro invalida imediatamente resultados/respostas anteriores.
+    // Alterar qualquer filtro invalida imediatamente resultados/respostas
+    // anteriores: nada do que estava visível pode continuar clicável.
     if (invalidate) invalidateSelection()
 
     if (debounce) clearTimeout(debounce)
 
+    items.value = []
+    error.value = ''
+    filterMessage.value = ''
+    searched.value = false
     loading.value = true
+
     const current = ++request
     debounce = setTimeout(() => runSearch(current), delay)
+}
+
+/** Mensagem segura do servidor (filtro), sem expor detalhes internos. */
+function safeApiMessage(apiError: ApiError): string {
+    if (typeof apiError.message === 'string' && apiError.message.trim()) {
+        return apiError.message
+    }
+
+    const nested = apiError.message as { message?: unknown } | undefined
+    if (nested && typeof nested === 'object' && typeof nested.message === 'string') {
+        return nested.message.trim()
+    }
+
+    return ''
 }
 
 async function runSearch(current: number) {
@@ -76,17 +100,45 @@ async function runSearch(current: number) {
     searched.value = true
 
     if (result.isLeft()) {
-        error.value = 'Não foi possível carregar os internamentos.'
         items.value = []
+        const message = safeApiMessage(result.value)
+
+        if (message) {
+            // Filtro inválido: mostra a mensagem do servidor, não o genérico.
+            filterMessage.value = message
+            error.value = ''
+        } else {
+            filterMessage.value = ''
+            error.value = 'Não foi possível carregar os internamentos.'
+        }
         return
     }
 
+    filterMessage.value = ''
     error.value = ''
     items.value = result.value
 }
 
 function onTerm(value: string) {
     term.value = value
+
+    const trimmed = value.trim()
+
+    // 1 carácter ainda não é um termo válido (2–50): não chama a API e orienta.
+    if (trimmed.length === 1) {
+        if (debounce) clearTimeout(debounce)
+        request++
+        invalidateSelection()
+        items.value = []
+        error.value = ''
+        searched.value = false
+        loading.value = false
+        filterMessage.value = `Escreva pelo menos ${MIN_TERM} caracteres para filtrar.`
+        return
+    }
+
+    if (trimmed.length > MAX_TERM) return
+
     scheduleSearch(DEBOUNCE_MS, true)
 }
 
@@ -100,7 +152,6 @@ function clearFilters() {
     to.value = ''
     scheduleSearch(0, true)
 }
-
 function openEpisode(row: RecentHospitalizationModel) {
     void router.push({
         name: 'RecentHospitalizations',
@@ -133,6 +184,7 @@ onUnmounted(() => {
                 placeholder="Pesquisar internamentos (ID ou nome)"
                 data-field="recent.term"
                 v-model="term"
+                :maxlength="MAX_TERM"
                 @update:model-value="onTerm($event)"
             />
 
@@ -163,10 +215,13 @@ onUnmounted(() => {
             </div>
 
             <p v-if="loading" class="text-sm text-gray-500">A carregar…</p>
+            <p v-if="filterMessage" class="text-sm text-amber-600" role="alert">
+                {{ filterMessage }}
+            </p>
             <p v-if="error" class="text-sm text-red-600" role="alert">{{ error }}</p>
 
             <p
-                v-if="searched && !loading && !error && items.length === 0"
+                v-if="searched && !loading && !error && !filterMessage && items.length === 0"
                 class="text-sm text-gray-600"
             >
                 Sem internamentos para os filtros.
