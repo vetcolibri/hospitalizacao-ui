@@ -89,6 +89,14 @@ function makeDetail(hospitalizationId: string, marker: string) {
 
 type ListResult = Either<ApiError, HospitalizationHistorySummaryModel[]>;
 type DetailResult = Either<ApiError, ReturnType<typeof makeDetail>>;
+type LinkResult = Either<ApiError, typeof ZERO_LINK_STATUS>;
+
+/** Promessa controlada pelo teste (resolvida explicitamente). */
+function deferred<T>() {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>((r) => (resolve = r));
+    return { promise, resolve };
+}
 
 interface ServiceOptions {
     list?: (patientId: string) => Promise<ListResult>;
@@ -403,6 +411,93 @@ describe('histórico de hospitalizações do paciente', () => {
 
         expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'h2');
         expect(wrapper.text()).toContain('DEEP-h2');
+    });
+
+    it('H1 em voo -> H2 do mesmo paciente nunca volta a H1', async () => {
+        const list = deferred<ListResult>();
+        const h2 = deferred<DetailResult>();
+        const service = makeService({
+            list: () => list.promise,
+            detail: () => h2.promise
+        });
+
+        const wrapper = mountHistory(service, { initialHospitalizationId: 'h1' });
+        await flushPromises();
+
+        await wrapper.setProps({ initialHospitalizationId: 'h2' });
+        await flushPromises();
+
+        // A lista antiga resolve agora: a execução antiga retoma aqui.
+        list.resolve(right([OPEN_EPISODE, CLOSED_EPISODE]));
+        await flushPromises();
+
+        expect(service.detail).not.toHaveBeenCalledWith(PATIENT_ID, 'h1');
+        expect(service.detail).toHaveBeenCalledWith(PATIENT_ID, 'h2');
+
+        h2.resolve(right(makeDetail('h2', 'MARCADOR-H2')));
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H2');
+    });
+
+    it('paciente A em voo não entrega summaries nem linkStatus a B', async () => {
+        const listA = deferred<ListResult>();
+        const listB = deferred<ListResult>();
+        const statusA = deferred<LinkResult>();
+        const statusB = deferred<LinkResult>();
+
+        const service = makeService({
+            list: (patientId) => (patientId === PATIENT_ID ? listA.promise : listB.promise),
+            linkStatus: (patientId) => (patientId === PATIENT_ID ? statusA.promise : statusB.promise)
+        });
+
+        const wrapper = mountHistory(service, { patientId: PATIENT_ID });
+        await flushPromises();
+
+        await wrapper.setProps({ patientId: 'sys-B' });
+        await flushPromises();
+
+        // A responde tarde: não pode aparecer em B.
+        listA.resolve(right([OPEN_EPISODE]));
+        statusA.resolve(
+            right({ reportsWithoutHospitalization: 99, roundsWithoutHospitalization: 99 })
+        );
+        await flushPromises();
+
+        expect(episodeItems(wrapper)).toHaveLength(0);
+        expect(wrapper.text()).not.toContain('por classificar');
+
+        listB.resolve(right([CLOSED_EPISODE]));
+        statusB.resolve(right(ZERO_LINK_STATUS));
+        await flushPromises();
+
+        expect(episodeItems(wrapper).map((item) => item.attributes('data-hospitalization-id'))).toEqual([
+            'h1'
+        ]);
+        expect(wrapper.text()).not.toContain('por classificar');
+    });
+
+    it('o detalhe final coincide sempre com a query mais recente', async () => {
+        const h1 = deferred<DetailResult>();
+        const h2 = deferred<DetailResult>();
+        const service = makeService({
+            list: () => Promise.resolve(right([OPEN_EPISODE, CLOSED_EPISODE])),
+            detail: (id) => (id === 'h1' ? h1.promise : h2.promise)
+        });
+
+        const wrapper = mountHistory(service, { initialHospitalizationId: 'h1' });
+        await flushPromises();
+
+        await wrapper.setProps({ initialHospitalizationId: 'h2' });
+        await flushPromises();
+
+        // A resposta antiga chega tarde e tem de ser descartada.
+        h1.resolve(right(makeDetail('h1', 'MARCADOR-H1')));
+        await flushPromises();
+        expect(wrapper.text()).not.toContain('MARCADOR-H1');
+
+        h2.resolve(right(makeDetail('h2', 'MARCADOR-H2')));
+        await flushPromises();
+        expect(wrapper.text()).toContain('MARCADOR-H2');
     });
 });
 

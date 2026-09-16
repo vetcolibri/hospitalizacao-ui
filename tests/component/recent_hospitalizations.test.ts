@@ -191,9 +191,64 @@ describe('página dos últimos internamentos', () => {
         expect(wrapper.text()).toContain('Sem internamentos');
 
         await setTerm(wrapper, 'mel');
-        lastCall(service).resolve(left({ status: 500, message: 'erro' }));
+        lastCall(service).resolve(left({ status: 500, message: '' }));
         await flushPromises();
         expect(wrapper.text()).toContain('Não foi possível carregar');
+    });
+
+    it('mostra a mensagem de filtro do servidor em vez do genérico', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        await setTerm(wrapper, 'loki');
+        lastCall(service).resolve(
+            left({
+                status: 400,
+                message: 'A data inicial não pode ser posterior à data final.'
+            })
+        );
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('A data inicial não pode ser posterior');
+        expect(wrapper.text()).not.toContain('Não foi possível carregar');
+    });
+
+    it('mudar um filtro limpa imediatamente as linhas antigas', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        await setTerm(wrapper, 'loki');
+        lastCall(service).resolve(right([ROW]));
+        await flushPromises();
+        expect(rows(wrapper)).toHaveLength(1);
+
+        // Antes de o debounce disparar, as linhas antigas já não estão clicáveis.
+        await wrapper.find('input[placeholder="Pesquisar internamentos (ID ou nome)"]').setValue('loki x');
+        await flushPromises();
+        expect(rows(wrapper)).toHaveLength(0);
+    });
+
+    it('1 carácter não chama a API e mostra orientação', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+        const before = service.calls.length;
+
+        await wrapper.find('input[placeholder="Pesquisar internamentos (ID ou nome)"]').setValue('l');
+        await new Promise((resolve) => setTimeout(resolve, 330));
+
+        expect(service.calls).toHaveLength(before);
+        expect(wrapper.text()).toContain('pelo menos 2 caracteres');
+    });
+
+    it('limita o termo a 50 caracteres no input', async () => {
+        const service = new FakeService();
+        const wrapper = await mountPage(service, router);
+
+        expect(
+            wrapper
+                .find('input[placeholder="Pesquisar internamentos (ID ou nome)"]')
+                .attributes('maxlength')
+        ).toBe('50');
     });
 
     it('clicar numa linha abre o episódio exacto no deep-link', async () => {
